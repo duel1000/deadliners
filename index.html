@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>deadliner</title>
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<div id="titleScreen">
+		<img class="deadlinerImg" src="images/deadliner.png">
+		
+		<div id="setupGameMenu">
+		<div class="smallHeaderFont" id="titleScreenText">local game  &nbsp;\&nbsp;  1-4 players  &nbsp;\&nbsp;  choose game mode  &nbsp;\&nbsp;  next</div>
+			<div>
+				<div class="white">number of players:</div>
+				<div class="black-white-button" id="NumberOfPlayersSelect">2</div>
+			</div>	
+			<div>
+				<div class="white">game mode:</div>
+				<div class="black-white-button" id="GameModeButton">Free For All</div>
+			</div>
+			<div>
+				<div class="black-white-button button-margin" id="nextButton1">next</div>
+			</div>
+		</div>
+		<div id="inputNamesMenu" class="white no-display">
+		<div class="smallHeaderFont" id="titleScreenText">input all player names  &nbsp;\&nbsp;  customize game  &nbsp;\&nbsp;  start race!</div>
+
+			<div id="backButton1" class="black-white-button">back to main menu</div>
+		
+			<div id="player1field" class="no-display">deadliner 1
+				<div id="player1" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player1name"/>
+				</div>
+			</div>
+			<div id="player2field" class="no-display">deadliner 2
+				<div id="player2" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player2name"/>
+				</div>
+			</div>
+			<div id="player3field" class="no-display">deadliner 3
+				<div id="player3" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player3name"/>
+				</div>
+			</div>
+			<div id="player4field" class="no-display">deadliner 4
+				<div id="player4" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player4name"/>
+				</div>
+			</div>
+			<div class="black-white-button button-margin" id="customizeButton">customize game</div>
+			<div class="black-white-button button-margin" id="startRaceButton">start race</div>
+		</div>
+		<div id="customizeMenu" class="no-display">
+			<div class="smallHeaderFont" id="titleScreenText">customize game setup  &nbsp;\&nbsp;  confirm</div>
+			<div class="black-white-button button-margin red-border" id="gameSpeedButton">game speed: high</div>
+			<div class="black-white-button button-margin red-border" id="mapSizeButton">map size: huge</div>
+			<div class="black-white-button button-margin" id="shotAmountButton">shot amount: 6</div>
+			<div class="black-white-button button-margin red-border" id="specialAmountButton">special amount: 1</div>
+			<div class="black-white-button button-margin red-border" id="gameScoreButton">victory points: 21</div>
+			<div class="black-white-button button-margin" id="backFromCustomizeButton">confirm</div>
+		</div>
+	</div>
+	
+	<div id="gamescreen" class="no-display">
+		<div id="gameView">
+			<div class="playerPoints">
+			<div class="point white" id="player1points" data-player="1" data-order="0">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player2points" data-player="2" data-order="1">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player3points" data-player="3" data-order="2">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player4points" data-player="4" data-order="3">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			</div> 
+			
+			<div class="wrapper">
+				<canvas id="backCanvas"></canvas>
+		 		<canvas id="middleCanvas"></canvas>
+		 		<canvas id="topCanvas"></canvas>
+		 		<canvas id="deathParticleCanvas"></canvas>
+			</div>
+
+			<div class="restartGameButton" id="restartGameButton">restart race</div>
+			<div class="black-white-button button-margin" id="showControlsButton">show controls</div>
+			<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
+			<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
+		</div>
+		
+		<div id="statsView">
+			
+		</div>
+	</div>
+
+	<div id="musicVolume">
+		<div id="musicVolumeSlider"></div>
+	</div>
+	<div id="effectsVolume">
+		<div id="effectsVolumeSlider"></div>
+	</div>
+
+	<!--<div id="titlescreen">
+			<img class="deadlinerImg" src="images/deadliner.png">
+			<div class="smallHeaderFont" id="titleScreenText">local game  &nbsp;\&nbsp;  1-4 players  &nbsp;\&nbsp;  input player names  &nbsp;\&nbsp;  start racing!</div>
+		<div id="nameInputScreen">
+			<div class="twoPlayerWrap">
+				<div class="white">Game mode:</div>
+				<div class="mode-button" id="ModeButton">Free For All</div>
+			</div>
+			<div id="inputScreen">
+				<div class="white">deadliner 1</div><div id="player1" class="name-input-wrap"><input maxlength="12" class="name-input" id="player1name"/></div>
+				<div class="white">deadliner 2</div><div id="player2" class="name-input-wrap"><input maxlength="12" class="name-input" id="player2name"/></div>
+				<div class="white">deadliner 3</div><div id="player3" class="name-input-wrap"><input maxlength="12" class="name-input" id="player3name"/></div>
+				<div class="white">deadliner 4</div><div id="player4" class="name-input-wrap"><input maxlength="12" class="name-input" id="player4name"/></div>
+			</div>
+			
+			<div class="customizeButton" id="customizeButton">customize game</div>
+			<div class="startGameButton" id="startGameButton">start race</div>
+		</div>
+		<div id="customizeScreen" style="display:none">
+			<div class="customizeButton" id="gameSpeedButton">game speed: high</div>
+			<div class="customizeButton" id="mapSizeButton">map size: huge</div>
+			<div class="customizeButton" id="shotAmountButton">shot amount: 6</div>
+			<div class="customizeButton" id="specialAmountButton">special amount: 1</div>
+			<div class="customizeButton" id="gameScoreButton">victory points: 21</div>
+			<!--<div id="gameScoreWrap">
+				<div class="white">Game score:</div>
+				<input value="15" id="gamePoints" class="game-score-input" type="number" min="1" max="100">
+			</div>-->
+			<!--<div class="customizeButton" id="backButton">confirm</div>
+		</div>
+	</div>
+	<div id="gameScreen">
+		<div class="playerPoints">
+			<div class="point white" id="player1points" data-player="1" data-order="0">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player2points" data-player="2" data-order="1">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player3points" data-player="3" data-order="2">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player4points" data-player="4" data-order="3">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+		</div> 
+		
+		<div class="wrapper">
+			<canvas id="backCanvas"></canvas>
+	 		<canvas id="middleCanvas"></canvas>
+	 		<canvas id="topCanvas"></canvas>
+	 		<canvas id="deathParticleCanvas"></canvas>
+		</div>
+
+		<div class="restartGameButton" id="restartGameButton">restart race</div>
+	</div>
+
+	<div id="musicVolume">
+		<div id="musicVolumeSlider"></div>
+	</div>
+	<div id="effectsVolume">
+		<div id="effectsVolumeSlider"></div>
+	</div>-->
+
+</body>
+</html>
+
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/helperFunctions.js"></script>
+<script src="js/math.js"></script>
+<script src="js/constants.js"></script>
+<script src="js/soundSystem.js"></script>
+<script src="js/menuScreens.js"></script>
+<script src="js/spriteAnimation.js"></script>
+<script src="js/animationSetup.js"></script>
+<script src="js/gridFunctions.js"></script>
+<script src="js/renderFunctions.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/entityFunctions.js"></script>
+<script>
+
+var BackCanvas = document.getElementById("backCanvas");
+var MiddleCanvas = document.getElementById("middleCanvas");
+var TopCanvas = document.getElementById("topCanvas");
+var DeathParticleCanvas = document.getElementById("deathParticleCanvas");
+BackCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+BackCanvas.height = (ROW_NUMBER*TILE_SIZE);
+MiddleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+MiddleCanvas.height = (ROW_NUMBER*TILE_SIZE);
+TopCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+TopCanvas.height = (ROW_NUMBER*TILE_SIZE);
+DeathParticleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+DeathParticleCanvas.height = (ROW_NUMBER*TILE_SIZE);
+var ctxBack = BackCanvas.getContext("2d");
+var ctxMiddle = MiddleCanvas.getContext("2d");
+var ctxFront = TopCanvas.getContext("2d");
+var ctxDeathParticles = DeathParticleCanvas.getContext("2d");
+
+$("#musicVolumeSlider").slider({
+    min: 0,
+    max: 50,
+    value: 0,
+		range: "min",
+		animate: true,
+    slide: function(event, ui) 
+    {
+      SoundSystem.SetMusicVolume(ui.value / 100);
+    }
+});
+$("#musicVolumeSlider .ui-slider-handle").unbind('keydown');
+
+$("#effectsVolumeSlider").slider({
+    min: 0,
+    max: 50,
+    value: 20,
+		range: "min",
+		animate: true,
+    slide: function(event, ui) 
+    {
+      SoundSystem.SetEffectsVolume(ui.value / 100);
+    }
+});
+$("#effectsVolumeSlider .ui-slider-handle").unbind('keydown');
+
+function GameState()
+{
+	this.PlayerNames = ["","","",""];
+	this.NumberOfWorms = 2;
+	this.GameMode = game_modes.FREE_FOR_ALL;
+	
+	this.StartCounter = START_COUNTER;
+	this.GameStarted = false;
+	this.GameFinished = false;
+	this.StartGameButtonPressed = false;
+
+	this.SecondsCounter = 0;
+
+	this.WormsDiedThisRound = [];
+	this.DeadWormsCounter = 0;
+
+	this.CurrentGamePoints = 0;
+	this.RoundWinningTeam = 0;
+	this.WinnerText = "";
+
+	this.hole_count = new hole_count();
+
+	this.Grid = Create2DGrid(COLUMN_NUMBER, ROW_NUMBER);
+	this.Worms = [];
+
+	this.Team1 = new Team(1);
+	this.Team2 = new Team(2);
+
+	//Handles for Render()	
+	this.SpriteAnimations = [];
+	this.DeathParticles = [];
+	this.PaintWalls = false;
+	this.PaintWhiteCanvasses = false;
+	this.DrawWhite = [];
+	this.DrawStartCounter = false;
+	this.RenderWinnerText = false;
+
+	//TODO(Martin): Handles for Music
+}
+
+var GameState = new GameState();
+var SoundSystem = new SoundSystem();
+SoundSystem.init();
+
+//TODO(Martin): Should probably put keystate events into a separate function and pass them
+//to the GameState, so the server knows what ended down.
+var keystate;
+
+function init()
+{	
+	keystate = {};
+
+	document.addEventListener("keydown", function(event) 
+	{	
+		//TODO(martin): Handle this properly. Handle the full screen button.
+		event.preventDefault();
+		keystate[event.keyCode] = true;
+	});
+
+	document.addEventListener("keyup", function(event) 
+	{
+		delete keystate[event.keyCode];
+	});
+
+	SetWallsInGrid();
+	GameState.PaintWhiteCanvasses = true;
+	GameState.PaintWalls = true;
+
+	if(GameState.NumberOfWorms >= 1)
+	{
+		GameState.Worms[0] = new worm(GameState.PlayerNames[0], Player1Keys, 1, worm1HoleAnimations,
+					deployAnimation1, deployOutAnimation1, fullDeployAnimation1,
+					WORM1HEAD);
+	}
+	if(GameState.NumberOfWorms >= 2)
+	{
+		GameState.Worms[1] = new worm(GameState.PlayerNames[1], Player2Keys, 2, worm2HoleAnimations,
+					deployAnimation2, deployOutAnimation2, fullDeployAnimation2,
+					WORM2HEAD);
+	}
+	if(GameState.NumberOfWorms >= 3)
+	{		
+		GameState.Worms[2] = new worm(GameState.PlayerNames[2], Player3Keys, 3, worm3HoleAnimations,
+					deployAnimation3, deployOutAnimation3, fullDeployAnimation3,
+					WORM3HEAD);
+	}
+	if(GameState.NumberOfWorms == 4)
+	{
+		GameState.Worms[3] = new worm(GameState.PlayerNames[3], Player4Keys, 4, worm4HoleAnimations,
+					deployAnimation4, deployOutAnimation4, fullDeployAnimation4,
+					WORM4HEAD);
+	}
+
+	if(GameState.GameMode == game_modes.FREE_FOR_ALL)
+	{
+		$("#player1points .name").text(GameState.PlayerNames[0]);
+		$("#player1points .points").text('0');
+		$("#player2points .name").text(GameState.PlayerNames[1]);
+		$("#player2points .points").text('0');
+		$("#player3points .name").text(GameState.PlayerNames[2]);
+		$("#player3points .points").text('0');
+		$("#player4points .name").text(GameState.PlayerNames[3]);
+		$("#player4points .points").text('0');		
+	}
+	else if(GameState.GameMode == game_modes.TWO_ON_TWO || 
+	          GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		$("#player1points .name").text("TEAM 1");
+		$("#player1points .points").text('0');
+		$("#player2points .name").text("TEAM 2");
+		$("#player2points .points").text('0');
+				
+		GameState.Team1.Member1 = GameState.Worms[0];
+		GameState.Team1.Member2 = GameState.Worms[1];
+		GameState.Team2.Member1 = GameState.Worms[2];
+		GameState.Team2.Member2 = GameState.Worms[3];
+	}
+
+	gameloop();
+}
+
+function Render()
+{
+	//NOTE(Martin): "Meta functions".
+	if(GameState.PaintWhiteCanvasses) 
+	{ 
+		PaintWhiteCanvasses();
+		GameState.PaintWhiteCanvasses = false; 
+	}
+	
+	if(GameState.PaintWalls) 
+	{ 
+		PaintWalls();
+		GameState.PaintWalls = false; 
+	}
+
+	if(GameState.DrawWhite.length > 0) 
+	{ 
+		for(var i = 0; i < GameState.DrawWhite.length; i++)
+		{
+			DrawWhite(GameState.DrawWhite[i]); 
+		}
+		GameState.DrawWhite = [];
+	}
+
+	if(GameState.DrawStartCounter)
+	{
+		ctxBack.font="50px Geo";
+		ctxBack.fillStyle="#000000";
+		ctxBack.fillText(GameState.StartCounter+1, COLUMN_NUMBER/2*TILE_SIZE, ROW_NUMBER/2*TILE_SIZE);
+		GameState.DrawStartCounter = false;
+	}
+
+	//TODO(Martin): Check this through.
+	if(GameState.RenderWinnerText)
+	{
+		GameState.RenderWinnerText = false;
+		ctxMiddle.font="25px Geo";
+				
+		var textWidth = ctxMiddle.measureText(GameState.WinnerText).width;
+		var textHeight = 50;
+		var upperLeftColumn = (COLUMN_NUMBER/2*TILE_SIZE) - (textWidth/2); 
+		var upperLeftRow = ROW_NUMBER/2*TILE_SIZE - textHeight/2;
+
+		ctxMiddle.fillStyle="#FFFFFF";
+		ctxBack.fillStyle="#FFFFFF";
+
+		ctxBack.fillRect(upperLeftColumn, upperLeftRow - textHeight/2, textWidth, textHeight);
+		ctxMiddle.fillRect(upperLeftColumn, upperLeftRow  - textHeight/2, textWidth, textHeight);
+		
+		ctxMiddle.fillStyle="#000000";
+		ctxMiddle.fillText(GameState.WinnerText, upperLeftColumn, upperLeftRow);
+	}
+
+	//NOTE(Martin): Actual grid drawing functions
+	for (var x=0; x < COLUMN_NUMBER; x++) 
+	{
+		for (var y=0; y < ROW_NUMBER; y++) 
+		{
+			switch (GetGridValue(x, y)) 
+			{
+				case WORM1CELL:
+					SetGridValue(DRAWN_WORM1CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM1HEAD:
+					SetGridValue(WORM1CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM2HEAD:
+					SetGridValue(WORM2CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM3HEAD:
+					SetGridValue(WORM3CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM4HEAD:
+					SetGridValue(WORM4CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case HOLE:
+					SetGridValue(DRAWN_HOLE, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WHITE_HOLE:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxFront.clearRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WALL:
+					SetGridValue(DRAWN_WALL, x ,y);
+					ctxFront.fillStyle = "#000000";
+					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case STATIC_WALL:
+					SetGridValue(STATIC_WALL_DRAWN, x ,y);
+					ctxFront.fillStyle = "#000000";
+					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_FLAG:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case FLAG1:
+					ctxBack.fillStyle = "#FF0000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case FLAG2:
+					ctxBack.fillStyle = "#FF0000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_WORM:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_HOLE:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case CLEAR_ALL:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+			}
+		}
+	}
+
+	for(var i = 0; i < GameState.SpriteAnimations.length; i++)
+	{
+		if(GameState.SpriteAnimations[i].runCount < GameState.SpriteAnimations[i].timesToRun)
+		{	
+			GameState.SpriteAnimations[i].UpdateAndRender(ctxMiddle);
+		}
+		else
+		{	
+			GameState.SpriteAnimations[i].Clear(ctxMiddle);	
+			GameState.SpriteAnimations.splice(i,1);
+		}
+	}
+
+	if(GameState.DeathParticles.length > 0)
+	{
+		ctxDeathParticles.clearRect(0,0,COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
+	}
+
+	for(var i = 0; i < GameState.DeathParticles.length; i++)
+	{
+		var particle = GameState.DeathParticles[i]; 
+
+		particle.CurrentLength += 1;
+		if(particle.CurrentLength > particle.MaxLength)
+		{
+			GameState.DeathParticles.splice(i,1);
+		}
+		else
+		{
+			var randomVector = new V2();
+			
+			switch(particle.Direction)
+			{
+				case Directions.Right:
+					randomVector.x = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
+					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					break;
+				case Directions.Left:
+					randomVector.x = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
+					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					break;
+				case Directions.Up:
+					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					randomVector.y = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
+					break;
+				case Directions.Down:
+					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					randomVector.y = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
+					break;
+				case Directions.Spread:
+					randomVector.x = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
+					randomVector.y = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
+					break;
+			}
+
+			particle.dP = randomVector;
+			particle.P.Add(particle.dP);
+
+			var alpha = 1-(particle.CurrentLength / particle.MaxLength);
+			ctxDeathParticles.globalAlpha = alpha * 0.8;
+
+			if(particle.CheckForColor)
+			{
+				var xPos = Math.floor(particle.P.x / 3);
+				var yPos = Math.floor(particle.P.y / 3);
+				var gridValue = GetGridValue(xPos, yPos);
+
+				if(gridValue == EMPTY)
+				{
+					particle.Color = '#000000';
+				}
+			}
+			
+			ctxDeathParticles.fillStyle = particle.Color;
+			ctxDeathParticles.fillRect(particle.P.x,particle.P.y, particle.SizeX, particle.SizeY);
+		}
+	}
+
+	if(GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		//flag1animation.UpdateAndRender(ctxFront);
+		//flag2animation.UpdateAndRender(ctxFront);
+	}
+}
+
+function NewGame()
+{
+	currentGamePoints = 0;
+	GameState.DeadWormsCounter = 0;
+
+	//TODO(Martin): This is like a re-init function.
+	GameState.Grid = Create2DGrid(COLUMN_NUMBER, ROW_NUMBER);
+	SetWallsInGrid();
+	GameState.PaintWhiteCanvasses = true;
+	GameState.PaintWalls = true;
+
+	if(GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		SetFlagOntoGrid(FLAG1);
+		SetFlagOntoGrid(FLAG2);
+	}
+
+	var startingPositions = MakeStartingPositions(GameState.NumberOfWorms);
+
+	if(GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
+		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
+	}
+
+	if(GameState.GameMode == game_modes.TWO_ON_TWO || GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		GameState.RoundWinningTeam = 0;
+
+		for (var i=0; i < GameState.NumberOfWorms; i++) 
+		{
+			//TODO(martin): This is pretty bad :)
+			if(i == 0)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], Directions.Down, GameState.Team1.ID);
+			}
+			else if(i == 1)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], Directions.Up, GameState.Team1.ID);
+			}
+			else if(i == 2)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], Directions.Down, GameState.Team2.ID);
+			}
+			else if(i == 3)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], Directions.Up, GameState.Team2.ID);
+			}
+		}
+	}
+	else 
+	{
+		for (var i=0; i<GameState.NumberOfWorms; i++) 
+		{
+			//TODO(martin): This is pretty bad :)
+			if(i == 0)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 1)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 2)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 3)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+		};
+	}
+
+	//TODO(Martin): Should not be WORM1CELL but different heads.
+	for(var i = 0; i < GameState.NumberOfWorms; i++)
+	{
+		SetGridValue(WORM1CELL, GameState.Worms[i].HeadPosition.x, GameState.Worms[i].HeadPosition.y);
+	}
+
+	GameState.GameStarted = false;
+}
+
+//STUDY(martin): Get comfortable with this.
+//NOTE(martin): http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
+var now, dt = 0, last = timestamp(), step = CHOSEN_GAME_SPEED;
+function gameloop()
+{	
+	now = timestamp();
+	dt = dt + Math.min(1, (now - last) / 1000);
+	
+	//TODO(Martin): Maybe the game loop should be initialized with init() method.
+	if(step != CHOSEN_GAME_SPEED)
+	{
+		step = CHOSEN_GAME_SPEED;
+	}
+
+	while(dt > step) 
+	{
+		dt = dt - step;
+		update(step);
+	}
+
+	//render(dt); //NOTE(martin): Used for LERP.
+	Render();
+	last = now;
+	
+	requestAnimationFrame(gameloop);
+}
+
+function HandleWormCollision(worm)
+{
+	if(worm.CollisionType > collisions.NO_COLLISION)
+	{
+		var numberOfParticles = 0;
+		if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+		{
+			numberOfParticles = Math.floor((Math.random() * 35) + 15);
+		}
+		else
+		{
+			numberOfParticles = Math.floor((Math.random() * 500) + 300);
+		}
+
+		for(var ParticleSpawnIndex = 0;
+			ParticleSpawnIndex < numberOfParticles;
+			ParticleSpawnIndex++)
+		{
+			var particle = new DeathParticle();
+			particle.P = new V2(worm.HeadPosition.x*TILE_SIZE, worm.HeadPosition.y*TILE_SIZE);
+			
+			particle.SizeX = 3;
+			particle.SizeY = 3;
+			
+			if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			{
+				particle.Direction = Directions.Spread;
+				particle.dP = new V2(9,9);
+			}
+			else
+			{
+				particle.Direction = worm.CurrentDirection;	
+				particle.dP = new V2(5,5);
+			}
+
+			if(worm.CollisionType == collisions.WALL_COLLISION || 
+			   worm.CollisionType == collisions.HOLE_COLLISION ||
+			   worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			{
+				particle.Color = '#FFFFFF';
+				particle.CheckForColor = true;
+			}
+			else
+			{
+				particle.Color = '#000000';
+			}
+
+			GameState.DeathParticles.push(particle);
+		}
+
+		Kill(worm, true);
+		GameState.WormsDiedThisRound.push(worm);
+	}	
+}
+
+function update(step)
+{
+	GameState.SecondsCounter += step;
+	
+	if(GameState.GameFinished) { return; }
+	
+	if(keystate[GeneralKeys.NewRound] && !GameState.GameStarted && !GameState.StartGameButtonPressed)
+	{
+		GameState.StartGameButtonPressed = true;
+		NewGame();
+	}
+
+	if(GameState.GameStarted)
+	{
+		GameState.StartGameButtonPressed = false;
+
+		HandleWormKeyInput(GameState.GameStarted);		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(GameState.Worms[i].Alive)
+			{
+				UpdateWormPosition(GameState.Worms[i]);
+				
+				SetWormCollision(GameState.Worms[i]);
+				HandleWormCollision(GameState.Worms[i]);
+
+				if(GameState.Worms[i].Alive)
+				{
+					SetGridValue(GameState.Worms[i].HeadID, 
+							GameState.Worms[i].HeadPosition.x, 
+							GameState.Worms[i].HeadPosition.y);
+				}
+			}
+		}		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(GameState.Worms[i].Alive)
+			{
+				if(GameState.Worms[i].JustShotHole)
+				{	
+					SoundSystem.PlayShotEffect();
+					GameState.Worms[i].JustShotHole = false;
+					var holeAnimation = GameState.Worms[i].getHoleAnimation();  
+					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
+					GameState.SpriteAnimations.push(holeAnimation);
+
+					SetHoleInGrid(GameState.Worms[i]);
+				}
+
+				if(GameState.Worms[i].JustShotWhiteHole)
+				{	
+					SoundSystem.PlayWhiteShotEffect();
+					GameState.Worms[i].JustShotWhiteHole = false;
+					SetWhiteHoleInGrid(GameState.Worms[i].WhiteHolePosition);
+
+					//TODO(martin): Should not be -12, but in the middle calculated somehow.
+					var animation = GetWhiteHoleAnimation();
+					animation.init(GameState.Worms[i].WhiteHolePosition, -36);
+					GameState.SpriteAnimations.push(animation);
+				}
+			}
+		}		
+
+		for(var i = 0; i < GameState.WormsDiedThisRound.length; i++)
+		{
+			GameState.DeadWormsCounter++;
+			ScorePoint(GameState.WormsDiedThisRound[i], currentGamePoints);
+		}
+		currentGamePoints += GameState.WormsDiedThisRound.length;
+		GameState.WormsDiedThisRound = [];
+
+		if(GameState.GameMode == game_modes.FREE_FOR_ALL)
+		{
+			if(GameState.NumberOfWorms > 1 && ((GameState.DeadWormsCounter == GameState.NumberOfWorms - 1) || (GameState.DeadWormsCounter == GameState.NumberOfWorms)))
+			{
+				GameState.GameStarted = false;
+
+				for(var w = 0; w<GameState.NumberOfWorms; w++)
+				{
+					if(GameState.Worms[w].Alive)
+					{
+						Kill(GameState.Worms[w], true);
+						GameState.DeadWormsCounter++;
+						ScorePoint(GameState.Worms[w], currentGamePoints);
+					}
+				}
+
+				GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
+				UpdateScoreboard();
+
+				if(GameState.Worms[0].Points >= CHOSEN_VICTORY_POINTS)
+				{
+					GameState.StartGameButtonPressed = false;
+					GameState.GameFinished = true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = GameState.Worms[0].Name + ' won the game!';
+					GameState.RenderWinnerText = true;
+				}		
+			}
+			else if(GameState.NumberOfWorms == 1 && GameState.DeadWormsCounter == 1)
+			{
+				GameState.GameStarted = false;
+			}
+
+		}
+		//TODO(Martin): Check who is alive.
+		else if(GameState.GameMode == game_modes.TWO_ON_TWO)
+		{
+			if(!GameState.Team1.Member1.Alive && 
+			   !GameState.Team1.Member2.Alive &&
+			   !GameState.Team2.Member1.Alive && 
+			   !GameState.Team2.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 0;
+				UpdateScoreboard();
+			}
+			else if(!GameState.Team1.Member1.Alive && !GameState.Team1.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 2;
+				Kill(GameState.Worms[2], true);
+				Kill(GameState.Worms[3], true);
+				UpdateScoreboard();
+				if(GameState.Team2.TeamScore >= CHOSEN_VICTORY_POINTS)
+				{
+					GameState.GameFinished == true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = "team 2 won the race!";
+					GameState.RenderWinner = true;
+				}
+			}
+			else if(!GameState.Team2.Member1.Alive && !GameState.Team1.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 1;
+				Kill(GameState.Worms[0], true);
+				Kill(GameState.Worms[1], true);
+				UpdateScoreboard();
+				if(GameState.Team1.TeamScore >= CHOSEN_VICTORY_POINTS)
+				{
+					GameState.GameFinished == true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = "team 1 won the race!";
+					GameState.RenderWinner = true;
+				}
+			}
+		}
+		else if(GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+		{
+			if(GameState.RoundWinningTeam == 1 || GameState.RoundWinningTeam == 2)
+			{
+				GameState.GameStarted = false;
+				Kill(GameState.Worms[0], false);
+				Kill(GameState.Worms[1], false);
+				Kill(GameState.Worms[2], false);
+				Kill(GameState.Worms[3], false);
+				UpdateScoreboard();
+			}
+			else
+			{
+				for(var i = 0; i < GameState.NumberOfWorms; i++)
+				{
+					if(!GameState.Worms[i].Alive && !GameState.Worms[i].IsRespawning)
+					{
+						GameState.Worms[i].IsRespawning = true;
+
+						RemoveWormPathFromGrid(GameState.Worms[i]);
+						RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions);
+						if(GameState.Worms[i].HoldsFlag > 0)
+						{
+							SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
+							DropFlag(GameState.Worms[i]);
+						}
+
+						var position = GameState.Worms[i].SpawnPoint;
+						Respawn(GameState.Worms[i], 1300);
+						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
+						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
+						ClearSpawnpointFromGrid(position);
+					}
+				}
+			}
+		}
+	}
+	else if(GameState.StartGameButtonPressed)
+	{
+		HandleWormKeyInput(GameState.GameStarted);
+
+		if(GameState.SecondsCounter > 1)
+		{
+			if(GameState.StartCounter == 0)
+			{
+				$("#player1points").removeClass('textBlurAnimation');
+				$("#player2points").removeClass('textBlurAnimation');
+				$("#player3points").removeClass('textBlurAnimation');
+				$("#player4points").removeClass('textBlurAnimation');	
+
+				for(var i = 0; i < GameState.NumberOfWorms; i++)
+				{
+					GameState.SpriteAnimations.push(GameState.Worms[i].deployOutAnimation);
+				}
+
+				GameState.GameStarted = true;
+				GameState.StartCounter = START_COUNTER;
+
+				SoundSystem.ToggleTitleScreenMusic(false);
+				SoundSystem.ToggleGameMusic(true);
+
+				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+													   COLUMN_NUMBER/2-25, COLUMN_NUMBER/2+25,
+													   ROW_NUMBER/2+25, ROW_NUMBER/2-25)); 
+				//DrawWhite(ctxBack, COLUMN_NUMBER/2-25,COLUMN_NUMBER/2+25,ROW_NUMBER/2+25,ROW_NUMBER/2-25);
+			}
+			else
+			{
+				if(GameState.StartCounter == 5)
+				{
+					SoundSystem.PlayCountDownEffect();
+				}
+				
+				//NOTE(martin): puts in the players in order of the counter
+				if(GameState.StartCounter == 4 && GameState.NumberOfWorms > 3)
+				{
+					$(".point[data-order=3]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 3 && GameState.NumberOfWorms > 2)
+				{
+					$(".point[data-order=2]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 2 && GameState.NumberOfWorms > 1)
+				{
+					$(".point[data-order=1]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 1 && GameState.NumberOfWorms > 0)
+				{
+					$(".point[data-order=0]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+
+				var halfTextWidth = ctxBack.measureText(GameState.StartCounter).width;
+				var halfTextHeight = 25;
+
+				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+													   COLUMN_NUMBER/2-halfTextWidth, COLUMN_NUMBER/2+halfTextWidth,
+													   ROW_NUMBER/2+halfTextHeight, ROW_NUMBER/2-halfTextHeight)); 
+
+				GameState.DrawStartCounter = true;
+				GameState.StartCounter--;					
+			}
+
+			GameState.SecondsCounter = 0;
+		}
+	}	
+}
+
+//TODO(Martin): This should be a function that resets the GameState object?
+function ExitGameToTitlescreen()
+{
+	SoundSystem.ChangeToTitleScreen();
+	GameState.StartGameButtonPressed = false;
+	GameState.GameStarted = false;
+	GameState.GameFinished = false;
+	GameState.StartCounter = START_COUNTER;
+	for(var i = 0; i < GameState.NumberOfWorms; i++)
+	{
+		Kill(GameState.Worms[i], false);
+	}
+}
+
+function HandleWormKeyInput(gameStarted)
+{
+	if(gameStarted)
+	{
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(keystate[GameState.Worms[i].Keys.LeftKey])
+			{
+				ChangeDirection(GameState.Worms[i], Directions.Left);
+			}
+			else if(keystate[GameState.Worms[i].Keys.UpKey])
+			{
+				ChangeDirection(GameState.Worms[i], Directions.Up);
+			}
+			else if(keystate[GameState.Worms[i].Keys.RightKey])
+			{
+				ChangeDirection(GameState.Worms[i], Directions.Right);
+			}
+			else if(keystate[GameState.Worms[i].Keys.DownKey])
+			{
+				ChangeDirection(GameState.Worms[i], Directions.Down);
+			}
+
+			if(keystate[GameState.Worms[i].Keys.SpecialKey])
+			{
+				ShootWhiteHole(GameState.Worms[i]);
+			}
+			
+			if(keystate[GameState.Worms[i].Keys.ShotKey])
+			{	
+				ShootHole(GameState.Worms[i]);
+			}
+		}
+	}
+	else
+	{
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(keystate[GameState.Worms[i].Keys.LeftKey])
+			{
+				GameState.Worms[i].Direction = Directions.Left;
+			}
+			else if(keystate[GameState.Worms[i].Keys.UpKey])
+			{
+				GameState.Worms[i].Direction = Directions.Up;
+			}
+			else if(keystate[GameState.Worms[i].Keys.RightKey])
+			{
+				GameState.Worms[i].Direction = Directions.Right;
+			}
+			else if(keystate[GameState.Worms[i].Keys.DownKey])
+			{
+				GameState.Worms[i].Direction = Directions.Down;
+			}
+		}
+	}
+	
+	keystate = {};
+}
+
+function UpdateScoreboard()
+{
+	if(GameState.GameMode == game_modes.FREE_FOR_ALL)
+	{	
+		for(var i = 0; i < GameState.NumberOfWorms; i++){
+			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
+		}
+	}
+	else if(GameState.GameMode == game_modes.TWO_ON_TWO || GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
+	{
+		if(GameState.RoundWinningTeam == 1)
+		{
+			GameState.Team1.TeamScore += 1;
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' won');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' lost');
+		}
+		else if(GameState.RoundWinningTeam == 2)
+		{
+			GameState.Team2.TeamScore += 1;
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' lost');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' won');
+		}
+		else if(GameState.RoundWinningTeam == 0)
+		{
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' draw');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' draw');
+		}
+	}
+}
+/*
+TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Sort out the sound effects, so they fit with the game.
+Less annoying soundtrack - Aslak
+Random starting position 3 player mode
+
+TODO(Nicolai):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+When canvas size changes, so does the position of canvasses. We need them to be positioned dynamically.
+Align gamepoints with canvas -> Different monitors?
+We need to remake the entire screen layout + transitions between screens:
+	- Screen 1: How many players? What Gamemode? Fullscreen button.
+	- Screen 2: Player names, customize button, start game.
+	- Screen 3: Gamescreen, return to the other screens.
+	- Screen 4: Game statistics -> Show who did what in the game. Headshots etc.
+No æøå in name input (no sound effect when pressed)
+
+TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Figure out what pattern to use for gamemode
+Titlescreen update + create customization screen
+Start making statistics: Headshot, most kills, deaths, who killed who etc.
+Vectorize the grid?
+AI player
+
+BUGS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+(Martin): Holding down the hole-button is weird
+(Martin): Holeanimation can appear outside the grid.
+(Martin): Sometimes in capture the flag spawn point changes.
+
+STUDY(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+TILE_SIZE is 3, but the renderer should actually not skip the 3 pixels?
+
+DONE(ALL):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Cannot start in opposite random direction
+So.. the grid in Y direction is very very long? Why? It actually wasnt, but the grid was set to expand. 
+Update the game to using vectors instead of X and Y coordinates all over the place.
+HEADSHOT!!!!
+Particle system upon death
+Player icons need to shift with player points when the round ends.
+2v2 capture the flag mode
+2v2 mode
+(Nicolai): Icons at the start menu should be aligned with the input fields
+Calculate if the whiteshotanimation fits with what gets removed
+Shot->popanimation
+Show how many points each player gets per round "fastcreamer 12 (+3)"
+Animations are not perfectly aligned with the actual hit-pixels
+Volume slider x 2
+Shotanimation + blackhole -> only when shot inside map
+Show player controls	
+Holes are not removed when new game is run
+Sometimes the points per game does not show until next round
+Simultaneous death points
+Victory points
+Restart game
+You can white hole the wall and get out of the grid.
+Create STATIC_WALLs to limit where the player can go
+study - Map draws black all the time?
+Larger grid + whitehole removable edges
+White space animation
+Map generation starts wall weird
+Press N for starting the game
+White space
+Align player points in the right side
+Put in new sound effect
+Placement animation
+Sound effects
+Assign all 4 player keys
+Layout title screen
+No new game before only 1 player remains
+Random symmetrical starting position
+Who is who when the game starts
+Music - titlemusic + gamemusic 
+Random starting positions
+Equal names not allowed
+4 player mode
+*/
+
+</script>
