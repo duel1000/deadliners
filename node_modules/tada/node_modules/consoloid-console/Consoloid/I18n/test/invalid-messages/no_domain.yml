@@ -1,0 +1,10 @@
+messages:
+  -
+    source: Apply
+    target: Alkalmaz
+  -
+    source: Add
+    target: Hozzáad
+  -
+    source: Foo Bar
+    target: Árvíztűrő tükörfúrógép

@@ -1,0 +1,50 @@
+domain: Consoloid.Topic
+messages:
+  -
+    source: Turn page
+    target: Lapozok
+  -
+    source: 'Turn to page <page>'
+    target: 'Lapozok a <page> számú oldalra'
+  -
+    source: 'Turn to first page'
+    target: 'Lapozok az első oldalra'
+  -
+    source: 'Turn to previous page'
+    target: 'Lapozok az előző oldalra'
+  -
+    source: 'Turn to next page'
+    target: 'Lapozok a következő oldalra'
+  -
+    source: 'Turn to last page'
+    target: 'Lapozok az utolsó oldalra'
+  -
+    source: 'list named <value>'
+    target: 'a <value> nevű listában'
+  -
+    source: 'to page <value>'
+    target: '<value> számú oldalra'
+  -
+    source: 'Filter for <filter>'
+    target: 'Szűrök arra hogy <filter>'
+  -
+    source: 'Search for <filter>'
+    target: 'Keresem hogy <filter>'
+  -
+    source: 'Further filter for <filter>'
+    target: 'Tovább szűrök arra hogy <filter>'
+  -
+    source: 'Further search for <filter>'
+    target: 'Keresem még hogy <filter>'
+  -
+    source: 'Clear filters'
+    target: 'Törlöm a szűrőket'
+  -
+    source: 'Stop search'
+    target: 'Megszakítom a keresést'
+  -
+    source: 'Stop filtering'
+    target: 'Megszakítom a szűrést'
+  -
+    source: "There isn't any list to change pages on"
+    target: 'Nincs a társalgásban lista amin lapozni lehetne!'

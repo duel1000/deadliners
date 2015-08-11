@@ -1,0 +1,11 @@
+domain: testpkg
+messages:
+  -
+    source: Apply
+    target: Translated Apply
+  -
+    source: Add
+    target: Translated Add
+  -
+    source: Foo Bar
+    target: Foo Bar

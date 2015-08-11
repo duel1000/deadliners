@@ -1,0 +1,24 @@
+definitions:
+  console_topic_i18n_messages:
+    cls: Consoloid.I18n.YamlMessagesDirectoryLoader
+    options:
+      directoryName: Consoloid/Topic/i18n
+    tags: [ "create-on-topic-load" ]
+  console_ui_list_i18n_messages:
+    cls: Consoloid.I18n.YamlMessagesDirectoryLoader
+    options:
+      directoryName: Consoloid/Ui/List/i18n
+    tags: [ "create-on-topic-load" ]
+  translator_repository:
+    cls: Consoloid.I18n.ServerSideTranslatorRepository
+    alias: translator
+    options:
+      language: "%translator_repository.lang%"
+    remoting:
+      mode: any
+    shared: true
+  append_session_id_to_log:
+    cls: Consoloid.Log.DetailProvider.SessionId
+    options:
+      autoaddToStream: '@server_log_buffer'
+    tags: [ "create-on-topic-load" ]

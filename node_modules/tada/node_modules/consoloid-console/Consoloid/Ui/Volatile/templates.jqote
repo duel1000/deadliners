@@ -1,0 +1,44 @@
+<script id="Consoloid-Ui-Volatile-DialogNormal" type="text/x-jqote-template">
+<![CDATA[
+  <div class="normal">
+    <div class="icon"/>
+    <div class="message"><%= this.getMessage() %></div>
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Ui-Volatile-DialogError" type="text/x-jqote-template">
+<![CDATA[
+  <div class="error">
+    <div class="icon">⚠ </div>
+    <div class="message"><%= this.getMessage() %></div>
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Ui-Volatile-DialogInfo" type="text/x-jqote-template">
+<![CDATA[
+  <div class="info">
+    <div class="icon">ℹ</div>
+    <div class="message"><%= this.getMessage() %></div>
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Ui-Volatile-ContainerClosed" type="text/x-jqote-template">
+<![CDATA[
+  <div class="expander">▶</div>
+  <div class="actions"><ul><li><a class="remove" href="#"><img src="/Consoloid/Ui/images/multi-trash.png" alt="remove" /></li></ul></a></div>
+  <div class="volatile-convo-number"><%= this.__getDialogCounterText() %></div>
+  <div class="volatile-convos"></div>
+
+]]>
+</script>
+
+<script id="Consoloid-Ui-Volatile-ContainerOpened" type="text/x-jqote-template">
+<![CDATA[
+  <div class="expander">▼ </div>
+  <div class="volatile-convos"></div>
+  <div class="actions"><ul><li><a class="remove" href="#"><img src="/Consoloid/Ui/images/multi-trash.png" alt="remove" /></li></ul></a></div>
+]]>
+</script>

@@ -1,0 +1,64 @@
+<script id="Consoloid-Topic-SentenceListing-Dialog" type="text/x-jqote-template">
+<![CDATA[
+  <p><%= __('These sentence can be interpreted:') %></p>
+  <div class="list-dialog"></div>
+]]>
+</script>
+
+<script id="Consoloid-Topic-SentenceListing-CollapsingItem" type="text/x-jqote-template">
+<![CDATA[
+  <div class="collapse-buttons">
+    <div class="more" style="font-size: 1em">
+      <% if (this.data.alternatives.length > 0) { %>
+        <a href="#">
+          <%= __('@count alternatives', { '@count': this.data.alternatives.length}) %>
+        </a>
+      <% } %>
+    </div>
+    <div class="less">×</div>
+  </div>
+  <div class="collapse-content">
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Topic-SentenceListing-ItemCollapsed" type="text/x-jqote-template">
+<![CDATA[
+  <div>
+    <% var pattern = __(this.data.pattern).replace('<', '&lt;').replace('>', '&gt;'); %>
+    <a class="expression-reference" data-text="<%= pattern %>" href="#">
+      <%= pattern %>
+    </a><br />
+    <%= __('Topic:') + ' ' + __(this.data.topic) %>
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Topic-SentenceListing-ItemOpened" type="text/x-jqote-template">
+<![CDATA[
+  <div>
+    <a class="expression-reference" data-text="<%= __(this.data.pattern) %>" href="#">
+      <%= __(this.data.pattern) %>
+    </a><br />
+    <%= __('Topic:') + ' ' + __(this.data.topic) %><% if (this.data.alternatives.length > 0) { %>,
+      <%=
+        __('alternatives:') %> <%= this.data.alternatives.map(function(i) {
+          return
+            '<a class="expression-reference" data-text="' + __(i).replace('<', '&lt;').replace('>', '&gt;') + '">' +
+              __(i).replace('<', '&lt;').replace('>', '&gt;') +
+            '</a>';
+        }).join(', ')
+      %>
+    <% } %>
+  </div>
+]]>
+</script>
+
+<script id="Consoloid-Topic-SentenceListing-FilterWidget" type="text/x-jqote-template">
+<![CDATA[
+  <div class="list-filter">
+    <div class="clear-filters"><img alt="remove" src="/Consoloid/Ui/images/trash.png" /></div>
+    <div><%= __("Displaying only the sentences matching the condition:") %> <div class="filter-value"></div></div>
+  </div>
+]]>
+</script>
