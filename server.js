@@ -1,4 +1,3 @@
-var stitch  = require('stitch');
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -6,7 +5,6 @@ var uuid = require('node-uuid');
 var express = require('express');
 var port = process.env.PORT || 3000;
 app.use(express.static('shared'));
-var fs = require('fs');
 
 app.get('/', function(req, res)
 {
