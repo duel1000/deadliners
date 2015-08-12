@@ -86,11 +86,11 @@ function team(id)
 };
 
 var collisions = {
-	NO_COLLISION: 0,
-	COLLISION: 1,
-	HEAD_COLLISION: 2,
-	WALL_COLLISION: 3,
-	HOLE_COLLISION: 4,
-	FLAG_COLLISION: 5,
-	HEADSHOT_COLLISION: 6
+	NoCollision: 0,
+	Collision: 1,
+	HeadCollision: 2,
+	WallCollision: 3,
+	HoleCollision: 4,
+	FlagCollisiion: 5,
+	HeadshotCollision: 6
 };

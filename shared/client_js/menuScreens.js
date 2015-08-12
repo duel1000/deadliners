@@ -67,18 +67,18 @@ $('#GameModeButton').on('click', function()
 	SoundSystem.PlayInputEffect();
 	switch(GameState.GameMode)
 	{
-		case variables.game_modes.FREE_FOR_ALL:
-			GameState.GameMode =variables. game_modes.TWO_ON_TWO;
+		case variables.game_modes.FreeForAll:
+			GameState.GameMode = variables.game_modes.TwoOnTwo;
 			$(this).text('2 vs 2');
 			$("body").addClass("team");
 			break;
-		case variables.game_modes.TWO_ON_TWO:
-			GameState.GameMode = variables.game_modes.CAPTURE_THE_FLAG;
+		case variables.game_modes.TwoOnTwo:
+			GameState.GameMode = variables.game_modes.CaptureTheFlag;
 			$(this).text('capture the flag');
 			$("body").addClass("team");
 			break;
-		case variables.game_modes.CAPTURE_THE_FLAG:
-			GameState.GameMode = variables.game_modes.FREE_FOR_ALL;
+		case variables.game_modes.CaptureTheFlag:
+			GameState.GameMode = variables.game_modes.FreeForAll;
 			$(this).text('free for all');
 			$("body").removeClass("team");
 			break;
@@ -90,14 +90,14 @@ var NextButton = $('#nextButton1');
 var NextButtonIsValid = true;
 function ValidateGameSetup()
 {
-	if(GameState.NumberOfWorms == 4 || GameState.GameMode == variables.game_modes.FREE_FOR_ALL)
+	if(GameState.NumberOfWorms == 4 || GameState.GameMode == variables.game_modes.FreeForAll)
 	{
 		NextButtonIsValid = true;
 		NextButton.text('next');
 		NextButton.css('border-color', 'white');
 	}
 	else if(GameState.NumberOfWorms < 4 && 
-	  (GameState.GameMode == variables.game_modes.TWO_ON_TWO || GameState.GameMode == variables.game_modes.CAPTURE_THE_FLAG))
+	  (GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag))
     {
     	NextButtonIsValid = false;
     	NextButton.text('4 player game mode');

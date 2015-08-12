@@ -8,6 +8,7 @@ var math = require('./math.js');*/
 {
 	exports.Initiate2Dgrid = function(grid, emptyValue)
 	{
+		grid.System = [];
 		for (var x = 0; x < grid.Width; x++) 
 		{
 			grid.System.push([]);
@@ -45,13 +46,15 @@ var math = require('./math.js');*/
 	}
 
 	//TODO(Martin): Hardcoded flag size and should be vectors
-	exports.SetFlagOntoGrid = function(flag, gridSystem)
+	exports.SetFlagOntoGrid = function(flag, grid)
 	{
 		for(var x = 0; x < flag.Width; x++)
 		{
 			for(var y = 0; y < flag.Height; y++)
 			{
-				gridSystem[flag.Position[0] + x-2][flag.Position[1] + y-2] = flag.ID;	
+				this.SetGridValue(grid, flag.ID, 
+								  flag.Position[0] + x-2, 
+								  flag.Position[1] + y-2)
 			}
 		}
 	}
@@ -228,26 +231,47 @@ var math = require('./math.js');*/
 		//}
 	}
 
-	exports.MakeStartingPositions = function(vectorGroup, grid)
+	exports.TOTstartingPositions = function(vectorGroup, grid)
 	{
 		var result = vectorGroup;
-		//TODO(Martin): This is written as a TWO_ON_TWO mode cheat. 
-		/*if(GameState.GameMode == variables.game_modes.TwoOnTwo)
-		{
-			result[0] = new math.V2(60, (variables.RowNumber/2) + 10);
-			result[1] = new math.V2(60, (variables.RowNumber/2) - 10);
-			result[2] = new math.V2(variables.ColumnNumber - 60, (variables.RowNumber/2) + 10);
-			result[3] = new math.V2(variables.ColumnNumber - 60, (variables.RowNumber/2) - 10);
-			return(result);
-		}
-		else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
-		{
-			result[0] = new math.V2(60, (variables.RowNumber/2) + 30);
-			result[1] = new math.V2(60, (variables.RowNumber/2) - 30);
-			result[2] = new math.V2(variables.ColumnNumber - 60, (variables.RowNumber/2) + 30);
-			result[3] = new math.V2(variables.ColumnNumber - 60, (variables.RowNumber/2) - 30);
-			return(result);
-		}*/
+
+		vectorGroup[0].x = 60;
+		vectorGroup[0].y = (grid.Height/2) + 10; 
+
+		vectorGroup[1].x = 60;
+		vectorGroup[1].y = (grid.Height/2) - 10; 
+
+		vectorGroup[2].x = grid.Width - 60;
+		vectorGroup[2].y = (grid.Height/2) + 10; 
+
+		vectorGroup[3].x = grid.Width - 60;
+		vectorGroup[3].y = (grid.Height/2) - 10; 
+		
+		return(result);
+	}
+
+	exports.CTFstartingPositions = function(vectorGroup, grid)
+	{
+		var result = vectorGroup;
+
+		vectorGroup[0].x = 60;
+		vectorGroup[0].y = (grid.Height/2) + 30; 
+
+		vectorGroup[1].x = 60;
+		vectorGroup[1].y = (grid.Height/2) - 30; 
+
+		vectorGroup[2].x = grid.Width - 60;
+		vectorGroup[2].y = (grid.Height/2) + 30; 
+
+		vectorGroup[3].x = grid.Width - 60;
+		vectorGroup[3].y = (grid.Height/2) - 30; 
+
+		return(result);
+	}
+
+	exports.FFAstartingPositions = function(vectorGroup, grid)
+	{
+		var result = vectorGroup;
 
 		//TODO(martin): refactor this to constants so we can adjust them globally
 		var edgeDistance = 20 + 40; // TODO(Martin): This is Map Threshold
@@ -294,31 +318,28 @@ var math = require('./math.js');*/
 	}
 
 	//TODO(Martin): This loooks bad.
-	exports.SetWormCollision = function(worm, grid, map_values, collisions)
+	exports.SetWormCollision = function(worm, grid, map_values, collisions, gameState)
 	{
 		var xPos = worm.HeadPosition.x;
 		var yPos = worm.HeadPosition.y;
 
-		//TODO(Martin): This works with modules? Maybe use 'this.'
-		var gridValue = this.GetGridValue(grid, xPos, yPos); 
+		var gridValue = this.GetGridValue(grid, xPos, yPos);
 
-		//TODO(Martin): This is a seperation of concerns problem that sucks.
-		/*if(gridValue == map_values.Worm1Head || 
+		if(gridValue == map_values.Worm1Head || 
 		   gridValue == map_values.Worm2Head || 
 		   gridValue == map_values.Worm3Head || 
 		   gridValue == map_values.Worm4Head)
 		{
 			worm.CollisionType = collisions.HeadCollision;	
 
-			for(var i = 0; i < GameState.NumberOfWorms; i++)
+			for(var i = 0; i < gameState.NumberOfWorms; i++)
 			{
-				if(gridValue == GameState.Worms[i].HeadID && GameState.Worms[i].Alive)
+				if(gridValue == gameState.Worms[i].HeadID && gameState.Worms[i].Alive)
 				{
-					GameState.Worms[i].CollisionType = collisions.HeadCollision;
-					entities.HandleWormCollision(GameState.Worms[i]);
+					gameState.Worms[i].CollisionType = collisions.HeadCollision;
 				} 
 			}
-		}*/
+		}
 		
 		if(gridValue == map_values.DrawnWall)
 		{	

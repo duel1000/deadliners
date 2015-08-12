@@ -111,22 +111,24 @@
 </body>
 </html>
 
-<script src="/socket.io/socket.io.js"></script>
+<!--BROWSER SCRIPTS-->
 <script src="client_js/jquery-2.1.4.min.js"></script>
 <script src="client_js/jquery-ui.min.js"></script>
-<script src="client_js/helperFunctions.js"></script>
-<script src="client_js/math.js"></script>
-<!--<script src="client_js/constants.js"></script>-->
-<script src="client_js/soundSystem.js"></script>
 <script src="client_js/menuScreens.js"></script>
+
+<!--CLIENT SYSTEMS-->
+<script src="/socket.io/socket.io.js"></script>
+<script src="client_js/soundSystem.js"></script>
 <script src="client_js/spriteAnimation.js"></script>
 <script src="client_js/animationSetup.js"></script>
-<!--<script src="client_js/gridFunctions.js"></script>-->
 <script src="client_js/renderFunctions.js"></script>
+
+<!--SHARED LOGIC-->
+<script src="client_js/math.js"></script>
+<script src="client_js/helperFunctions.js"></script>
 <script src="client_js/entities.js"></script>
 <script src="client_js/entityFunctions.js"></script>
 
-<!--<script src="modules/foo.js"></script>-->
 <script src="modules/gridFunctions.js"></script>
 <script src="modules/variables.js"></script>
 <script>
@@ -213,10 +215,10 @@ function GameState()
 	this.Team1 = new team(1);
 	this.Team2 = new team(2);
 
-	this.Flag1 = new flag(this.Team1.ID, map_values.FlagSize, 
+	this.Flag1 = new flag(map_values.Flag1, map_values.FlagSize, 
 					      map_values.FlagSize, map_values.Flag1Position);
 
-	this.Flag2 = new flag(this.Team2.ID, map_values.FlagSize, 
+	this.Flag2 = new flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
 
 	//Handles for Render()	
@@ -559,16 +561,27 @@ function NewGame()
 		gridFunctions.SetFlagOntoGrid(GameState.Flag2, GameState.Grid);
 	}
 
-	//TODO(Martin): Remake
-	//TODO(Martin): FIX - REMOVE AFTER USE
-		
+	//STUDY(martin): Understand new and when to use it.
 	var vectorGroup = [];
 	vectorGroup[0] = new V2();
 	vectorGroup[1] = new V2();
 	vectorGroup[2] = new V2();
 	vectorGroup[3] = new V2();
 
-	var startingPositions = gridFunctions.MakeStartingPositions(vectorGroup, GameState.Grid);
+	var startingPositions = [];
+
+	switch(GameState.GameMode)
+	{
+		case variables.game_modes.FreeForAll:
+			startingPositions = gridFunctions.FFAstartingPositions(vectorGroup, GameState.Grid);
+			break;
+		case variables.game_modes.TwoOnTwo:
+			startingPositions = gridFunctions.TOTstartingPositions(vectorGroup, GameState.Grid);
+			break;
+		case variables.game_modes.CaptureTheFlag:
+			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
+			break;
+	}
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
@@ -663,29 +676,30 @@ function gameloop()
 
 function HandleWormCollision(worm)
 {
-	if(worm.CollisionType > collisions.NO_COLLISION)
+	if(worm.CollisionType > collisions.NoCollision)
 	{
 		var numberOfParticles = 0;
-		if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+		if(worm.CollisionType == collisions.HeadshotCollision)
 		{
-			numberOfParticles = Math.floor((Math.random() * 35) + 15);
+			numberOfParticles = Math.floor((Math.random() * 50) + 15);
 		}
 		else
 		{
-			numberOfParticles = Math.floor((Math.random() * 500) + 300);
+			numberOfParticles = Math.floor((Math.random() * 15) + 6);
 		}
 
 		for(var ParticleSpawnIndex = 0;
 			ParticleSpawnIndex < numberOfParticles;
 			ParticleSpawnIndex++)
 		{
+			//TODO(Martin): Probably should not new them here :)
 			var particle = new DeathParticle();
 			particle.P = new V2(worm.HeadPosition.x*map_values.TileSize, worm.HeadPosition.y*map_values.TileSize);
 			
 			particle.SizeX = 3;
 			particle.SizeY = 3;
 			
-			if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			if(worm.CollisionType == collisions.HeadshotCollision)
 			{
 				particle.Direction = variables.directions.Spread;
 				particle.dP = new V2(9,9);
@@ -696,9 +710,9 @@ function HandleWormCollision(worm)
 				particle.dP = new V2(5,5);
 			}
 
-			if(worm.CollisionType == collisions.WALL_COLLISION || 
-			   worm.CollisionType == collisions.HOLE_COLLISION ||
-			   worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			if(worm.CollisionType == collisions.WallCollision || 
+			   worm.CollisionType == collisions.HoleCollision ||
+			   worm.CollisionType == collisions.HeadshotCollision)
 			{
 				particle.Color = '#FFFFFF';
 				particle.CheckForColor = true;
@@ -739,23 +753,7 @@ function update(step)
 			if(GameState.Worms[i].Alive)
 			{
 				UpdateWormPosition(GameState.Worms[i]);
-				
-				gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, map_values, collisions);
-				HandleWormCollision(GameState.Worms[i]);
 
-				if(GameState.Worms[i].Alive)
-				{
-					gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
-							GameState.Worms[i].HeadPosition.x, 
-							GameState.Worms[i].HeadPosition.y);
-				}
-			}
-		}		
-
-		for(var i = 0; i < GameState.NumberOfWorms; i++)
-		{
-			if(GameState.Worms[i].Alive)
-			{
 				if(GameState.Worms[i].JustShotHole)
 				{	
 					SoundSystem.PlayShotEffect();
@@ -780,6 +778,27 @@ function update(step)
 				}
 			}
 		}		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(GameState.Worms[i].Alive)
+			{
+				gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, 
+											   map_values, collisions, GameState);
+			}
+		}		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			HandleWormCollision(GameState.Worms[i]);
+
+			if(GameState.Worms[i].Alive)
+			{
+				gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
+										   GameState.Worms[i].HeadPosition.x, 
+										   GameState.Worms[i].HeadPosition.y);
+			}
+		}
 
 		for(var i = 0; i < GameState.WormsDiedThisRound.length; i++)
 		{
@@ -885,8 +904,11 @@ function update(step)
 					{
 						GameState.Worms[i].IsRespawning = true;
 
-						RemoveWormPathFromGrid(GameState.Worms[i].Path, GameState.Grid.System, map_values.RemoveWorm);
-						RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions, GameState.Grid, map_values);
+						gridFunctions.RemoveWormPathFromGrid(GameState.Worms[i].Path, 
+															 GameState.Grid.System, 
+															 map_values.RemoveWorm);
+
+						gridFunctions.RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions, GameState.Grid, map_values);
 						if(GameState.Worms[i].HoldsFlag > 0)
 						{
 							//TODO(Martin): The player need to have the actual flag struct.
@@ -898,7 +920,10 @@ function update(step)
 						Respawn(GameState.Worms[i], 1300);
 						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
 						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
-						ClearSpawnpointFromGrid(position, GameState.Grid.System, map_values.ClearAll);
+						
+						gridFunctions.ClearSpawnpointFromGrid(position, 
+															  GameState.Grid.System, 
+															  map_values.ClearAll);
 					}
 				}
 			}

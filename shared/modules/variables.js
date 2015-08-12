@@ -46,8 +46,8 @@
 		ColumnNumber: 200 + 56, 
 		RowNumber: 200 + 56, 
 
-		Flag1Position: [60, 100],
-		Flag2Position: [200 - 60, 100],
+		Flag1Position: [60, 128],
+		Flag2Position: [256 - 60, 128],
 
 		Empty: 0,
 		Wall: 1,
