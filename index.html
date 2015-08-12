@@ -205,13 +205,19 @@ function GameState()
 
 	this.hole_count = new variables.hole_count();
 
-	this.Grid = gridFunctions.Create2DGrid(map_values.ColumnNumber, 
-										   map_values.RowNumber, 
-										   map_values.Empty);
+	this.Grid = new grid_2D(map_values.ColumnNumber, map_values.RowNumber);
+	
 	this.Worms = [];
 
-	this.Team1 = new Team(1);
-	this.Team2 = new Team(2);
+
+	this.Team1 = new team(1);
+	this.Team2 = new team(2);
+
+	this.Flag1 = new flag(this.Team1.ID, map_values.FlagSize, 
+					      map_values.FlagSize, map_values.Flag1Position);
+
+	this.Flag2 = new flag(this.Team2.ID, map_values.FlagSize, 
+						  map_values.FlagSize, map_values.Flag2Position);
 
 	//Handles for Render()	
 	this.SpriteAnimations = [];
@@ -226,6 +232,8 @@ function GameState()
 }
 
 var GameState = new GameState();
+gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
+
 var SoundSystem = new SoundSystem();
 SoundSystem.init();
 
@@ -253,7 +261,7 @@ function init()
 		delete keystate[event.keyCode];
 	});
 
-	gridFunctions.SetWallsInGrid();
+	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
 	GameState.PaintWalls = true;
 
@@ -364,60 +372,60 @@ function Render()
 	}
 
 	//NOTE(Martin): Actual grid drawing functions
-	for (var x=0; x < map_values.ColumnNumber; x++) 
+	for (var x = 0; x < map_values.ColumnNumber; x++) 
 	{
-		for (var y=0; y < map_values.RowNumber; y++) 
+		for (var y = 0; y < map_values.RowNumber; y++) 
 		{
-			switch (gridFunctions.GetGridValue(x, y)) 
+			switch (gridFunctions.GetGridValue(GameState.Grid, x, y)) 
 			{
 				case map_values.Worm1Cell:
-					gridFunctions.SetGridValue(map_values.DrawnWorm1Cell, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWorm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm1Head:
-					gridFunctions.SetGridValue(map_values.Worm1Cell, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm2Head:
-					gridFunctions.SetGridValue(map_values.Worm2Cell, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm2Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm3Head:
-					gridFunctions.SetGridValue(WORM3CELL, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm3Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm4Head:
-					gridFunctions.SetGridValue(WORM4CELL, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm4Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Hole:
-					gridFunctions.SetGridValue(map_values.DrawnHole, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnHole, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.WhiteHole:
-					gridFunctions.SetGridValue(map_values.Empty, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					ctxFront.clearRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Wall:
-					gridFunctions.SetGridValue(map_values.DrawnWall, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWall, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.StaticWall:
-					gridFunctions.SetGridValue(map_values.StaticWallDrawn, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.StaticWallDrawn, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveFlag:
-					gridFunctions.SetGridValue(map_values.Empty, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
@@ -430,17 +438,17 @@ function Render()
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveWorm:
-					gridFunctions.SetGridValue(map_values.Empty, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveHole:
-					gridFunctions.SetGridValue(map_values.Empty, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.ClearAll:
-					gridFunctions.SetGridValue(map_values.Empty, x ,y);
+					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
@@ -513,7 +521,7 @@ function Render()
 			{
 				var xPos = Math.floor(particle.P.x / 3);
 				var yPos = Math.floor(particle.P.y / 3);
-				var gridValue = gridFunctions.GetGridValue(xPos, yPos);
+				var gridValue = gridFunctions.GetGridValue(GameState.Grid, xPos, yPos);
 
 				if(gridValue == map_values.Empty)
 				{
@@ -539,20 +547,28 @@ function NewGame()
 	GameState.DeadWormsCounter = 0;
 
 	//TODO(Martin): This is like a re-init function.
-	GameState.Grid = gridFunctions.Create2DGrid(map_values.ColumnNumber, 
-												map_values.RowNumber,
-												map_values.Empty);
-	gridFunctions.SetWallsInGrid();
+	gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
+
+	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
 	GameState.PaintWalls = true;
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
-		gridFunctions.SetFlagOntoGrid(FLAG1);
-		gridFunctions.SetFlagOntoGrid(FLAG2);
+		gridFunctions.SetFlagOntoGrid(GameState.Flag1, GameState.Grid);
+		gridFunctions.SetFlagOntoGrid(GameState.Flag2, GameState.Grid);
 	}
 
-	var startingPositions = gridFunctions.MakeStartingPositions(GameState.NumberOfWorms);
+	//TODO(Martin): Remake
+	//TODO(Martin): FIX - REMOVE AFTER USE
+		
+	var vectorGroup = [];
+	vectorGroup[0] = new V2();
+	vectorGroup[1] = new V2();
+	vectorGroup[2] = new V2();
+	vectorGroup[3] = new V2();
+
+	var startingPositions = gridFunctions.MakeStartingPositions(vectorGroup, GameState.Grid);
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
@@ -612,7 +628,7 @@ function NewGame()
 	//TODO(Martin): Should not be WORM1CELL but different heads.
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
-		gridFunctions.SetGridValue(map_values.Worm1Cell, GameState.Worms[i].HeadPosition.x, GameState.Worms[i].HeadPosition.y);
+		gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, GameState.Worms[i].HeadPosition.x, GameState.Worms[i].HeadPosition.y);
 	}
 
 	GameState.GameStarted = false;
@@ -724,12 +740,12 @@ function update(step)
 			{
 				UpdateWormPosition(GameState.Worms[i]);
 				
-				gridFunctions.SetWormCollision(GameState.Worms[i]);
+				gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, map_values, collisions);
 				HandleWormCollision(GameState.Worms[i]);
 
 				if(GameState.Worms[i].Alive)
 				{
-					gridFunctions.SetGridValue(GameState.Worms[i].HeadID, 
+					gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
 							GameState.Worms[i].HeadPosition.x, 
 							GameState.Worms[i].HeadPosition.y);
 				}
@@ -748,14 +764,14 @@ function update(step)
 					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
 					GameState.SpriteAnimations.push(holeAnimation);
 
-					gridFunctions.SetHoleInGrid(GameState.Worms[i]);
+					gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 				}
 
 				if(GameState.Worms[i].JustShotWhiteHole)
 				{	
 					SoundSystem.PlayWhiteShotEffect();
 					GameState.Worms[i].JustShotWhiteHole = false;
-					gridFunctions.SetWhiteHoleInGrid(GameState.Worms[i].WhiteHolePosition);
+					gridFunctions.SetWhiteHoleInGrid(GameState.Worms[i].WhiteHolePosition, GameState.Grid, map_values);
 
 					//TODO(martin): Should not be -12, but in the middle calculated somehow.
 					var animation = GetWhiteHoleAnimation();
@@ -869,11 +885,12 @@ function update(step)
 					{
 						GameState.Worms[i].IsRespawning = true;
 
-						RemoveWormPathFromGrid(GameState.Worms[i]);
-						RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions);
+						RemoveWormPathFromGrid(GameState.Worms[i].Path, GameState.Grid.System, map_values.RemoveWorm);
+						RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions, GameState.Grid, map_values);
 						if(GameState.Worms[i].HoldsFlag > 0)
 						{
-							gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
+							//TODO(Martin): The player need to have the actual flag struct.
+							//gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
 							DropFlag(GameState.Worms[i]);
 						}
 
@@ -881,7 +898,7 @@ function update(step)
 						Respawn(GameState.Worms[i], 1300);
 						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
 						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
-						ClearSpawnpointFromGrid(position);
+						ClearSpawnpointFromGrid(position, GameState.Grid.System, map_values.ClearAll);
 					}
 				}
 			}

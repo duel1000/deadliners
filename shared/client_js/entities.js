@@ -1,3 +1,18 @@
+function grid_2D(width, height)
+{
+	this.Width = width;
+	this.Height = height;
+	this.System = [];
+}
+
+function flag(id, width, height, pos)
+{
+	this.ID = id;
+	this.Width = width;
+	this.Height = height;
+	this.Position = pos;
+}
+
 function worm(name, keys, playerID, holeAnimations, deployAnimation, deployOutAnimation, fullDeployAnimation,  wormHeadID) 
 {
 	this.Name = name;
@@ -62,7 +77,7 @@ function DeathParticle()
 	this.SizeY = 1;
 };
 
-function Team(id)
+function team(id)
 {
 	this.ID = id;
 	this.TeamScore = 0;
