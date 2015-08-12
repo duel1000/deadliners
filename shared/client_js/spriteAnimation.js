@@ -31,7 +31,7 @@ function SpriteAnimation(options)
 
 	this.init = function(positionVector, threshold)
 	{
-		Position = new V2(positionVector.x*TILE_SIZE + threshold, positionVector.y*TILE_SIZE + threshold);
+		Position = new V2(positionVector.x*map_values.TileSize + threshold, positionVector.y*map_values.TileSize + threshold);
 		this.initiated = true;
 		stopped = false;
 		_threshold = threshold;
@@ -39,7 +39,7 @@ function SpriteAnimation(options)
 
 	this.setNewPosition = function(positionVector)
 	{
-		Position = new V2(positionVector.x*TILE_SIZE + _threshold, positionVector.y*TILE_SIZE + _threshold);
+		Position = new V2(positionVector.x*map_values.TileSize + _threshold, positionVector.y*map_values.TileSize + _threshold);
 	};
 
 	this.Stop = function()

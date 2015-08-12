@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>deadliner</title>
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<div id="gamescreen">
+		<div id="gameView">
+			<div class="playerPoints">
+			<div class="point white" id="player1points" data-player="1" data-order="0">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player2points" data-player="2" data-order="1">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player3points" data-player="3" data-order="2">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			<div class="point white" id="player4points" data-player="4" data-order="3">
+				<div class="name"></div>
+				<div class="points"></div>
+			</div>
+			</div> 
+			
+			<div class="wrapper">
+				<canvas id="backCanvas"></canvas>
+		 		<canvas id="middleCanvas"></canvas>
+		 		<canvas id="topCanvas"></canvas>
+		 		<canvas id="deathParticleCanvas"></canvas>
+			</div>
+
+			<div class="restartGameButton" id="restartGameButton">restart race</div>
+			<div class="black-white-button button-margin" id="showControlsButton">show controls</div>
+			<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
+			<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
+		</div>
+		
+		<div id="statsView">
+			
+		</div>
+	</div>
+
+	<div id="musicVolume">
+		<div id="musicVolumeSlider"></div>
+	</div>
+	<div id="effectsVolume">
+		<div id="effectsVolumeSlider"></div>
+	</div>
+</body>
+</html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client_js/jquery-2.1.4.min.js"></script>
+<script src="client_js/jquery-ui.min.js"></script>
+<script src="client_js/helperFunctions.js"></script>
+<script src="client_js/math.js"></script>
+<script src="client_js/constants.js"></script>
+<script src="client_js/soundSystem.js"></script>
+<script src="client_js/menuScreens.js"></script>
+<script src="client_js/spriteAnimation.js"></script>
+<script src="client_js/animationSetup.js"></script>
+<script src="client_js/gridFunctions.js"></script>
+<script src="client_js/renderFunctions.js"></script>
+<script src="client_js/entities.js"></script>
+<script src="client_js/entityFunctions.js"></script>
+
+<!--<script src="modules/foo.js"></script>-->
+<script src="modules/variables.js"></script>
+<script>
+
+var socket = io();
+
+var CLIENT_ID = 0;
+socket.on('connected', function(data)
+{
+	CLIENT_ID = data.id;
+});
+
+socket.on('update', function(data)
+{
+	for(var i = 0; i < data.worms.length; i++)
+	{
+		SetGridValue(data.worms[i].HeadID, 
+			          data.worms[i].HeadPosition.x, 
+			          data.worms[i].HeadPosition.y);
+	}								
+});
+
+socket.on('init', function()
+{
+	PaintWhiteCanvasses();
+	SetWallsInGrid();
+	GameState.PaintWalls = true;
+
+	if(!GameState.IsRunning)
+	{
+		GameState.IsRunning = true;
+		gameloop();
+	}
+});
+
+var BackCanvas = document.getElementById("backCanvas");
+var MiddleCanvas = document.getElementById("middleCanvas");
+var TopCanvas = document.getElementById("topCanvas");
+var DeathParticleCanvas = document.getElementById("deathParticleCanvas");
+BackCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+BackCanvas.height = (ROW_NUMBER*TILE_SIZE);
+MiddleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+MiddleCanvas.height = (ROW_NUMBER*TILE_SIZE);
+TopCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+TopCanvas.height = (ROW_NUMBER*TILE_SIZE);
+DeathParticleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
+DeathParticleCanvas.height = (ROW_NUMBER*TILE_SIZE);
+var ctxBack = BackCanvas.getContext("2d");
+var ctxMiddle = MiddleCanvas.getContext("2d");
+var ctxFront = TopCanvas.getContext("2d");
+var ctxDeathParticles = DeathParticleCanvas.getContext("2d");
+
+$("#musicVolumeSlider").slider({
+    min: 0,
+    max: 50,
+    value: 0,
+		range: "min",
+		animate: true,
+    slide: function(event, ui) 
+    {
+      SoundSystem.SetMusicVolume(ui.value / 100);
+    }
+});
+$("#musicVolumeSlider .ui-slider-handle").unbind('keydown');
+
+$("#effectsVolumeSlider").slider({
+    min: 0,
+    max: 50,
+    value: 20,
+		range: "min",
+		animate: true,
+    slide: function(event, ui) 
+    {
+      SoundSystem.SetEffectsVolume(ui.value / 100);
+    }
+});
+$("#effectsVolumeSlider .ui-slider-handle").unbind('keydown');
+
+function GameState()
+{
+	this.PlayerNames = ["","","",""];
+	this.NumberOfWorms = 2;
+	this.GameMode = variables.game_modes.FREE_FOR_ALL;
+	
+	this.StartCounter = START_COUNTER;
+	this.GameStarted = false;
+	this.GameFinished = false;
+	this.StartGameButtonPressed = false;
+
+	this.SecondsCounter = 0;
+
+	this.WormsDiedThisRound = [];
+	this.DeadWormsCounter = 0;
+
+	this.CurrentGamePoints = 0;
+	this.RoundWinningTeam = 0;
+	this.WinnerText = "";
+
+	this.IsRunning = false;
+
+	this.hole_count = new hole_count();
+
+	this.Grid = Create2DGrid(COLUMN_NUMBER, ROW_NUMBER);
+	this.Worms = [];
+
+	this.Team1 = new Team(1);
+	this.Team2 = new Team(2);
+
+	//Handles for Render()	
+	this.SpriteAnimations = [];
+	this.DeathParticles = [];
+	this.PaintWalls = false;
+	this.PaintWhiteCanvasses = false;
+	this.DrawWhite = [];
+	this.DrawStartCounter = false;
+	this.RenderWinnerText = false;
+
+	//TODO(Martin): Handles for Music
+}
+var GameState = new GameState();
+
+function LOGGAMESTATE()
+{
+	log(GameState.Worms[0]);
+	log(GameState.Worms[1])
+}
+
+function Render()
+{
+	//NOTE(Martin): "Meta functions".
+	if(GameState.PaintWhiteCanvasses) 
+	{ 
+		PaintWhiteCanvasses();
+		GameState.PaintWhiteCanvasses = false; 
+	}
+	
+	if(GameState.PaintWalls) 
+	{ 
+		PaintWalls();
+		GameState.PaintWalls = false; 
+	}
+
+	if(GameState.DrawWhite.length > 0) 
+	{ 
+		for(var i = 0; i < GameState.DrawWhite.length; i++)
+		{
+			DrawWhite(GameState.DrawWhite[i]); 
+		}
+		GameState.DrawWhite = [];
+	}
+
+	if(GameState.DrawStartCounter)
+	{
+		ctxBack.font="50px Geo";
+		ctxBack.fillStyle="#000000";
+		ctxBack.fillText(GameState.StartCounter+1, COLUMN_NUMBER/2*TILE_SIZE, ROW_NUMBER/2*TILE_SIZE);
+		GameState.DrawStartCounter = false;
+	}
+
+	//TODO(Martin): Check this through.
+	if(GameState.RenderWinnerText)
+	{
+		GameState.RenderWinnerText = false;
+		ctxMiddle.font="25px Geo";
+				
+		var textWidth = ctxMiddle.measureText(GameState.WinnerText).width;
+		var textHeight = 50;
+		var upperLeftColumn = (COLUMN_NUMBER/2*TILE_SIZE) - (textWidth/2); 
+		var upperLeftRow = ROW_NUMBER/2*TILE_SIZE - textHeight/2;
+
+		ctxMiddle.fillStyle="#FFFFFF";
+		ctxBack.fillStyle="#FFFFFF";
+
+		ctxBack.fillRect(upperLeftColumn, upperLeftRow - textHeight/2, textWidth, textHeight);
+		ctxMiddle.fillRect(upperLeftColumn, upperLeftRow  - textHeight/2, textWidth, textHeight);
+		
+		ctxMiddle.fillStyle="#000000";
+		ctxMiddle.fillText(GameState.WinnerText, upperLeftColumn, upperLeftRow);
+	}
+
+	//NOTE(Martin): Actual grid drawing functions
+	for (var x=0; x < COLUMN_NUMBER; x++) 
+	{
+		for (var y=0; y < ROW_NUMBER; y++) 
+		{
+			switch (GetGridValue(x, y)) 
+			{
+				case WORM1CELL:
+					SetGridValue(DRAWN_WORM1CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM1HEAD:
+					SetGridValue(WORM1CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM2HEAD:
+					SetGridValue(WORM2CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM3HEAD:
+					SetGridValue(WORM3CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WORM4HEAD:
+					SetGridValue(WORM4CELL, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case HOLE:
+					SetGridValue(DRAWN_HOLE, x ,y);
+					ctxBack.fillStyle = "#000000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WHITE_HOLE:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxFront.clearRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case WALL:
+					SetGridValue(DRAWN_WALL, x ,y);
+					ctxFront.fillStyle = "#000000";
+					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case STATIC_WALL:
+					SetGridValue(STATIC_WALL_DRAWN, x ,y);
+					ctxFront.fillStyle = "#000000";
+					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_FLAG:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case FLAG1:
+					ctxBack.fillStyle = "#FF0000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case FLAG2:
+					ctxBack.fillStyle = "#FF0000";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_WORM:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case REMOVE_HOLE:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+				case CLEAR_ALL:
+					SetGridValue(EMPTY, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					break;
+			}
+		}
+	}
+
+	for(var i = 0; i < GameState.SpriteAnimations.length; i++)
+	{
+		if(GameState.SpriteAnimations[i].runCount < GameState.SpriteAnimations[i].timesToRun)
+		{	
+			GameState.SpriteAnimations[i].UpdateAndRender(ctxMiddle);
+		}
+		else
+		{	
+			GameState.SpriteAnimations[i].Clear(ctxMiddle);	
+			GameState.SpriteAnimations.splice(i,1);
+		}
+	}
+
+	if(GameState.DeathParticles.length > 0)
+	{
+		ctxDeathParticles.clearRect(0,0,COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
+	}
+
+	for(var i = 0; i < GameState.DeathParticles.length; i++)
+	{
+		var particle = GameState.DeathParticles[i]; 
+
+		particle.CurrentLength += 1;
+		if(particle.CurrentLength > particle.MaxLength)
+		{
+			GameState.DeathParticles.splice(i,1);
+		}
+		else
+		{
+			var randomVector = new V2();
+			
+			switch(particle.Direction)
+			{
+				case Directions.Right:
+					randomVector.x = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
+					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					break;
+				case Directions.Left:
+					randomVector.x = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
+					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					break;
+				case Directions.Up:
+					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					randomVector.y = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
+					break;
+				case Directions.Down:
+					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
+					randomVector.y = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
+					break;
+				case Directions.Spread:
+					randomVector.x = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
+					randomVector.y = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
+					break;
+			}
+
+			particle.dP = randomVector;
+			particle.P.Add(particle.dP);
+
+			var alpha = 1-(particle.CurrentLength / particle.MaxLength);
+			ctxDeathParticles.globalAlpha = alpha * 0.8;
+
+			if(particle.CheckForColor)
+			{
+				var xPos = Math.floor(particle.P.x / 3);
+				var yPos = Math.floor(particle.P.y / 3);
+				var gridValue = GetGridValue(xPos, yPos);
+
+				if(gridValue == EMPTY)
+				{
+					particle.Color = '#000000';
+				}
+			}
+			
+			ctxDeathParticles.fillStyle = particle.Color;
+			ctxDeathParticles.fillRect(particle.P.x,particle.P.y, particle.SizeX, particle.SizeY);
+		}
+	}
+}
+
+//STUDY(martin): Get comfortable with this.
+//NOTE(martin): http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
+var now, dt = 0, last = timestamp(), step = CHOSEN_GAME_SPEED;
+function gameloop()
+{	
+	now = timestamp();
+	dt = dt + Math.min(1, (now - last) / 1000);
+	
+	//TODO(Martin): Maybe the game loop should be initialized with init() method.
+	if(step != CHOSEN_GAME_SPEED)
+	{
+		step = CHOSEN_GAME_SPEED;
+	}
+
+	while(dt > step) 
+	{
+		dt = dt - step;
+		HandleWormKeyInput();
+		//update(step);
+	}
+
+	//render(dt); //NOTE(martin): Used for LERP.
+	Render();
+	last = now;
+	
+	requestAnimationFrame(gameloop);
+}
+
+var Player1Keys = new keys(37,38,39,40,189,190);
+function keys(left, up, right, down, shot, special)
+{
+	this.LeftKey = left;
+	this.UpKey = up;
+	this.RightKey = right;
+	this.DownKey = down;
+	this.ShotKey = shot;
+	this.SpecialKey = special;
+};
+
+var keystate = {};
+document.addEventListener("keydown", function(event) 
+{	
+	event.preventDefault();
+	keystate[event.keyCode] = true;
+});
+
+document.addEventListener("keyup", function(event) 
+{
+	delete keystate[event.keyCode];
+});
+
+var Directions = {
+	Left: 0,
+	Up: 1,
+	Right: 2,
+	Down: 3,
+	Spread: 5
+}
+
+var Keys = {
+	Left: 0,
+	Up: 1,
+	Right: 2,
+	Down: 3,
+	Shot: 4,
+	Special: 5
+}
+
+function HandleWormKeyInput(gameStarted)
+{
+	if(keystate[Player1Keys.LeftKey])
+	{
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Left });
+	}
+	else if(keystate[Player1Keys.UpKey])
+	{
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Up });
+	}
+	else if(keystate[Player1Keys.RightKey])
+	{
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Right });
+	}
+	else if(keystate[Player1Keys.DownKey])
+	{
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Down });
+	}
+
+	if(keystate[Player1Keys.SpecialKey])
+	{
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Special });
+	}
+	
+	if(keystate[Player1Keys.ShotKey])
+	{	
+		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Shot });
+	}
+
+	if(keystate[13])
+	{
+		socket.emit('newgame');
+	}
+	
+	keystate = {};
+}
+
+</script>

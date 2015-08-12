@@ -6,7 +6,7 @@ function Create2DGrid(width, height)
 		grid.push([]);
 		for (var y = 0; y < height; y++)
 		{
-			grid[x].push(EMPTY);
+			grid[x].push(map_values.Empty);
 		}	
 	}
 	return(grid);
@@ -15,9 +15,9 @@ function Create2DGrid(width, height)
 //TODO(Martin): Could be a V2
 function InsideGrid(x, y)
 {
-	if(x < COLUMN_NUMBER && 
+	if(x < map_values.ColumnNumber && 
 	   x > 0 && 
-	   y < ROW_NUMBER && 
+	   y < map_values.RowNumber && 
 	   y > 0)	
 	{
 		return(true);
@@ -103,7 +103,7 @@ function RemoveWormHolesFromGrid(holePositions)
 			{
 				//TODO(Martin): This does not account for if a shot is shot on top of another shot.
 				//it can probably be solved by creating shot values per player.
-				if((x < COLUMN_NUMBER && x > 0) && GameState.Grid[x][y] == DRAWN_HOLE)
+				if((x < map_values.ColumnNumber && x > 0) && GameState.Grid[x][y] == map_values.DrawnHole)
 				{
 					GameState.Grid[x][y] = REMOVE_HOLE;	
 				}
@@ -129,14 +129,14 @@ function SetHoleInGrid(worm)
 {
 	var centerpoint = worm.HolePosition;
 
-	if(GameState.GameMode == variables.game_modes.FREE_FOR_ALL || GameState.GameMode == variables.game_modes.TWO_ON_TWO)
+	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.TwoOnTwo)
 	{
-		for (var x=0; x<HOLE_SIZE; x++) 
+		for (var x=0; x<map_values.HoleSize; x++) 
 		{
-			for (var y=0; y<HOLE_SIZE; y++) 
+			for (var y=0; y<map_values.HoleSize; y++) 
 			{
-				var leftSideOfHolePosition = Math.round(centerpoint.x + x - (HOLE_SIZE/2));
-				var topSideOfHolePosition = Math.round(centerpoint.y + y - (HOLE_SIZE/2));
+				var leftSideOfHolePosition = Math.round(centerpoint.x + x - (map_values.HoleSize/2));
+				var topSideOfHolePosition = Math.round(centerpoint.y + y - (map_values.HoleSize/2));
 
 				if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
 				{
@@ -152,28 +152,28 @@ function SetHoleInGrid(worm)
 						}
 					}
 
-					GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = HOLE;
+					GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = map_values.Hole;
 				}
 			}
 		}	
 	}
-	else if(GameState.GameMode == variables.game_modes.CAPTURE_THE_FLAG)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
-		for (var x=0; x<HOLE_SIZE; x++) 
+		for (var x=0; x<map_values.HoleSize; x++) 
 		{
-			for (var y=0; y<HOLE_SIZE; y++) 
+			for (var y=0; y<map_values.HoleSize; y++) 
 			{
-				var leftSideOfHolePosition = Math.round(centerpoint.x + x - (HOLE_SIZE/2));
-				var topSideOfHolePosition = Math.round(centerpoint.y + y - (HOLE_SIZE/2));
+				var leftSideOfHolePosition = Math.round(centerpoint.x + x - (map_values.HoleSize/2));
+				var topSideOfHolePosition = Math.round(centerpoint.y + y - (map_values.HoleSize/2));
 
 				if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
 				{
 					var gridValue = GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition];
 					
-					if(gridValue != FLAG1 && 
-					   gridValue != FLAG2)
+					if(gridValue != map_values.Flag1 && 
+					   gridValue != map_valuesFlag2)
 					{
-						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = HOLE;
+						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = map_values.Hole;
 					}
 
 					for(var i = 0; i < GameState.NumberOfWorms; i++)
@@ -194,44 +194,43 @@ function SetHoleInGrid(worm)
 //TODO(Martin): Game_MODE pattern problems.
 function SetWhiteHoleInGrid(centerpoint)
 {	
-
-	if(GameState.GameMode == variables.game_modes.FREE_FOR_ALL || GameState.GameMode == variables.game_modes.TWO_ON_TWO)
+	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.TwoOnTwo)
 	{
-		for (var x=0; x<WHITE_HOLE_SIZE; x++) 
+		for (var x=0; x<map_values.WhiteHoleSize; x++) 
 		{
-			for (var y=0; y<WHITE_HOLE_SIZE; y++) 
+			for (var y=0; y<map_values.WhiteHoleSize; y++) 
 			{
-				var leftSideOfHolePosition = Math.round(centerpoint.x+x-WHITE_HOLE_SIZE/2);
-				var topSideOfHolePosition = Math.round(centerpoint.y+y-WHITE_HOLE_SIZE/2);
+				var leftSideOfHolePosition = Math.round(centerpoint.x+x-map_values.WhiteHoleSize/2);
+				var topSideOfHolePosition = Math.round(centerpoint.y+y-map_values.WhiteHoleSize/2);
 
 				if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
 				{
-					if(GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] != STATIC_WALL_DRAWN)
+					if(GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] != map_values.StaticWallDrawn)
 					{
-						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = WHITE_HOLE;
+						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = map_values.WhiteHole;
 					}
 				}
 			}
 		}
 	}
-	else if(GameState.GameMode == variables.game_modes.CAPTURE_THE_FLAG)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
-		for (var x=0; x<WHITE_HOLE_SIZE; x++) 
+		for (var x=0; x<map_values.WhiteHoleSize; x++) 
 		{
-			for (var y=0; y<WHITE_HOLE_SIZE; y++) 
+			for (var y=0; y<map_values.WhiteHoleSize; y++) 
 			{
-				var leftSideOfHolePosition = Math.round(centerpoint.x+x-WHITE_HOLE_SIZE/2);
-				var topSideOfHolePosition =  Math.round(centerpoint.y+y-WHITE_HOLE_SIZE/2);
+				var leftSideOfHolePosition = Math.round(centerpoint.x+x-map_values.WhiteHoleSize/2);
+				var topSideOfHolePosition =  Math.round(centerpoint.y+y-map_values.WhiteHoleSize/2);
 
 				if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
 				{
 					var value = GetGridValue(leftSideOfHolePosition, topSideOfHolePosition); 
 					
-					if(value != STATIC_WALL_DRAWN && 
-					   value != FLAG1 && 
-					   value != FLAG2) 
+					if(value != map_values.StaticWallDrawn && 
+					   value != map_values.Flag1 && 
+					   value != map_values.Flag2) 
 					{
-						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = WHITE_HOLE;
+						GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = map_values.WhiteHole;
 					}
 				}
 			}
@@ -243,29 +242,29 @@ function MakeStartingPositions(amount)
 {
 	var result = [];
 
-	//TODO(Martin): This is written as a TWO_ON_TWO mode cheat. 
-	if(GameState.GameMode == variables.game_modes.TWO_ON_TWO)
+	//TODO(Martin): This is written as a TwoOnTwo mode cheat. 
+	if(GameState.GameMode == variables.game_modes.TwoOnTwo)
 	{
-		result[0] = new V2(60, (ROW_NUMBER/2) + 10);
-		result[1] = new V2(60, (ROW_NUMBER/2) - 10);
-		result[2] = new V2(COLUMN_NUMBER - 60, (ROW_NUMBER/2) + 10);
-		result[3] = new V2(COLUMN_NUMBER - 60, (ROW_NUMBER/2) - 10);
+		result[0] = new V2(60, (map_values.RowNumber/2) + 10);
+		result[1] = new V2(60, (map_values.RowNumber/2) - 10);
+		result[2] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) + 10);
+		result[3] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) - 10);
 		return(result);
 	}
-	else if(GameState.GameMode == variables.game_modes.CAPTURE_THE_FLAG)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
-		result[0] = new V2(60, (ROW_NUMBER/2) + 30);
-		result[1] = new V2(60, (ROW_NUMBER/2) - 30);
-		result[2] = new V2(COLUMN_NUMBER - 60, (ROW_NUMBER/2) + 30);
-		result[3] = new V2(COLUMN_NUMBER - 60, (ROW_NUMBER/2) - 30);
+		result[0] = new V2(60, (map_values.RowNumber/2) + 30);
+		result[1] = new V2(60, (map_values.RowNumber/2) - 30);
+		result[2] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) + 30);
+		result[3] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) - 30);
 		return(result);
 	}
 
 	//TODO(martin): refactor this to constants so we can adjust them globally
-	var edgeDistance = 20 + MAP_THRESHOLD;
+	var edgeDistance = 20 + map_values.MapThreshold;
 	var middleDistance = 40;
-	var Xmax = COLUMN_NUMBER;
-	var Ymax = ROW_NUMBER;
+	var Xmax = map_values.ColumnNumber;
+	var Ymax = map_values.RowNumber;
 
 	var xCor = Math.floor((Math.random() * (Xmax-2*edgeDistance)) + edgeDistance);
 	var yCor = 0;
@@ -318,7 +317,10 @@ function SetWormCollision(worm)
 	var yPos = worm.HeadPosition.y;
 	var gridValue = GetGridValue(xPos, yPos); 
 
-	if(gridValue == WORM1HEAD || gridValue == WORM2HEAD || gridValue == WORM3HEAD || gridValue == WORM4HEAD)
+	if(gridValue == map_values.Worm1Head || 
+	   gridValue == map_values.Worm2Head || 
+	   gridValue == map_values.Worm3Head || 
+	   gridValue == map_values.Worm4Head)
 	{
 		worm.CollisionType = collisions.HEAD_COLLISION;	
 
@@ -331,17 +333,17 @@ function SetWormCollision(worm)
 			} 
 		}
 	}
-	else if(gridValue == DRAWN_WALL)
+	else if(gridValue == map_values.DrawnWall)
 	{	
 		worm.Path.pop();
 		worm.CollisionType = collisions.WALL_COLLISION;
 	}
-	else if(gridValue == DRAWN_HOLE)
+	else if(gridValue == map_values.DrawnHole)
 	{	
 		worm.Path.pop();
 		worm.CollisionType = collisions.HOLE_COLLISION;	
 	}
-	else if(GameState.GameMode == variables.game_modes.CAPTURE_THE_FLAG && (gridValue == FLAG1 || gridValue == FLAG2))
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag && (gridValue == FLAG1 || gridValue == FLAG2))
 	{	
 		worm.Path.pop();
 		if(gridValue == FLAG1 && worm.TeamID == TEAM2ID)
@@ -386,20 +388,20 @@ function SetWormCollision(worm)
 
 function SetWallsInGrid()
 {
-	for(var x = 0; x < COLUMN_NUMBER; x++)
+	for(var x = 0; x < map_values.ColumnNumber; x++)
 	{
-		for(var y=0; y < ROW_NUMBER; y++)
+		for(var y=0; y < map_values.RowNumber; y++)
 		{
-			if((y < MAP_THRESHOLD) || (y > ROW_NUMBER - MAP_THRESHOLD) || 
-			   (x < MAP_THRESHOLD) || (x > COLUMN_NUMBER - MAP_THRESHOLD))
+			if((y < map_values.MapThreshold) || (y > map_values.RowNumber - map_values.MapThreshold) || 
+			   (x < map_values.MapThreshold) || (x > map_values.ColumnNumber - map_values.MapThreshold))
 			{
-				SetGridValue(WALL, x, y);
+				SetGridValue(map_values.Wall, x, y);
 			}
 
-			GameState.Grid[1][y] = STATIC_WALL;
-			GameState.Grid[COLUMN_NUMBER-1][y] = STATIC_WALL;
+			GameState.Grid[1][y] = map_values.StaticWall;
+			GameState.Grid[map_values.ColumnNumber-1][y] = map_values.StaticWall;
 		}
-		GameState.Grid[x][1] = STATIC_WALL;
-		GameState.Grid[x][ROW_NUMBER-1] = STATIC_WALL;
+		GameState.Grid[x][1] = map_values.StaticWall;
+		GameState.Grid[x][map_values.RowNumber-1] = map_values.StaticWall;
 	}
 }

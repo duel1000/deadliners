@@ -16,129 +16,26 @@ http.listen(port, function()
 	console.log('listening on *:' + port);
 });
 
+io.on('connection', function(newClient)
+{	
+	newClient.userid = uuid.v4();
+	console.log('\t socket.io:: player ' + newClient.userid + ' connected');
+
+	newClient.on('disconnect', function () 
+	{	
+		console.log('\t socket.io:: newClient disconnected ' + newClient.userid );
+	});
+});
+
 //var foo = require('./shared/modules/foo.js');
 //console.log(foo.hello.a);
 
-var variables = require('./shared/modules/variables.js');
+/*var variables = require('./shared/modules/variables.js');
+var GameStateModule = require('./shared/modules/gameState.js');
+var GameState = new GameStateModule.GameState();
 
-var
-LOW_GAME_SPEED = 1/20,
-MEDIUM_GAME_SPEED = 1/30,
-HIGH_GAME_SPEED = 1/40,
-GAME_SPEED_TEXT = ['low', 'medium', 'high'],
-GAME_SPEEDS = [LOW_GAME_SPEED, MEDIUM_GAME_SPEED, HIGH_GAME_SPEED],
-CHOSEN_GAME_SPEED = HIGH_GAME_SPEED,
-
-TINY_MAP_SIZE = 90,
-SMALL_MAP_SIZE = 110,
-MEDIUM_MAP_SIZE = 140,
-LARGE_MAP_SIZE = 170,
-HUGE_MAP_SIZE = 200,
-MAP_SIZES = [TINY_MAP_SIZE, SMALL_MAP_SIZE, MEDIUM_MAP_SIZE, LARGE_MAP_SIZE, HUGE_MAP_SIZE],
-MAP_SIZE_TEXT = ['tiny', 'small', 'medium', 'large', 'huge'],
-CHOSEN_MAP_SIZE = HUGE_MAP_SIZE;
-
-function hole_count() 
-{
-	var holeAmounts = [3,6,9];
-	var pointer = 1;
-	this.Amount = 6;
-	this.ShiftAmountForward = function()
-	{
-		pointer = (pointer + 1) % holeAmounts.length;
-		this.Amount = holeAmounts[pointer]; 
-	};
-}
-
-var LOW_SPECIALSHOT_COUNT = 1,
-MEDIUM_SPECIALSHOT_COUNT = 2,
-HIGH_SPECIALSHOT_COUNT = 3,
-SPECIAL_COUNTS = [LOW_SPECIALSHOT_COUNT, MEDIUM_SPECIALSHOT_COUNT, HIGH_SPECIALSHOT_COUNT],
-
-LOW_VICTORY_POINTS = 11,
-MEDIUM_VICTORY_POINTS = 15,
-HIGH_VICTORY_POINTS = 21,
-VICTORY_VALUES = [LOW_VICTORY_POINTS, MEDIUM_VICTORY_POINTS, HIGH_VICTORY_POINTS],
-
-CHOSEN_VICTORY_POINTS = HIGH_VICTORY_POINTS;
-
-var
-TILE_SIZE = 3,
-
-HOLE_RANGE = 50,
-HOLE_SIZE = 9,
-
-FLAG_SIZE = 5,
-
-TEAM1ID = 1,
-TEAM2ID = 2,
-
-WHITE_HOLE_SIZE = 24,
-WHITE_HOLE_RANGE = 4 + WHITE_HOLE_SIZE/2,
-WHITE_HOLE_AMOUNT = LOW_SPECIALSHOT_COUNT,
-
-START_COUNTER = 5,
-
-MAP_THRESHOLD = WHITE_HOLE_SIZE/2 + WHITE_HOLE_RANGE,
-COLUMN_NUMBER = CHOSEN_MAP_SIZE + MAP_THRESHOLD*2, 
-ROW_NUMBER = CHOSEN_MAP_SIZE + MAP_THRESHOLD*2, 
-
-FLAG_1_POSITION = [60, ROW_NUMBER/2],
-FLAG_2_POSITION = [COLUMN_NUMBER - 60, ROW_NUMBER/2];
-
-var EMPTY = 0,
-WALL = 1,
-DRAWN_WALL = 2,
-HOLE = 3,
-DRAWN_HOLE = 4,
-WORM1CELL = 5,
-DRAWN_WORM1CELL = 6,
-WORM1HEAD = 7,
-
-WORM2CELL = 8,
-DRAWN_WORM2CELL = 9,
-WORM2HEAD = 10,
-
-WORM3CELL = 11,
-DRAWN_WORM3CELL = 12,
-WORM3HEAD = 13,
-
-WORM4CELL = 14,
-DRAWN_WORM4CELL = 15,
-WORM4HEAD = 16,
-
-WHITE_HOLE = -17,
-STATIC_WALL = 18,
-STATIC_WALL_DRAWN = 19,
-
-FLAG1 = 20,
-FLAG2 = 21,
-REMOVE_FLAG = 22,
-REMOVE_WORM = 23,
-REMOVE_HOLE = 24,
-CLEAR_ALL = 25;
-
-var Directions = {
-	Left: 0,
-	Up: 1,
-	Right: 2,
-	Down: 3,
-	Spread: 5
-}
-
-var Keys = {
-	Left: 0,
-	Up: 1,
-	Right: 2,
-	Down: 3,
-	Shot: 4,
-	Special: 5
-}
-
-var counts = 0;
 function GameLoop() 
 {
-	counts++;
 	update()
 	io.emit('update', { worms : GameState.Worms });
 
@@ -148,7 +45,7 @@ function GameLoop()
 	}, 30)
 }
 
-var GameState = new GameState();
+
 var connected_clients = new ConnectedClients();
 GameState.Worms[0] = new worm(GameState.PlayerNames[0],	WORM1HEAD);
 GameState.Worms[1] = new worm(GameState.PlayerNames[1],	WORM2HEAD);
@@ -297,48 +194,6 @@ function Create2DGrid(width, height)
 	}
 	return(grid);
 };
-
-function GameState()
-{
-	this.PlayerNames = ["player1","player2","player3","player4"];
-	this.NumberOfWorms = 2;
-	this.GameMode = variables.game_modes.FREE_FOR_ALL;
-	
-	this.StartCounter = START_COUNTER;
-	this.GameStarted = false;
-	this.GameFinished = false;
-	this.StartGameButtonPressed = false;
-
-	this.SecondsCounter = 0;
-
-	this.WormsDiedThisRound = [];
-	this.DeadWormsCounter = 0;
-
-	this.CurrentGamePoints = 0;
-	this.RoundWinningTeam = 0;
-	this.WinnerText = "";
-
-	this.IsRunning = false;
-
-	this.hole_count = new hole_count();
-
-	this.Grid = Create2DGrid(COLUMN_NUMBER, ROW_NUMBER);
-	this.Worms = [];
-
-	this.Team1 = new Team(1);
-	this.Team2 = new Team(2);
-
-	//Handles for Render()	
-	this.SpriteAnimations = [];
-	this.DeathParticles = [];
-	this.PaintWalls = false;
-	this.PaintWhiteCanvasses = false;
-	this.DrawWhite = [];
-	this.DrawStartCounter = false;
-	this.RenderWinnerText = false;
-
-	//TODO(Martin): Handles for Music
-}
 
 function init()
 {	
@@ -555,60 +410,7 @@ function update(step)
 	}
 }
 
-function HandleWormCollision(worm)
-{
-	if(worm.CollisionType > collisions.NO_COLLISION)
-	{
-		var numberOfParticles = 0;
-		if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
-		{
-			numberOfParticles = Math.floor((Math.random() * 35) + 15);
-		}
-		else
-		{
-			numberOfParticles = Math.floor((Math.random() * 500) + 300);
-		}
 
-		for(var ParticleSpawnIndex = 0;
-			ParticleSpawnIndex < numberOfParticles;
-			ParticleSpawnIndex++)
-		{
-			var particle = new DeathParticle();
-			particle.P = new V2(worm.HeadPosition.x*TILE_SIZE, worm.HeadPosition.y*TILE_SIZE);
-			
-			particle.SizeX = 3;
-			particle.SizeY = 3;
-			
-			if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
-			{
-				particle.Direction = Directions.Spread;
-				particle.dP = new V2(9,9);
-			}
-			else
-			{
-				particle.Direction = worm.CurrentDirection;	
-				particle.dP = new V2(5,5);
-			}
-
-			if(worm.CollisionType == collisions.WALL_COLLISION || 
-			   worm.CollisionType == collisions.HOLE_COLLISION ||
-			   worm.CollisionType == collisions.HEADSHOT_COLLISION)
-			{
-				particle.Color = '#FFFFFF';
-				particle.CheckForColor = true;
-			}
-			else
-			{
-				particle.Color = '#000000';
-			}
-
-			GameState.DeathParticles.push(particle);
-		}
-
-		Kill(worm, true);
-		GameState.WormsDiedThisRound.push(worm);
-	}	
-}
 
 function Log(text)
 {
@@ -803,24 +605,6 @@ function DeathParticle()
 	this.SizeY = 1;
 };
 
-function Team(id)
-{
-	this.ID = id;
-	this.TeamScore = 0;
-	this.TeamMember1 = 0;
-	this.TeamMember2 = 0;
-};
-
-var collisions = {
-	NO_COLLISION: 0,
-	COLLISION: 1,
-	HEAD_COLLISION: 2,
-	WALL_COLLISION: 3,
-	HOLE_COLLISION: 4,
-	FLAG_COLLISION: 5,
-	HEADSHOT_COLLISION: 6
-};
-
 function InitializeWorm(worm, position, startingDirection, teamID)
 {
 	worm.HeadPosition = position;
@@ -846,39 +630,7 @@ function InitializeWorm(worm, position, startingDirection, teamID)
 	worm.TeamID = teamID;
 }
 
-function AddKill(worm)
-{
-	worm.KillCount++;
-	worm.TotalKills++;
 
-	switch(worm.KillCount)
-	{
-		case 1:
-			SoundSystem.PlayHeadshotEffect();
-			break;
-		case 2:
-			SoundSystem.PlayDoubleKillEffect();
-			break;
-		case 3:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-		case 4:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-		case 5:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-		case 6:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-		case 7:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-		case 8:
-			SoundSystem.PlayMultiKillEffect();
-			break;
-	}
-}
 
 function ScorePoint(worm, value)
 {
@@ -1459,35 +1211,6 @@ function LOGWORMS()
 	log(worms[3].getName());
 }
 
-function V2(x,y)
-{
-	this.x = x;
-	this.y = y;
-};
-
-V2.prototype.Add = function(V2)
-{
-	this.x += V2.x;
-	this.y += V2.y;
-};
-
-V2.prototype.Invert = function(V2)
-{
-	this.x = -this.x;
-	this.y = -this.y;	
-};
-
-V2.prototype.Clear = function()
-{
-	this.x = null;
-	this.y = null;
-};
-
-V2.prototype.getLength = function () 
-{
-	return(Math.sqrt(this.x * this.x + this.y * this.y));
-};
-
 function CanvasBox(indexZ, xLeft, xRight, yTop, yBot)
 {
 	this.indexZ = indexZ;
@@ -1496,3 +1219,4 @@ function CanvasBox(indexZ, xLeft, xRight, yTop, yBot)
 	this.yTop = yTop;
 	this.yBot = yBot;
 }
+*/

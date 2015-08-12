@@ -1,21 +1,21 @@
 //TODO(Martin): This should be put in the Renderer somehow?
 function PaintWhiteCanvasses()
 {
-	ctxBack.clearRect(0,0, COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
-	ctxMiddle.clearRect(0,0, COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
-	ctxFront.clearRect(0,0, COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
-	ctxDeathParticles.clearRect(0,0, COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
+	ctxBack.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
+	ctxMiddle.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
+	ctxFront.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
+	ctxDeathParticles.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
 }
 
 //TODO(Martin): This should be put in the Renderer somehow?
 function PaintWalls()
 {
-	for (var x = 1; x < COLUMN_NUMBER - 1; x++) 
+	for (var x = 1; x < map_values.ColumnNumber - 1; x++) 
 	{
-		for (var y = 1; y < ROW_NUMBER - 1; y++) 
+		for (var y = 1; y < map_values.RowNumber - 1; y++) 
 		{
 			ctxBack.fillStyle = "#FFFFFF"; //FFFFFF
-			ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+			ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 		}
 	}
 }
@@ -27,7 +27,7 @@ function DrawWhite(canvasBox)
 		for (var y = canvasBox.yBot; y < canvasBox.yTop; y++) 
 		{
 			canvasBox.canvas.fillStyle = "#FFFFFF";
-			canvasBox.canvas.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+			canvasBox.canvas.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 		}
 	}
 }

@@ -7,7 +7,63 @@
 	<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<div id="gamescreen">
+	<div id="titleScreen">
+		<img class="deadlinerImg" src="images/deadliner.png">
+		
+		<div id="setupGameMenu">
+		<div class="smallHeaderFont" id="titleScreenText">local game  &nbsp;\&nbsp;  1-4 players  &nbsp;\&nbsp;  choose game mode  &nbsp;\&nbsp;  next</div>
+			<div>
+				<div class="white">number of players:</div>
+				<div class="black-white-button" id="NumberOfPlayersSelect">2</div>
+			</div>	
+			<div>
+				<div class="white">game mode:</div>
+				<div class="black-white-button" id="GameModeButton">Free For All</div>
+			</div>
+			<div>
+				<div class="black-white-button button-margin" id="nextButton1">next</div>
+			</div>
+		</div>
+		<div id="inputNamesMenu" class="white no-display">
+		<div class="smallHeaderFont" id="titleScreenText">input all player names  &nbsp;\&nbsp;  customize game  &nbsp;\&nbsp;  start race!</div>
+
+			<div id="backButton1" class="black-white-button">back to main menu</div>
+		
+			<div id="player1field" class="no-display">deadliner 1
+				<div id="player1" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player1name"/>
+				</div>
+			</div>
+			<div id="player2field" class="no-display">deadliner 2
+				<div id="player2" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player2name"/>
+				</div>
+			</div>
+			<div id="player3field" class="no-display">deadliner 3
+				<div id="player3" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player3name"/>
+				</div>
+			</div>
+			<div id="player4field" class="no-display">deadliner 4
+				<div id="player4" class="name-input-wrap">
+					<input maxlength="12" class="name-input" id="player4name"/>
+				</div>
+			</div>
+			<div class="black-white-button button-margin" id="customizeButton">customize game</div>
+			<div class="black-white-button button-margin" id="startRaceButton">start race</div>
+		</div>
+		<div id="customizeMenu" class="no-display">
+			<div class="smallHeaderFont" id="titleScreenText">customize game setup  &nbsp;\&nbsp;  confirm</div>
+			<div class="black-white-button button-margin red-border" id="gameSpeedButton">game speed: high</div>
+			<div class="black-white-button button-margin red-border" id="mapSizeButton">map size: huge</div>
+			<div class="black-white-button button-margin" id="shotAmountButton">shot amount: 6</div>
+			<div class="black-white-button button-margin red-border" id="specialAmountButton">special amount: 1</div>
+			<div class="black-white-button button-margin red-border" id="gameScoreButton">victory points: 21</div>
+			<div class="black-white-button button-margin" id="backFromCustomizeButton">confirm</div>
+		</div>
+	</div>
+	
+	<div id="gamescreen" class="no-display">
 		<div id="gameView">
 			<div class="playerPoints">
 			<div class="point white" id="player1points" data-player="1" data-order="0">
@@ -60,63 +116,42 @@
 <script src="client_js/jquery-ui.min.js"></script>
 <script src="client_js/helperFunctions.js"></script>
 <script src="client_js/math.js"></script>
-<script src="client_js/constants.js"></script>
+<!--<script src="client_js/constants.js"></script>-->
 <script src="client_js/soundSystem.js"></script>
 <script src="client_js/menuScreens.js"></script>
 <script src="client_js/spriteAnimation.js"></script>
 <script src="client_js/animationSetup.js"></script>
-<script src="client_js/gridFunctions.js"></script>
+<!--<script src="client_js/gridFunctions.js"></script>-->
 <script src="client_js/renderFunctions.js"></script>
 <script src="client_js/entities.js"></script>
 <script src="client_js/entityFunctions.js"></script>
 
 <!--<script src="modules/foo.js"></script>-->
+<script src="modules/gridFunctions.js"></script>
 <script src="modules/variables.js"></script>
 <script>
 
-var socket = io();
+var map_values = variables.map_values;
 
+var socket = io();
 var CLIENT_ID = 0;
 socket.on('connected', function(data)
 {
 	CLIENT_ID = data.id;
 });
 
-socket.on('update', function(data)
-{
-	for(var i = 0; i < data.worms.length; i++)
-	{
-		SetGridValue(data.worms[i].HeadID, 
-			          data.worms[i].HeadPosition.x, 
-			          data.worms[i].HeadPosition.y);
-	}								
-});
-
-socket.on('init', function()
-{
-	PaintWhiteCanvasses();
-	SetWallsInGrid();
-	GameState.PaintWalls = true;
-
-	if(!GameState.IsRunning)
-	{
-		GameState.IsRunning = true;
-		gameloop();
-	}
-});
-
 var BackCanvas = document.getElementById("backCanvas");
 var MiddleCanvas = document.getElementById("middleCanvas");
 var TopCanvas = document.getElementById("topCanvas");
 var DeathParticleCanvas = document.getElementById("deathParticleCanvas");
-BackCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
-BackCanvas.height = (ROW_NUMBER*TILE_SIZE);
-MiddleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
-MiddleCanvas.height = (ROW_NUMBER*TILE_SIZE);
-TopCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
-TopCanvas.height = (ROW_NUMBER*TILE_SIZE);
-DeathParticleCanvas.width = (COLUMN_NUMBER*TILE_SIZE);
-DeathParticleCanvas.height = (ROW_NUMBER*TILE_SIZE);
+BackCanvas.width = (map_values.ColumnNumber*map_values.TileSize);
+BackCanvas.height = (map_values.RowNumber*map_values.TileSize);
+MiddleCanvas.width = (map_values.ColumnNumber*map_values.TileSize);
+MiddleCanvas.height = (map_values.RowNumber*map_values.TileSize);
+TopCanvas.width = (map_values.ColumnNumber*map_values.TileSize);
+TopCanvas.height = (map_values.RowNumber*map_values.TileSize);
+DeathParticleCanvas.width = (map_values.ColumnNumber*map_values.TileSize);
+DeathParticleCanvas.height = (map_values.RowNumber*map_values.TileSize);
 var ctxBack = BackCanvas.getContext("2d");
 var ctxMiddle = MiddleCanvas.getContext("2d");
 var ctxFront = TopCanvas.getContext("2d");
@@ -152,9 +187,9 @@ function GameState()
 {
 	this.PlayerNames = ["","","",""];
 	this.NumberOfWorms = 2;
-	this.GameMode = variables.game_modes.FREE_FOR_ALL;
+	this.GameMode = variables.game_modes.FreeForAll;
 	
-	this.StartCounter = START_COUNTER;
+	this.StartCounter = map_values.StartCounter;
 	this.GameStarted = false;
 	this.GameFinished = false;
 	this.StartGameButtonPressed = false;
@@ -168,11 +203,11 @@ function GameState()
 	this.RoundWinningTeam = 0;
 	this.WinnerText = "";
 
-	this.IsRunning = false;
+	this.hole_count = new variables.hole_count();
 
-	this.hole_count = new hole_count();
-
-	this.Grid = Create2DGrid(COLUMN_NUMBER, ROW_NUMBER);
+	this.Grid = gridFunctions.Create2DGrid(map_values.ColumnNumber, 
+										   map_values.RowNumber, 
+										   map_values.Empty);
 	this.Worms = [];
 
 	this.Team1 = new Team(1);
@@ -189,12 +224,90 @@ function GameState()
 
 	//TODO(Martin): Handles for Music
 }
-var GameState = new GameState();
 
-function LOGGAMESTATE()
-{
-	log(GameState.Worms[0]);
-	log(GameState.Worms[1])
+var GameState = new GameState();
+var SoundSystem = new SoundSystem();
+SoundSystem.init();
+
+//TODO(Martin): Should probably put keystate events into a separate function and pass them
+//to the GameState, so the server knows what ended down.
+var keystate;
+var Player1Keys = new variables.key_package(37,38,39,40,189,190);
+var Player2Keys = new variables.key_package(68,82,71,70,88,90);
+var Player3Keys = new variables.key_package(97,101,99,98,34,35);
+var Player4Keys = new variables.key_package(74,73,76,75,66,86);
+
+function init()
+{	
+	keystate = {};
+
+	document.addEventListener("keydown", function(event) 
+	{	
+		//TODO(martin): Handle this properly. Handle the full screen button.
+		event.preventDefault();
+		keystate[event.keyCode] = true;
+	});
+
+	document.addEventListener("keyup", function(event) 
+	{
+		delete keystate[event.keyCode];
+	});
+
+	gridFunctions.SetWallsInGrid();
+	GameState.PaintWhiteCanvasses = true;
+	GameState.PaintWalls = true;
+
+	if(GameState.NumberOfWorms >= 1)
+	{
+		GameState.Worms[0] = new worm(GameState.PlayerNames[0], Player1Keys, 1, worm1HoleAnimations,
+					deployAnimation1, deployOutAnimation1, fullDeployAnimation1,
+					map_values.Worm1Head);
+	}
+	if(GameState.NumberOfWorms >= 2)
+	{
+		GameState.Worms[1] = new worm(GameState.PlayerNames[1], Player2Keys, 2, worm2HoleAnimations,
+					deployAnimation2, deployOutAnimation2, fullDeployAnimation2,
+					map_values.Worm2Head);
+	}
+	if(GameState.NumberOfWorms >= 3)
+	{		
+		GameState.Worms[2] = new worm(GameState.PlayerNames[2], Player3Keys, 3, worm3HoleAnimations,
+					deployAnimation3, deployOutAnimation3, fullDeployAnimation3,
+					map_values.Worm3Head);
+	}
+	if(GameState.NumberOfWorms == 4)
+	{
+		GameState.Worms[3] = new worm(GameState.PlayerNames[3], Player4Keys, 4, worm4HoleAnimations,
+					deployAnimation4, deployOutAnimation4, fullDeployAnimation4,
+					map_values.Worm4Head);
+	}
+
+	if(GameState.GameMode == variables.game_modes.FreeForAll)
+	{
+		$("#player1points .name").text(GameState.PlayerNames[0]);
+		$("#player1points .points").text('0');
+		$("#player2points .name").text(GameState.PlayerNames[1]);
+		$("#player2points .points").text('0');
+		$("#player3points .name").text(GameState.PlayerNames[2]);
+		$("#player3points .points").text('0');
+		$("#player4points .name").text(GameState.PlayerNames[3]);
+		$("#player4points .points").text('0');		
+	}
+	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
+	          GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		$("#player1points .name").text("TEAM 1");
+		$("#player1points .points").text('0');
+		$("#player2points .name").text("TEAM 2");
+		$("#player2points .points").text('0');
+				
+		GameState.Team1.Member1 = GameState.Worms[0];
+		GameState.Team1.Member2 = GameState.Worms[1];
+		GameState.Team2.Member1 = GameState.Worms[2];
+		GameState.Team2.Member2 = GameState.Worms[3];
+	}
+
+	gameloop();
 }
 
 function Render()
@@ -225,7 +338,7 @@ function Render()
 	{
 		ctxBack.font="50px Geo";
 		ctxBack.fillStyle="#000000";
-		ctxBack.fillText(GameState.StartCounter+1, COLUMN_NUMBER/2*TILE_SIZE, ROW_NUMBER/2*TILE_SIZE);
+		ctxBack.fillText(GameState.StartCounter+1, map_values.ColumnNumber/2*map_values.TileSize, map_values.RowNumber/2*map_values.TileSize);
 		GameState.DrawStartCounter = false;
 	}
 
@@ -237,8 +350,8 @@ function Render()
 				
 		var textWidth = ctxMiddle.measureText(GameState.WinnerText).width;
 		var textHeight = 50;
-		var upperLeftColumn = (COLUMN_NUMBER/2*TILE_SIZE) - (textWidth/2); 
-		var upperLeftRow = ROW_NUMBER/2*TILE_SIZE - textHeight/2;
+		var upperLeftColumn = (map_values.ColumnNumber/2*map_values.TileSize) - (textWidth/2); 
+		var upperLeftRow = map_values.RowNumber/2*map_values.TileSize - textHeight/2;
 
 		ctxMiddle.fillStyle="#FFFFFF";
 		ctxBack.fillStyle="#FFFFFF";
@@ -251,85 +364,85 @@ function Render()
 	}
 
 	//NOTE(Martin): Actual grid drawing functions
-	for (var x=0; x < COLUMN_NUMBER; x++) 
+	for (var x=0; x < map_values.ColumnNumber; x++) 
 	{
-		for (var y=0; y < ROW_NUMBER; y++) 
+		for (var y=0; y < map_values.RowNumber; y++) 
 		{
-			switch (GetGridValue(x, y)) 
+			switch (gridFunctions.GetGridValue(x, y)) 
 			{
-				case WORM1CELL:
-					SetGridValue(DRAWN_WORM1CELL, x ,y);
+				case map_values.Worm1Cell:
+					gridFunctions.SetGridValue(map_values.DrawnWorm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WORM1HEAD:
-					SetGridValue(WORM1CELL, x ,y);
+				case map_values.Worm1Head:
+					gridFunctions.SetGridValue(map_values.Worm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WORM2HEAD:
-					SetGridValue(WORM2CELL, x ,y);
+				case map_values.Worm2Head:
+					gridFunctions.SetGridValue(map_values.Worm2Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WORM3HEAD:
-					SetGridValue(WORM3CELL, x ,y);
+				case map_values.Worm3Head:
+					gridFunctions.SetGridValue(WORM3CELL, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WORM4HEAD:
-					SetGridValue(WORM4CELL, x ,y);
+				case map_values.Worm4Head:
+					gridFunctions.SetGridValue(WORM4CELL, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case HOLE:
-					SetGridValue(DRAWN_HOLE, x ,y);
+				case map_values.Hole:
+					gridFunctions.SetGridValue(map_values.DrawnHole, x ,y);
 					ctxBack.fillStyle = "#000000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WHITE_HOLE:
-					SetGridValue(EMPTY, x ,y);
+				case map_values.WhiteHole:
+					gridFunctions.SetGridValue(map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
-					ctxFront.clearRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
+					ctxFront.clearRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case WALL:
-					SetGridValue(DRAWN_WALL, x ,y);
+				case map_values.Wall:
+					gridFunctions.SetGridValue(map_values.DrawnWall, x ,y);
 					ctxFront.fillStyle = "#000000";
-					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case STATIC_WALL:
-					SetGridValue(STATIC_WALL_DRAWN, x ,y);
+				case map_values.StaticWall:
+					gridFunctions.SetGridValue(map_values.StaticWallDrawn, x ,y);
 					ctxFront.fillStyle = "#000000";
-					ctxFront.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case REMOVE_FLAG:
-					SetGridValue(EMPTY, x ,y);
+				case map_values.RemoveFlag:
+					gridFunctions.SetGridValue(map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case FLAG1:
+				case map_values.Flag1:
 					ctxBack.fillStyle = "#FF0000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case FLAG2:
+				case map_values.Flag2:
 					ctxBack.fillStyle = "#FF0000";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case REMOVE_WORM:
-					SetGridValue(EMPTY, x ,y);
+				case map_values.RemoveWorm:
+					gridFunctions.SetGridValue(map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case REMOVE_HOLE:
-					SetGridValue(EMPTY, x ,y);
+				case map_values.RemoveHole:
+					gridFunctions.SetGridValue(map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				case CLEAR_ALL:
-					SetGridValue(EMPTY, x ,y);
+				case map_values.ClearAll:
+					gridFunctions.SetGridValue(map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 			}
 		}
@@ -350,7 +463,7 @@ function Render()
 
 	if(GameState.DeathParticles.length > 0)
 	{
-		ctxDeathParticles.clearRect(0,0,COLUMN_NUMBER*TILE_SIZE, ROW_NUMBER*TILE_SIZE);
+		ctxDeathParticles.clearRect(0,0,map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
 	}
 
 	for(var i = 0; i < GameState.DeathParticles.length; i++)
@@ -368,23 +481,23 @@ function Render()
 			
 			switch(particle.Direction)
 			{
-				case Directions.Right:
+				case variables.directions.Right:
 					randomVector.x = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
 					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
 					break;
-				case Directions.Left:
+				case variables.directions.Left:
 					randomVector.x = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
 					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
 					break;
-				case Directions.Up:
+				case variables.directions.Up:
 					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
 					randomVector.y = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
 					break;
-				case Directions.Down:
+				case variables.directions.Down:
 					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
 					randomVector.y = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
 					break;
-				case Directions.Spread:
+				case variables.directions.Spread:
 					randomVector.x = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
 					randomVector.y = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
 					break;
@@ -400,9 +513,9 @@ function Render()
 			{
 				var xPos = Math.floor(particle.P.x / 3);
 				var yPos = Math.floor(particle.P.y / 3);
-				var gridValue = GetGridValue(xPos, yPos);
+				var gridValue = gridFunctions.GetGridValue(xPos, yPos);
 
-				if(gridValue == EMPTY)
+				if(gridValue == map_values.Empty)
 				{
 					particle.Color = '#000000';
 				}
@@ -412,27 +525,117 @@ function Render()
 			ctxDeathParticles.fillRect(particle.P.x,particle.P.y, particle.SizeX, particle.SizeY);
 		}
 	}
+
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		//flag1animation.UpdateAndRender(ctxFront);
+		//flag2animation.UpdateAndRender(ctxFront);
+	}
+}
+
+function NewGame()
+{
+	GameState.CurrentGamePoints = 0;
+	GameState.DeadWormsCounter = 0;
+
+	//TODO(Martin): This is like a re-init function.
+	GameState.Grid = gridFunctions.Create2DGrid(map_values.ColumnNumber, 
+												map_values.RowNumber,
+												map_values.Empty);
+	gridFunctions.SetWallsInGrid();
+	GameState.PaintWhiteCanvasses = true;
+	GameState.PaintWalls = true;
+
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		gridFunctions.SetFlagOntoGrid(FLAG1);
+		gridFunctions.SetFlagOntoGrid(FLAG2);
+	}
+
+	var startingPositions = gridFunctions.MakeStartingPositions(GameState.NumberOfWorms);
+
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
+		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
+	}
+
+	if(GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		GameState.RoundWinningTeam = 0;
+
+		for (var i=0; i < GameState.NumberOfWorms; i++) 
+		{
+			//TODO(martin): This is pretty bad :)
+			if(i == 0)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Down, GameState.Team1.ID);
+			}
+			else if(i == 1)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Up, GameState.Team1.ID);
+			}
+			else if(i == 2)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Down, GameState.Team2.ID);
+			}
+			else if(i == 3)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Up, GameState.Team2.ID);
+			}
+		}
+	}
+	else 
+	{
+		for (var i=0; i<GameState.NumberOfWorms; i++) 
+		{
+			//TODO(martin): This is pretty bad :)
+			if(i == 0)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 1)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 2)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+			else if(i == 3)
+			{
+				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
+			}
+		};
+	}
+
+	//TODO(Martin): Should not be WORM1CELL but different heads.
+	for(var i = 0; i < GameState.NumberOfWorms; i++)
+	{
+		gridFunctions.SetGridValue(map_values.Worm1Cell, GameState.Worms[i].HeadPosition.x, GameState.Worms[i].HeadPosition.y);
+	}
+
+	GameState.GameStarted = false;
 }
 
 //STUDY(martin): Get comfortable with this.
 //NOTE(martin): http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
-var now, dt = 0, last = timestamp(), step = CHOSEN_GAME_SPEED;
+var now, dt = 0, last = timestamp(), step = variables.game_speeds.CurrentSpeed;
 function gameloop()
 {	
 	now = timestamp();
 	dt = dt + Math.min(1, (now - last) / 1000);
 	
 	//TODO(Martin): Maybe the game loop should be initialized with init() method.
-	if(step != CHOSEN_GAME_SPEED)
+	if(step != variables.game_speeds.CurrentSpeed)
 	{
-		step = CHOSEN_GAME_SPEED;
+		step = variables.game_speeds.CurrentSpeed;
 	}
 
 	while(dt > step) 
 	{
 		dt = dt - step;
-		HandleWormKeyInput();
-		//update(step);
+		update(step);
 	}
 
 	//render(dt); //NOTE(martin): Used for LERP.
@@ -442,81 +645,499 @@ function gameloop()
 	requestAnimationFrame(gameloop);
 }
 
-var Player1Keys = new keys(37,38,39,40,189,190);
-function keys(left, up, right, down, shot, special)
+function HandleWormCollision(worm)
 {
-	this.LeftKey = left;
-	this.UpKey = up;
-	this.RightKey = right;
-	this.DownKey = down;
-	this.ShotKey = shot;
-	this.SpecialKey = special;
-};
+	if(worm.CollisionType > collisions.NO_COLLISION)
+	{
+		var numberOfParticles = 0;
+		if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+		{
+			numberOfParticles = Math.floor((Math.random() * 35) + 15);
+		}
+		else
+		{
+			numberOfParticles = Math.floor((Math.random() * 500) + 300);
+		}
 
-var keystate = {};
-document.addEventListener("keydown", function(event) 
-{	
-	event.preventDefault();
-	keystate[event.keyCode] = true;
-});
+		for(var ParticleSpawnIndex = 0;
+			ParticleSpawnIndex < numberOfParticles;
+			ParticleSpawnIndex++)
+		{
+			var particle = new DeathParticle();
+			particle.P = new V2(worm.HeadPosition.x*map_values.TileSize, worm.HeadPosition.y*map_values.TileSize);
+			
+			particle.SizeX = 3;
+			particle.SizeY = 3;
+			
+			if(worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			{
+				particle.Direction = variables.directions.Spread;
+				particle.dP = new V2(9,9);
+			}
+			else
+			{
+				particle.Direction = worm.CurrentDirection;	
+				particle.dP = new V2(5,5);
+			}
 
-document.addEventListener("keyup", function(event) 
-{
-	delete keystate[event.keyCode];
-});
+			if(worm.CollisionType == collisions.WALL_COLLISION || 
+			   worm.CollisionType == collisions.HOLE_COLLISION ||
+			   worm.CollisionType == collisions.HEADSHOT_COLLISION)
+			{
+				particle.Color = '#FFFFFF';
+				particle.CheckForColor = true;
+			}
+			else
+			{
+				particle.Color = '#000000';
+			}
 
-var Directions = {
-	Left: 0,
-	Up: 1,
-	Right: 2,
-	Down: 3,
-	Spread: 5
+			GameState.DeathParticles.push(particle);
+		}
+
+		Kill(worm, true);
+		GameState.WormsDiedThisRound.push(worm);
+	}	
 }
 
-var Keys = {
-	Left: 0,
-	Up: 1,
-	Right: 2,
-	Down: 3,
-	Shot: 4,
-	Special: 5
+function update(step)
+{
+	GameState.SecondsCounter += step;
+	
+	if(GameState.GameFinished) { return; }
+	
+	if(keystate[variables.GeneralKeys.NewRound] && !GameState.GameStarted && !GameState.StartGameButtonPressed)
+	{
+		GameState.StartGameButtonPressed = true;
+		NewGame();
+	}
+
+	if(GameState.GameStarted)
+	{
+		GameState.StartGameButtonPressed = false;
+
+		HandleWormKeyInput(GameState.GameStarted);		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(GameState.Worms[i].Alive)
+			{
+				UpdateWormPosition(GameState.Worms[i]);
+				
+				gridFunctions.SetWormCollision(GameState.Worms[i]);
+				HandleWormCollision(GameState.Worms[i]);
+
+				if(GameState.Worms[i].Alive)
+				{
+					gridFunctions.SetGridValue(GameState.Worms[i].HeadID, 
+							GameState.Worms[i].HeadPosition.x, 
+							GameState.Worms[i].HeadPosition.y);
+				}
+			}
+		}		
+
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(GameState.Worms[i].Alive)
+			{
+				if(GameState.Worms[i].JustShotHole)
+				{	
+					SoundSystem.PlayShotEffect();
+					GameState.Worms[i].JustShotHole = false;
+					var holeAnimation = GameState.Worms[i].getHoleAnimation();  
+					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
+					GameState.SpriteAnimations.push(holeAnimation);
+
+					gridFunctions.SetHoleInGrid(GameState.Worms[i]);
+				}
+
+				if(GameState.Worms[i].JustShotWhiteHole)
+				{	
+					SoundSystem.PlayWhiteShotEffect();
+					GameState.Worms[i].JustShotWhiteHole = false;
+					gridFunctions.SetWhiteHoleInGrid(GameState.Worms[i].WhiteHolePosition);
+
+					//TODO(martin): Should not be -12, but in the middle calculated somehow.
+					var animation = GetWhiteHoleAnimation();
+					animation.init(GameState.Worms[i].WhiteHolePosition, -36);
+					GameState.SpriteAnimations.push(animation);
+				}
+			}
+		}		
+
+		for(var i = 0; i < GameState.WormsDiedThisRound.length; i++)
+		{
+			GameState.DeadWormsCounter++;
+			ScorePoint(GameState.WormsDiedThisRound[i], GameState.CurrentGamePoints);
+		}
+		GameState.CurrentGamePoints += GameState.WormsDiedThisRound.length;
+		GameState.WormsDiedThisRound = [];
+
+		if(GameState.GameMode == variables.game_modes.FreeForAll)
+		{
+			if(GameState.NumberOfWorms > 1 && ((GameState.DeadWormsCounter == GameState.NumberOfWorms - 1) || (GameState.DeadWormsCounter == GameState.NumberOfWorms)))
+			{
+				GameState.GameStarted = false;
+
+				for(var w = 0; w<GameState.NumberOfWorms; w++)
+				{
+					if(GameState.Worms[w].Alive)
+					{
+						Kill(GameState.Worms[w], true);
+						GameState.DeadWormsCounter++;
+						ScorePoint(GameState.Worms[w], GameState.CurrentGamePoints);
+					}
+				}
+
+				GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
+				UpdateScoreboard();
+
+				if(GameState.Worms[0].Points >= variables.VictoryPoints.CurrentValue)
+				{
+					GameState.StartGameButtonPressed = false;
+					GameState.GameFinished = true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = GameState.Worms[0].Name + ' won the game!';
+					GameState.RenderWinnerText = true;
+				}		
+			}
+			else if(GameState.NumberOfWorms == 1 && GameState.DeadWormsCounter == 1)
+			{
+				GameState.GameStarted = false;
+			}
+
+		}
+		//TODO(Martin): Check who is alive.
+		else if(GameState.GameMode == variables.game_modes.TwoOnTwo)
+		{
+			if(!GameState.Team1.Member1.Alive && 
+			   !GameState.Team1.Member2.Alive &&
+			   !GameState.Team2.Member1.Alive && 
+			   !GameState.Team2.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 0;
+				UpdateScoreboard();
+			}
+			else if(!GameState.Team1.Member1.Alive && !GameState.Team1.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 2;
+				Kill(GameState.Worms[2], true);
+				Kill(GameState.Worms[3], true);
+				UpdateScoreboard();
+				if(GameState.Team2.TeamScore >= variables.VictoryPoints.CurrentValue)
+				{
+					GameState.GameFinished == true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = "team 2 won the race!";
+					GameState.RenderWinner = true;
+				}
+			}
+			else if(!GameState.Team2.Member1.Alive && !GameState.Team1.Member2.Alive)
+			{
+				GameState.GameStarted = false;
+				GameState.RoundWinningTeam = 1;
+				Kill(GameState.Worms[0], true);
+				Kill(GameState.Worms[1], true);
+				UpdateScoreboard();
+				if(GameState.Team1.TeamScore >= variables.VictoryPoints.CurrentValue)
+				{
+					GameState.GameFinished == true;
+					$('#restartGameButton').show();
+					GameState.WinnerText = "team 1 won the race!";
+					GameState.RenderWinner = true;
+				}
+			}
+		}
+		else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+		{
+			if(GameState.RoundWinningTeam == 1 || GameState.RoundWinningTeam == 2)
+			{
+				GameState.GameStarted = false;
+				Kill(GameState.Worms[0], false);
+				Kill(GameState.Worms[1], false);
+				Kill(GameState.Worms[2], false);
+				Kill(GameState.Worms[3], false);
+				UpdateScoreboard();
+			}
+			else
+			{
+				for(var i = 0; i < GameState.NumberOfWorms; i++)
+				{
+					if(!GameState.Worms[i].Alive && !GameState.Worms[i].IsRespawning)
+					{
+						GameState.Worms[i].IsRespawning = true;
+
+						RemoveWormPathFromGrid(GameState.Worms[i]);
+						RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions);
+						if(GameState.Worms[i].HoldsFlag > 0)
+						{
+							gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
+							DropFlag(GameState.Worms[i]);
+						}
+
+						var position = GameState.Worms[i].SpawnPoint;
+						Respawn(GameState.Worms[i], 1300);
+						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
+						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
+						ClearSpawnpointFromGrid(position);
+					}
+				}
+			}
+		}
+	}
+	else if(GameState.StartGameButtonPressed)
+	{
+		HandleWormKeyInput(GameState.GameStarted);
+
+		if(GameState.SecondsCounter > 1)
+		{
+			if(GameState.StartCounter == 0)
+			{
+				$("#player1points").removeClass('textBlurAnimation');
+				$("#player2points").removeClass('textBlurAnimation');
+				$("#player3points").removeClass('textBlurAnimation');
+				$("#player4points").removeClass('textBlurAnimation');	
+
+				for(var i = 0; i < GameState.NumberOfWorms; i++)
+				{
+					GameState.SpriteAnimations.push(GameState.Worms[i].deployOutAnimation);
+				}
+
+				GameState.GameStarted = true;
+				GameState.StartCounter = map_values.StartCounter;
+
+				SoundSystem.ToggleTitleScreenMusic(false);
+				SoundSystem.ToggleGameMusic(true);
+
+				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+													   map_values.ColumnNumber/2-25, map_values.ColumnNumber/2+25,
+													   map_values.RowNumber/2+25, map_values.RowNumber/2-25)); 
+				//DrawWhite(ctxBack, map_values.ColumnNumber/2-25,map_values.ColumnNumber/2+25,map_values.RowNumber/2+25,map_values.RowNumber/2-25);
+			}
+			else
+			{
+				if(GameState.StartCounter == 5)
+				{
+					SoundSystem.PlayCountDownEffect();
+				}
+				
+				//NOTE(martin): puts in the players in order of the counter
+				if(GameState.StartCounter == 4 && GameState.NumberOfWorms > 3)
+				{
+					$(".point[data-order=3]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 3 && GameState.NumberOfWorms > 2)
+				{
+					$(".point[data-order=2]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 2 && GameState.NumberOfWorms > 1)
+				{
+					$(".point[data-order=1]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+				else if(GameState.StartCounter == 1 && GameState.NumberOfWorms > 0)
+				{
+					$(".point[data-order=0]").addClass('textBlurAnimation');
+					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+				}
+
+				var halfTextWidth = ctxBack.measureText(GameState.StartCounter).width;
+				var halfTextHeight = 25;
+
+				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+													   map_values.ColumnNumber/2-halfTextWidth, map_values.ColumnNumber/2+halfTextWidth,
+													   map_values.RowNumber/2+halfTextHeight, map_values.RowNumber/2-halfTextHeight)); 
+
+				GameState.DrawStartCounter = true;
+				GameState.StartCounter--;					
+			}
+
+			GameState.SecondsCounter = 0;
+		}
+	}	
+}
+
+//TODO(Martin): This should be a function that resets the GameState object?
+function ExitGameToTitlescreen()
+{
+	SoundSystem.ChangeToTitleScreen();
+	GameState.StartGameButtonPressed = false;
+	GameState.GameStarted = false;
+	GameState.GameFinished = false;
+	GameState.StartCounter = variables.StartCounter;
+	for(var i = 0; i < GameState.NumberOfWorms; i++)
+	{
+		Kill(GameState.Worms[i], false);
+	}
 }
 
 function HandleWormKeyInput(gameStarted)
 {
-	if(keystate[Player1Keys.LeftKey])
+	if(gameStarted)
 	{
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Left });
-	}
-	else if(keystate[Player1Keys.UpKey])
-	{
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Up });
-	}
-	else if(keystate[Player1Keys.RightKey])
-	{
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Right });
-	}
-	else if(keystate[Player1Keys.DownKey])
-	{
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Down });
-	}
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(keystate[GameState.Worms[i].Keys.LeftKey])
+			{
+				ChangeDirection(GameState.Worms[i], variables.directions.Left);
+			}
+			else if(keystate[GameState.Worms[i].Keys.UpKey])
+			{
+				ChangeDirection(GameState.Worms[i], variables.directions.Up);
+			}
+			else if(keystate[GameState.Worms[i].Keys.RightKey])
+			{
+				ChangeDirection(GameState.Worms[i], variables.directions.Right);
+			}
+			else if(keystate[GameState.Worms[i].Keys.DownKey])
+			{
+				ChangeDirection(GameState.Worms[i], variables.directions.Down);
+			}
 
-	if(keystate[Player1Keys.SpecialKey])
-	{
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Special });
+			if(keystate[GameState.Worms[i].Keys.SpecialKey])
+			{
+				ShootWhiteHole(GameState.Worms[i]);
+			}
+			
+			if(keystate[GameState.Worms[i].Keys.ShotKey])
+			{	
+				ShootHole(GameState.Worms[i]);
+			}
+		}
 	}
-	
-	if(keystate[Player1Keys.ShotKey])
-	{	
-		socket.emit('keypress', { clientid: CLIENT_ID, key : Keys.Shot });
-	}
-
-	if(keystate[13])
+	else
 	{
-		socket.emit('newgame');
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
+			if(keystate[GameState.Worms[i].Keys.LeftKey])
+			{
+				GameState.Worms[i].Direction = variables.directions.Left;
+			}
+			else if(keystate[GameState.Worms[i].Keys.UpKey])
+			{
+				GameState.Worms[i].Direction = variables.directions.Up;
+			}
+			else if(keystate[GameState.Worms[i].Keys.RightKey])
+			{
+				GameState.Worms[i].Direction = variables.directions.Right;
+			}
+			else if(keystate[GameState.Worms[i].Keys.DownKey])
+			{
+				GameState.Worms[i].Direction = variables.directions.Down;
+			}
+		}
 	}
 	
 	keystate = {};
 }
+
+function UpdateScoreboard()
+{
+	if(GameState.GameMode == variables.game_modes.FreeForAll)
+	{	
+		for(var i = 0; i < GameState.NumberOfWorms; i++){
+			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
+		}
+	}
+	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		if(GameState.RoundWinningTeam == 1)
+		{
+			GameState.Team1.TeamScore += 1;
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' won');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' lost');
+		}
+		else if(GameState.RoundWinningTeam == 2)
+		{
+			GameState.Team2.TeamScore += 1;
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' lost');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' won');
+		}
+		else if(GameState.RoundWinningTeam == 0)
+		{
+			$("#player1points .points").text(GameState.Team1.TeamScore + ' draw');
+			$("#player2points .points").text(GameState.Team2.TeamScore + ' draw');
+		}
+	}
+}
+/*
+TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Sort out the sound effects, so they fit with the game.
+Less annoying soundtrack - Aslak
+Random starting position 3 player mode
+
+TODO(Nicolai):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+When canvas size changes, so does the position of canvasses. We need them to be positioned dynamically.
+Align gamepoints with canvas -> Different monitors?
+We need to remake the entire screen layout + transitions between screens:
+	- Screen 1: How many players? What Gamemode? Fullscreen button.
+	- Screen 2: Player names, customize button, start game.
+	- Screen 3: Gamescreen, return to the other screens.
+	- Screen 4: Game statistics -> Show who did what in the game. Headshots etc.
+No æøå in name input (no sound effect when pressed)
+
+TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Figure out what pattern to use for gamemode
+Titlescreen update + create customization screen
+Start making statistics: Headshot, most kills, deaths, who killed who etc.
+Vectorize the grid?
+AI player
+
+BUGS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+(Martin): Holding down the hole-button is weird
+(Martin): Holeanimation can appear outside the grid.
+(Martin): Sometimes in capture the flag spawn point changes.
+
+STUDY(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+map_values.TileSize is 3, but the renderer should actually not skip the 3 pixels?
+
+DONE(ALL):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Cannot start in opposite random direction
+So.. the grid in Y direction is very very long? Why? It actually wasnt, but the grid was set to expand. 
+Update the game to using vectors instead of X and Y coordinates all over the place.
+HEADSHOT!!!!
+Particle system upon death
+Player icons need to shift with player points when the round ends.
+2v2 capture the flag mode
+2v2 mode
+(Nicolai): Icons at the start menu should be aligned with the input fields
+Calculate if the whiteshotanimation fits with what gets removed
+Shot->popanimation
+Show how many points each player gets per round "fastcreamer 12 (+3)"
+Animations are not perfectly aligned with the actual hit-pixels
+Volume slider x 2
+Shotanimation + blackhole -> only when shot inside map
+Show player controls	
+Holes are not removed when new game is run
+Sometimes the points per game does not show until next round
+Simultaneous death points
+Victory points
+Restart game
+You can white hole the wall and get out of the grid.
+Create STATIC_WALLs to limit where the player can go
+study - Map draws black all the time?
+Larger grid + whitehole removable edges
+White space animation
+Map generation starts wall weird
+Press N for starting the game
+White space
+Align player points in the right side
+Put in new sound effect
+Placement animation
+Sound effects
+Assign all 4 player keys
+Layout title screen
+No new game before only 1 player remains
+Random symmetrical starting position
+Who is who when the game starts
+Music - titlemusic + gamemusic 
+Random starting positions
+Equal names not allowed
+4 player mode
+*/
 
 </script>

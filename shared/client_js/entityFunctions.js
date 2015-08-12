@@ -15,7 +15,7 @@ function InitializeWorm(worm, position, startingDirection, teamID)
 	worm.HoleCount = GameState.hole_count.Amount;
 	worm.currentHoleAnimation = GameState.hole_count.Amount;
 	
-	worm.WhiteHoleCount = WHITE_HOLE_AMOUNT;
+	worm.WhiteHoleCount = 1;
 
 	worm.JustShotHole = false;
 	worm.JustShotWhiteHole = false;
@@ -76,24 +76,24 @@ function ShootHole(worm)
 
 		switch (worm.CurrentDirection)
 		{
-			case Directions.Left:
-				worm.HolePosition.x = worm.HeadPosition.x - HOLE_RANGE;
+			case variables.directions.Left:
+				worm.HolePosition.x = worm.HeadPosition.x - map_values.HoleRange;
 				worm.HolePosition.y = worm.HeadPosition.y;
 				break;
 
-			case Directions.Up:
+			case variables.directions.Up:
 				worm.HolePosition.x = worm.HeadPosition.x;
-				worm.HolePosition.y = worm.HeadPosition.y - HOLE_RANGE;
+				worm.HolePosition.y = worm.HeadPosition.y - map_values.HoleRange;
 				break;
 
-			case Directions.Right:
-				worm.HolePosition.x = worm.HeadPosition.x + HOLE_RANGE;
+			case variables.directions.Right:
+				worm.HolePosition.x = worm.HeadPosition.x + map_values.HoleRange;
 				worm.HolePosition.y = worm.HeadPosition.y;
 				break;
 
-			case Directions.Down:
+			case variables.directions.Down:
 				worm.HolePosition.x = worm.HeadPosition.x;
-				worm.HolePosition.y = worm.HeadPosition.y + HOLE_RANGE;
+				worm.HolePosition.y = worm.HeadPosition.y + map_values.HoleRange;
 				break;
 		}
 
@@ -110,24 +110,24 @@ function ShootWhiteHole(worm)
 
 		switch (worm.CurrentDirection) 
 		{
-			case Directions.Left:
-				worm.WhiteHolePosition.x = worm.HeadPosition.x - WHITE_HOLE_SIZE/2 - 1;
+			case variables.directions.Left:
+				worm.WhiteHolePosition.x = worm.HeadPosition.x - map_values.WhiteHoleSize/2 - 1;
 				worm.WhiteHolePosition.y = worm.HeadPosition.y;
 				break;
 
-			case Directions.Up:
+			case variables.directions.Up:
 				worm.WhiteHolePosition.x = worm.HeadPosition.x;
-				worm.WhiteHolePosition.y = worm.HeadPosition.y - WHITE_HOLE_SIZE/2 - 1;
+				worm.WhiteHolePosition.y = worm.HeadPosition.y - map_values.WhiteHoleSize/2 - 1;
 				break;
 
-			case Directions.Right:
-				worm.WhiteHolePosition.x = worm.HeadPosition.x + WHITE_HOLE_SIZE/2 + 2;
+			case variables.directions.Right:
+				worm.WhiteHolePosition.x = worm.HeadPosition.x + map_values.WhiteHoleSize/2 + 2;
 				worm.WhiteHolePosition.y = worm.HeadPosition.y;
 				break;
 
-			case Directions.Down:
+			case variables.directions.Down:
 				worm.WhiteHolePosition.x = worm.HeadPosition.x;
-				worm.WhiteHolePosition.y = worm.HeadPosition.y + WHITE_HOLE_SIZE/2 + 2;
+				worm.WhiteHolePosition.y = worm.HeadPosition.y + map_values.WhiteHoleSize/2 + 2;
 				break;
 		}
 	}
@@ -158,7 +158,7 @@ function Respawn(worm, ms)
 {
 	worm.HoleCount = GameState.hole_count.Amount;
 	worm.currentHoleAnimation = worm.HoleCount;
-	worm.WhiteHoleCount = WHITE_HOLE_AMOUNT;
+	worm.WhiteHoleCount = 1;
 	worm.HeadPosition = new V2(worm.SpawnPoint.x, worm.SpawnPoint.y);
 	worm.JustShotHole = false;
 	worm.JustShotWhiteHole = false;
@@ -177,21 +177,21 @@ function Respawn(worm, ms)
 
 function ChangeDirection(worm, newDirection)
 {
-	if(newDirection == Directions.Left && worm.CurrentDirection !== Directions.Right)
+	if(newDirection == variables.directions.Left && worm.CurrentDirection !== variables.directions.Right)
 	{
-		worm.CurrentDirection = Directions.Left;
+		worm.CurrentDirection = variables.directions.Left;
 	}
-	else if(newDirection == Directions.Down && worm.CurrentDirection !== Directions.Up)
+	else if(newDirection == variables.directions.Down && worm.CurrentDirection !== variables.directions.Up)
 	{
-		worm.CurrentDirection = Directions.Down;
+		worm.CurrentDirection = variables.directions.Down;
 	}
-	else if(newDirection == Directions.Right && worm.CurrentDirection !== Directions.Left)
+	else if(newDirection == variables.directions.Right && worm.CurrentDirection !== variables.directions.Left)
 	{
-		worm.CurrentDirection = Directions.Right;
+		worm.CurrentDirection = variables.directions.Right;
 	}
-	else if(newDirection == Directions.Up && worm.CurrentDirection !== Directions.Down)
+	else if(newDirection == variables.directions.Up && worm.CurrentDirection !== variables.directions.Down)
 	{
-		worm.CurrentDirection = Directions.Up;
+		worm.CurrentDirection = variables.directions.Up;
 	}
 }
 
@@ -202,22 +202,22 @@ function UpdateWormPosition(worm)
 		worm.CurrentDirection = Math.floor((Math.random() * 3) + 0);
 	}
 
-	if(worm.CurrentDirection == Directions.Left)
+	if(worm.CurrentDirection == variables.directions.Left)
 	{
 		worm.HeadPosition.x--;
 		worm.Path.push(new V2(worm.HeadPosition.x, worm.HeadPosition.y));
 	}
-	if(worm.CurrentDirection == Directions.Up)
+	if(worm.CurrentDirection == variables.directions.Up)
 	{
 		worm.HeadPosition.y--;
 		worm.Path.push(new V2(worm.HeadPosition.x, worm.HeadPosition.y));
 	}
-	if(worm.CurrentDirection == Directions.Right)
+	if(worm.CurrentDirection == variables.directions.Right)
 	{
 		worm.HeadPosition.x++;
 		worm.Path.push(new V2(worm.HeadPosition.x, worm.HeadPosition.y));
 	}
-	if(worm.CurrentDirection == Directions.Down)
+	if(worm.CurrentDirection == variables.directions.Down)
 	{
 		worm.HeadPosition.y++;
 		worm.Path.push(new V2(worm.HeadPosition.x, worm.HeadPosition.y));
