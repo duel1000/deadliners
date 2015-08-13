@@ -148,11 +148,6 @@
 		}
 	};
 
-	exports.DropFlag = function(worm, gameState)
-	{
-		worm.HoldsFlag = 0;
-	};
-
 	exports.Respawn = function(worm, ms, holeCount, v2Factory)
 	{
 		worm.HoleCount = holeCount;

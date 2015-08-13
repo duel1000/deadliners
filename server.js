@@ -4,6 +4,7 @@ var io = require('socket.io')(http);
 var uuid = require('node-uuid');
 var express = require('express');
 var port = process.env.PORT || 3000;
+app.use(express.static('client'));
 app.use(express.static('shared'));
 
 app.get('/', function(req, res)

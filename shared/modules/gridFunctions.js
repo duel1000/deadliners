@@ -295,28 +295,28 @@
 			worm.CollisionType = collisions.HoleCollision;	
 		}
 		else if(gameState.GameMode == 3 && 
-			   (gridValue == map_values.Flag1 || gridValue == map_values.Flag2))
+			   (gridValue == gameState.Flag1.ID || gridValue == gameState.Flag2.ID))
 		{	
 			worm.Path.pop();
-			if(gridValue == map_values.Flag1 && worm.TeamID == map_values.Team2ID)
+			if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team2ID)
 			{
-				worm.HoldsFlag = map_values.Flag1;
+				worm.HoldsFlag = gameState.Flag1;
 				this.RemoveFlagFromGrid(gameState.Flag1, grid.System, map_values.RemoveFlag);
 				//SoundSystem.PlayFlagEffect();
 			}
-			else if(gridValue == map_values.Flag2 && worm.TeamID == map_values.Team1ID)
+			else if(gridValue == gameState.Flag2.ID && worm.TeamID == map_values.Team1ID)
 			{
-				worm.HoldsFlag = map_values.Flag2;
+				worm.HoldsFlag = gameState.Flag2;
 				this.RemoveFlagFromGrid(gameState.Flag2, grid.System, map_values.RemoveFlag);
 				//SoundSystem.PlayFlagEffect();
 			}
-			else if(gridValue == map_values.Flag1 && worm.TeamID == map_values.Team1ID && worm.HoldsFlag > 0)
+			else if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team1ID && worm.HoldsFlag != 0)
 			{
 				gameState.RoundWinningTeam = map_values.Team1ID;
 				worm.HoldsFlag = 0;
 				//SoundSystem.PlayFlagEffect();
 			}
-			else if(gridValue == map_values.Flag2 && worm.TeamID == map_values.Team2ID && worm.HoldsFlag > 0)
+			else if(gridValue == gameState.Flag2.ID && worm.TeamID == map_values.Team2ID && worm.HoldsFlag != 0)
 			{
 				gameState.RoundWinningTeam = map_values.Team2ID;
 				worm.HoldsFlag = 0;

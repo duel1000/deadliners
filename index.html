@@ -113,15 +113,15 @@
 
 <!--CLIENT SYSTEMS-->
 <script src="/socket.io/socket.io.js"></script>
-<script src="client_js/jquery-2.1.4.min.js"></script>
-<script src="client_js/jquery-ui.min.js"></script>
-<script src="client_js/menuScreens.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/menuScreens.js"></script>
 
-<script src="client_js/soundSystem.js"></script>
-<script src="client_js/spriteAnimation.js"></script>
-<script src="client_js/animationSetup.js"></script>
-<script src="client_js/renderFunctions.js"></script>
-<script src="client_js/helperFunctions.js"></script>
+<script src="js/soundSystem.js"></script>
+<script src="js/spriteAnimation.js"></script>
+<script src="js/animationSetup.js"></script>
+<script src="js/renderFunctions.js"></script>
+<script src="js/helperFunctions.js"></script>
 
 <!--SHARED LOGIC-->
 <script src="modules/math.js"></script>
@@ -373,7 +373,7 @@ function SoundEffects()
 	{
 		for(var i = 0; i < length; i++)
 		{
-			SoundSystem.PlayHeadShotEffect();
+			SoundSystem.PlayHeadshotEffect();
 		}
 		GameState.HeadShotEffects = [];	
 	}
@@ -981,12 +981,12 @@ function update(step)
 															 map_values.RemoveWorm);
 
 						gridFunctions.RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions, GameState.Grid, map_values);
-						if(GameState.Worms[i].HoldsFlag > 0)
+						if(GameState.Worms[i].HoldsFlag != 0)
 						{
-							//TODO(Martin): The player need to have the actual flag struct.
-							//gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
-							entityFunctions.DropFlag(GameState.Worms[i]);
 							GameState.DeniedEffects.push(1);
+							gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag,
+														  GameState.Grid);
+							GameState.Worms[i].HoldsFlag = 0;
 						}
 
 						var position = GameState.Worms[i].SpawnPoint;
@@ -1030,10 +1030,13 @@ function update(step)
 				SoundSystem.ToggleTitleScreenMusic(false);
 				SoundSystem.ToggleGameMusic(true);
 
-				GameState.DrawWhite.push(new math.canvas_box(0, 
-													   map_values.ColumnNumber/2-25, map_values.ColumnNumber/2+25,
-													   map_values.RowNumber/2+25, map_values.RowNumber/2-25)); 
-				//DrawWhite(ctxBack, map_values.ColumnNumber/2-25,map_values.ColumnNumber/2+25,map_values.RowNumber/2+25,map_values.RowNumber/2-25);
+				var box = new math.canvas_box(0, 
+										      map_values.ColumnNumber/2-25,
+										      map_values.ColumnNumber/2+25,
+										      map_values.RowNumber/2+25, 
+										      map_values.RowNumber/2-25);
+
+				GameState.DrawWhite.push(box); 
 			}
 			else
 			{
@@ -1067,9 +1070,13 @@ function update(step)
 				var halfTextWidth = ctxBack.measureText(GameState.StartCounter).width;
 				var halfTextHeight = 25;
 
-				GameState.DrawWhite.push(new math.canvas_box(0, 
-													   map_values.ColumnNumber/2-halfTextWidth, map_values.ColumnNumber/2+halfTextWidth,
-													   map_values.RowNumber/2+halfTextHeight, map_values.RowNumber/2-halfTextHeight)); 
+				var box = new math.canvas_box(0, 
+										      map_values.ColumnNumber/2-halfTextWidth, 
+										      map_values.ColumnNumber/2+halfTextWidth,
+										      map_values.RowNumber/2+halfTextHeight, 
+										      map_values.RowNumber/2-halfTextHeight);
+
+				GameState.DrawWhite.push(box); 
 
 				GameState.DrawStartCounter = true;
 				GameState.StartCounter--;					

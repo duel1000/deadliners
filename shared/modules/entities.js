@@ -15,7 +15,9 @@
 		this.Position = pos;
 	};
 
-	exports.worm = function(name, keys, playerID, holeAnimations, deployAnimation, deployOutAnimation, fullDeployAnimation,  wormHeadID) 
+	exports.worm = function(name, keys, playerID, 
+							holeAnimations, deployAnimation, deployOutAnimation, 
+							fullDeployAnimation,  wormHeadID) 
 	{
 		this.Name = name;
 		this.Keys = keys;
