@@ -22,12 +22,31 @@ function PaintWalls()
 
 function DrawWhite(canvasBox)
 {
+	var canvas = 0;
+
+	switch(canvasBox.zPosition)
+	{
+		case 0:
+			canvas = ctxBack;
+			break;
+		case 1:
+			canvas = ctxMiddle;
+			break;
+		case 2:
+			canvas = ctxFront;
+			break;
+		case 3:
+			canvas = ctxDeathParticles;
+			break;
+		
+	}
+
 	for (var x = canvasBox.xLeft; x < canvasBox.xRight; x++) 
 	{
 		for (var y = canvasBox.yBot; y < canvasBox.yTop; y++) 
 		{
-			canvasBox.canvas.fillStyle = "#FFFFFF";
-			canvasBox.canvas.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
+			canvas.fillStyle = "#FFFFFF";
+			canvas.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 		}
 	}
 }

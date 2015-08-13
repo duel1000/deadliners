@@ -124,8 +124,7 @@
 <script src="client_js/helperFunctions.js"></script>
 
 <!--SHARED LOGIC-->
-<script src="client_js/math.js"></script>
-
+<script src="modules/math.js"></script>
 <script src="modules/entities.js"></script>
 <script src="modules/entityFunctions.js"></script>
 <script src="modules/gridFunctions.js"></script>
@@ -135,7 +134,7 @@
 var map_values = variables.map_values;
 var collisions = entities.collisions;
 
-var VectorFactory = new V2Factory(100);
+var VectorFactory = new math.V2Factory(100);
 
 var socket = io();
 var CLIENT_ID = 0;
@@ -511,7 +510,7 @@ function Render()
 		}
 		else
 		{
-			var randomVector = new V2();
+			var randomVector = VectorFactory.EmptyVector();
 			
 			switch(particle.Direction)
 			{
@@ -589,10 +588,10 @@ function NewGame()
 
 	//STUDY(martin): Understand new and when to use it.
 	var vectorGroup = [];
-	vectorGroup[0] = new V2();
-	vectorGroup[1] = new V2();
-	vectorGroup[2] = new V2();
-	vectorGroup[3] = new V2();
+	vectorGroup[0] = VectorFactory.EmptyVector();
+	vectorGroup[1] = VectorFactory.EmptyVector();
+	vectorGroup[2] = VectorFactory.EmptyVector();
+	vectorGroup[3] = VectorFactory.EmptyVector();
 
 	var startingPositions = [];
 
@@ -705,7 +704,8 @@ function HandleWormCollision(worm)
 		{
 			//TODO(Martin): Probably should not new them here :)
 			var particle = new entities.DeathParticle();
-			particle.P = new V2(worm.HeadPosition.x*map_values.TileSize, worm.HeadPosition.y*map_values.TileSize);
+			particle.P = VectorFactory.CustomVector(worm.HeadPosition.x*map_values.TileSize,
+												    worm.HeadPosition.y*map_values.TileSize);
 			
 			particle.SizeX = 3;
 			particle.SizeY = 3;
@@ -713,12 +713,12 @@ function HandleWormCollision(worm)
 			if(worm.CollisionType == collisions.HeadshotCollision)
 			{
 				particle.Direction = variables.directions.Spread;
-				particle.dP = new V2(9,9);
+				particle.dP = VectorFactory.CustomVector(9,9);
 			}
 			else
 			{
 				particle.Direction = worm.CurrentDirection;	
-				particle.dP = new V2(5,5);
+				particle.dP = VectorFactory.CustomVector(5,5);
 			}
 
 			if(worm.CollisionType == collisions.WallCollision || 
@@ -984,7 +984,7 @@ function update(step)
 				SoundSystem.ToggleTitleScreenMusic(false);
 				SoundSystem.ToggleGameMusic(true);
 
-				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+				GameState.DrawWhite.push(new math.canvas_box(0, 
 													   map_values.ColumnNumber/2-25, map_values.ColumnNumber/2+25,
 													   map_values.RowNumber/2+25, map_values.RowNumber/2-25)); 
 				//DrawWhite(ctxBack, map_values.ColumnNumber/2-25,map_values.ColumnNumber/2+25,map_values.RowNumber/2+25,map_values.RowNumber/2-25);
@@ -1021,7 +1021,7 @@ function update(step)
 				var halfTextWidth = ctxBack.measureText(GameState.StartCounter).width;
 				var halfTextHeight = 25;
 
-				GameState.DrawWhite.push(new CanvasBox(ctxBack, 
+				GameState.DrawWhite.push(new math.canvas_box(0, 
 													   map_values.ColumnNumber/2-halfTextWidth, map_values.ColumnNumber/2+halfTextWidth,
 													   map_values.RowNumber/2+halfTextHeight, map_values.RowNumber/2-halfTextHeight)); 
 
