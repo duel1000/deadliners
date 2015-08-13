@@ -91,6 +91,6 @@ var collisions = {
 	HeadCollision: 2,
 	WallCollision: 3,
 	HoleCollision: 4,
-	FlagCollisiion: 5,
+	FlagCollision: 5,
 	HeadshotCollision: 6
 };

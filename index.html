@@ -111,29 +111,31 @@
 </body>
 </html>
 
-<!--BROWSER SCRIPTS-->
+<!--CLIENT SYSTEMS-->
+<script src="/socket.io/socket.io.js"></script>
 <script src="client_js/jquery-2.1.4.min.js"></script>
 <script src="client_js/jquery-ui.min.js"></script>
 <script src="client_js/menuScreens.js"></script>
 
-<!--CLIENT SYSTEMS-->
-<script src="/socket.io/socket.io.js"></script>
 <script src="client_js/soundSystem.js"></script>
 <script src="client_js/spriteAnimation.js"></script>
 <script src="client_js/animationSetup.js"></script>
 <script src="client_js/renderFunctions.js"></script>
+<script src="client_js/helperFunctions.js"></script>
 
 <!--SHARED LOGIC-->
 <script src="client_js/math.js"></script>
-<script src="client_js/helperFunctions.js"></script>
-<script src="client_js/entities.js"></script>
-<script src="client_js/entityFunctions.js"></script>
 
+<script src="modules/entities.js"></script>
+<script src="modules/entityFunctions.js"></script>
 <script src="modules/gridFunctions.js"></script>
 <script src="modules/variables.js"></script>
 <script>
 
 var map_values = variables.map_values;
+var collisions = entities.collisions;
+
+var VectorFactory = new V2Factory(100);
 
 var socket = io();
 var CLIENT_ID = 0;
@@ -207,18 +209,18 @@ function GameState()
 
 	this.hole_count = new variables.hole_count();
 
-	this.Grid = new grid_2D(map_values.ColumnNumber, map_values.RowNumber);
+	this.Grid = new entities.grid_2D(map_values.ColumnNumber, map_values.RowNumber);
 	
 	this.Worms = [];
 
 
-	this.Team1 = new team(1);
-	this.Team2 = new team(2);
+	this.Team1 = new entities.team(1);
+	this.Team2 = new entities.team(2);
 
-	this.Flag1 = new flag(map_values.Flag1, map_values.FlagSize, 
+	this.Flag1 = new entities.flag(map_values.Flag1, map_values.FlagSize, 
 					      map_values.FlagSize, map_values.Flag1Position);
 
-	this.Flag2 = new flag(map_values.Flag2, map_values.FlagSize, 
+	this.Flag2 = new entities.flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
 
 	//Handles for Render()	
@@ -231,6 +233,8 @@ function GameState()
 	this.RenderWinnerText = false;
 
 	//TODO(Martin): Handles for Music
+	this.CrashEffects = [];
+	this.DeniedEffects = [];
 }
 
 var GameState = new GameState();
@@ -269,25 +273,25 @@ function init()
 
 	if(GameState.NumberOfWorms >= 1)
 	{
-		GameState.Worms[0] = new worm(GameState.PlayerNames[0], Player1Keys, 1, worm1HoleAnimations,
+		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], Player1Keys, 1, worm1HoleAnimations,
 					deployAnimation1, deployOutAnimation1, fullDeployAnimation1,
 					map_values.Worm1Head);
 	}
 	if(GameState.NumberOfWorms >= 2)
 	{
-		GameState.Worms[1] = new worm(GameState.PlayerNames[1], Player2Keys, 2, worm2HoleAnimations,
+		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], Player2Keys, 2, worm2HoleAnimations,
 					deployAnimation2, deployOutAnimation2, fullDeployAnimation2,
 					map_values.Worm2Head);
 	}
 	if(GameState.NumberOfWorms >= 3)
 	{		
-		GameState.Worms[2] = new worm(GameState.PlayerNames[2], Player3Keys, 3, worm3HoleAnimations,
+		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], Player3Keys, 3, worm3HoleAnimations,
 					deployAnimation3, deployOutAnimation3, fullDeployAnimation3,
 					map_values.Worm3Head);
 	}
 	if(GameState.NumberOfWorms == 4)
 	{
-		GameState.Worms[3] = new worm(GameState.PlayerNames[3], Player4Keys, 4, worm4HoleAnimations,
+		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4, worm4HoleAnimations,
 					deployAnimation4, deployOutAnimation4, fullDeployAnimation4,
 					map_values.Worm4Head);
 	}
@@ -318,6 +322,26 @@ function init()
 	}
 
 	gameloop();
+}
+
+function SoundEffects()
+{
+	if(GameState.CrashEffects.length > 0)
+	{
+		for(var i = 0; i < GameState.CrashEffects.length; i++)
+		{
+			SoundSystem.PlayCrashEffect();
+		}
+		GameState.CrashEffects = [];	
+	}
+	if(GameState.DeniedEffects.length > 0)
+	{
+		for(var i = 0; i < GameState.DeniedEffects.length; i++)
+		{
+			SoundSystem.PlayDeniedEffect();
+		}
+		GameState.DeniedEffects = [];	
+	}
 }
 
 function Render()
@@ -545,6 +569,8 @@ function Render()
 
 function NewGame()
 {
+	VectorFactory.Reboot();
+
 	GameState.CurrentGamePoints = 0;
 	GameState.DeadWormsCounter = 0;
 
@@ -589,59 +615,43 @@ function NewGame()
 		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
 	}
 
-	if(GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag)
-	{
-		GameState.RoundWinningTeam = 0;
+	GameState.RoundWinningTeam = 0;
 
-		for (var i=0; i < GameState.NumberOfWorms; i++) 
-		{
-			//TODO(martin): This is pretty bad :)
-			if(i == 0)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Down, GameState.Team1.ID);
-			}
-			else if(i == 1)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Up, GameState.Team1.ID);
-			}
-			else if(i == 2)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Down, GameState.Team2.ID);
-			}
-			else if(i == 3)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], variables.directions.Up, GameState.Team2.ID);
-			}
-		}
-	}
-	else 
+	for (var i=0; i < GameState.NumberOfWorms; i++) 
 	{
-		for (var i=0; i<GameState.NumberOfWorms; i++) 
+		//TODO(martin): This is pretty bad :)
+		if(i == 0)
 		{
-			//TODO(martin): This is pretty bad :)
-			if(i == 0)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
-			}
-			else if(i == 1)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
-			}
-			else if(i == 2)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
-			}
-			else if(i == 3)
-			{
-				InitializeWorm(GameState.Worms[i], startingPositions[i], null, null);
-			}
-		};
+			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
+			 			   variables.directions.Down, GameState.Team1.ID,
+			 			   VectorFactory, GameState.hole_count.Amount);
+		}
+		else if(i == 1)
+		{
+			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
+			 			   variables.directions.Up, GameState.Team1.ID,
+			 			   VectorFactory, GameState.hole_count.Amount);
+		}
+		else if(i == 2)
+		{
+			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
+						   variables.directions.Down, GameState.Team2.ID,
+						   VectorFactory, GameState.hole_count.Amount);
+		}
+		else if(i == 3)
+		{
+			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i], 
+						   variables.directions.Up, GameState.Team2.ID,
+						   VectorFactory, GameState.hole_count.Amount);
+		}
 	}
 
 	//TODO(Martin): Should not be WORM1CELL but different heads.
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
-		gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, GameState.Worms[i].HeadPosition.x, GameState.Worms[i].HeadPosition.y);
+		gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, 
+								   GameState.Worms[i].HeadPosition.x, 
+								   GameState.Worms[i].HeadPosition.y);
 	}
 
 	GameState.GameStarted = false;
@@ -668,6 +678,7 @@ function gameloop()
 	}
 
 	//render(dt); //NOTE(martin): Used for LERP.
+	SoundEffects();
 	Render();
 	last = now;
 	
@@ -693,7 +704,7 @@ function HandleWormCollision(worm)
 			ParticleSpawnIndex++)
 		{
 			//TODO(Martin): Probably should not new them here :)
-			var particle = new DeathParticle();
+			var particle = new entities.DeathParticle();
 			particle.P = new V2(worm.HeadPosition.x*map_values.TileSize, worm.HeadPosition.y*map_values.TileSize);
 			
 			particle.SizeX = 3;
@@ -725,7 +736,8 @@ function HandleWormCollision(worm)
 			GameState.DeathParticles.push(particle);
 		}
 
-		Kill(worm, true);
+		entityFunctions.Kill(worm);
+		GameState.CrashEffects.push(1);
 		GameState.WormsDiedThisRound.push(worm);
 	}	
 }
@@ -752,7 +764,7 @@ function update(step)
 		{
 			if(GameState.Worms[i].Alive)
 			{
-				UpdateWormPosition(GameState.Worms[i]);
+				entityFunctions.UpdateWormPosition(GameState.Worms[i], variables.directions, VectorFactory);
 
 				if(GameState.Worms[i].JustShotHole)
 				{	
@@ -783,17 +795,26 @@ function update(step)
 		{
 			if(GameState.Worms[i].Alive)
 			{
-				gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, 
-											   map_values, collisions, GameState);
+				if(gridFunctions.CheckHeadShotCollision(GameState.Worms[i], GameState.Grid, 
+													 	map_values))
+				{
+					GameState.Worms[i].CollisionType = collisions.HeadShotCollision;
+					SoundSystem.PlayHeadshotEffect();
+				}
+				else
+				{
+					gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, 
+												   map_values, collisions, GameState);
+				}
+
 			}
 		}		
 
 		for(var i = 0; i < GameState.NumberOfWorms; i++)
 		{
-			HandleWormCollision(GameState.Worms[i]);
-
 			if(GameState.Worms[i].Alive)
 			{
+				HandleWormCollision(GameState.Worms[i]);
 				gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
 										   GameState.Worms[i].HeadPosition.x, 
 										   GameState.Worms[i].HeadPosition.y);
@@ -803,7 +824,7 @@ function update(step)
 		for(var i = 0; i < GameState.WormsDiedThisRound.length; i++)
 		{
 			GameState.DeadWormsCounter++;
-			ScorePoint(GameState.WormsDiedThisRound[i], GameState.CurrentGamePoints);
+			entityFunctions.ScorePoint(GameState.WormsDiedThisRound[i], GameState.CurrentGamePoints);
 		}
 		GameState.CurrentGamePoints += GameState.WormsDiedThisRound.length;
 		GameState.WormsDiedThisRound = [];
@@ -818,9 +839,10 @@ function update(step)
 				{
 					if(GameState.Worms[w].Alive)
 					{
-						Kill(GameState.Worms[w], true);
+						entityFunctions.Kill(GameState.Worms[w]);
+						GameState.CrashEffects.push(1);
 						GameState.DeadWormsCounter++;
-						ScorePoint(GameState.Worms[w], GameState.CurrentGamePoints);
+						entityFunctions.ScorePoint(GameState.Worms[w], GameState.CurrentGamePoints);
 					}
 				}
 
@@ -858,8 +880,10 @@ function update(step)
 			{
 				GameState.GameStarted = false;
 				GameState.RoundWinningTeam = 2;
-				Kill(GameState.Worms[2], true);
-				Kill(GameState.Worms[3], true);
+				entityFunctions.Kill(GameState.Worms[2]);
+				entityFunctions.Kill(GameState.Worms[3]);
+				GameState.CrashEffects.push(1);
+				GameState.CrashEffects.push(1);
 				UpdateScoreboard();
 				if(GameState.Team2.TeamScore >= variables.VictoryPoints.CurrentValue)
 				{
@@ -873,8 +897,10 @@ function update(step)
 			{
 				GameState.GameStarted = false;
 				GameState.RoundWinningTeam = 1;
-				Kill(GameState.Worms[0], true);
-				Kill(GameState.Worms[1], true);
+				entityFunctions.Kill(GameState.Worms[0]);
+				entityFunctions.Kill(GameState.Worms[1]);
+				GameState.CrashEffects.push(1);
+				GameState.CrashEffects.push(1);
 				UpdateScoreboard();
 				if(GameState.Team1.TeamScore >= variables.VictoryPoints.CurrentValue)
 				{
@@ -890,10 +916,10 @@ function update(step)
 			if(GameState.RoundWinningTeam == 1 || GameState.RoundWinningTeam == 2)
 			{
 				GameState.GameStarted = false;
-				Kill(GameState.Worms[0], false);
-				Kill(GameState.Worms[1], false);
-				Kill(GameState.Worms[2], false);
-				Kill(GameState.Worms[3], false);
+				entityFunctions.Kill(GameState.Worms[0]);
+				entityFunctions.Kill(GameState.Worms[1]);
+				entityFunctions.Kill(GameState.Worms[2]);
+				entityFunctions.Kill(GameState.Worms[3]);
 				UpdateScoreboard();
 			}
 			else
@@ -913,11 +939,16 @@ function update(step)
 						{
 							//TODO(Martin): The player need to have the actual flag struct.
 							//gridFunctions.SetFlagOntoGrid(GameState.Worms[i].HoldsFlag);
-							DropFlag(GameState.Worms[i]);
+							entityFunctions.DropFlag(GameState.Worms[i]);
+							GameState.DeniedEffects.push(1);
 						}
 
 						var position = GameState.Worms[i].SpawnPoint;
-						Respawn(GameState.Worms[i], 1300);
+
+						entityFunctions.Respawn(GameState.Worms[i], 1300, 
+												GameState.hole_count.Amount,
+												VectorFactory);
+
 						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
 						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
 						
@@ -1013,7 +1044,7 @@ function ExitGameToTitlescreen()
 	GameState.StartCounter = variables.StartCounter;
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
-		Kill(GameState.Worms[i], false);
+		entityFunctions.Kill(GameState.Worms[i]);
 	}
 }
 
@@ -1025,29 +1056,34 @@ function HandleWormKeyInput(gameStarted)
 		{
 			if(keystate[GameState.Worms[i].Keys.LeftKey])
 			{
-				ChangeDirection(GameState.Worms[i], variables.directions.Left);
+				entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+												variables.directions.Left);
 			}
 			else if(keystate[GameState.Worms[i].Keys.UpKey])
 			{
-				ChangeDirection(GameState.Worms[i], variables.directions.Up);
+				entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+												variables.directions.Up);
 			}
 			else if(keystate[GameState.Worms[i].Keys.RightKey])
 			{
-				ChangeDirection(GameState.Worms[i], variables.directions.Right);
+				entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+												variables.directions.Right);
 			}
 			else if(keystate[GameState.Worms[i].Keys.DownKey])
 			{
-				ChangeDirection(GameState.Worms[i], variables.directions.Down);
+				entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+												variables.directions.Down);
 			}
 
 			if(keystate[GameState.Worms[i].Keys.SpecialKey])
 			{
-				ShootWhiteHole(GameState.Worms[i]);
+				entityFunctions.ShootWhiteHole(GameState.Worms[i], variables.directions, map_values);
 			}
 			
 			if(keystate[GameState.Worms[i].Keys.ShotKey])
 			{	
-				ShootHole(GameState.Worms[i]);
+				entityFunctions.ShootHole(GameState.Worms[i], variables.directions, 
+						  				  map_values.HoleRange, VectorFactory);
 			}
 		}
 	}

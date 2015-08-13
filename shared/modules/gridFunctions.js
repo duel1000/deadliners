@@ -1,9 +1,3 @@
-/*var variables = require('./variables.js');
-var map_values = variables.map_values;
-var entities = require('./entities.js');
-var entityFunctions = require('./entityFunctions.js');
-var math = require('./math.js');*/
-
 (function (exports) 
 {
 	exports.Initiate2Dgrid = function(grid, emptyValue)
@@ -121,114 +115,63 @@ var math = require('./math.js');*/
 	{
 		var centerpoint = worm.HolePosition;
 
-		//if(GameState.GameMode == game_modes.FreeForAll || GameState.GameMode == game_modes.TwoOnTwo)
-		//{
-			for(var x = 0; x < map_values.HoleSize; x++) 
+		for(var x = 0; x < map_values.HoleSize; x++) 
+		{
+			for (var y = 0; y < map_values.HoleSize; y++) 
 			{
-				for (var y = 0; y < map_values.HoleSize; y++) 
+				var leftSideOfHolePosition = Math.round(centerpoint.x + x - (map_values.HoleSize/2));
+				var topSideOfHolePosition = Math.round(centerpoint.y + y - (map_values.HoleSize/2));
+
+				if(InsideGrid(grid, leftSideOfHolePosition, topSideOfHolePosition))
 				{
-					var leftSideOfHolePosition = Math.round(centerpoint.x + x - (map_values.HoleSize/2));
-					var topSideOfHolePosition = Math.round(centerpoint.y + y - (map_values.HoleSize/2));
-
-					if(InsideGrid(grid, leftSideOfHolePosition, topSideOfHolePosition))
+					var gridValue = grid.System[leftSideOfHolePosition][topSideOfHolePosition];
+					
+					if(gridValue != map_values.Flag1 && 
+					   gridValue != map_values.Flag2)
 					{
-						var gridValue = grid.System[leftSideOfHolePosition][topSideOfHolePosition];
-						
-						//TODO(Martin): Put elsewhere?
-						/*for(var i = 0; i < GameState.NumberOfWorms; i++)
-						{
-							if(gridValue == GameState.Worms[i].HeadID)
-							{
-								entityFunctions.AddKill(worm);
-								GameState.Worms[i].CollisionType = entities.collisions.HeadShotCollision;
-								entityFunctions.HandleWormCollision(GameState.Worms[i]);
-							}
-						}*/
-
 						grid.System[leftSideOfHolePosition][topSideOfHolePosition] = map_values.Hole;
 					}
 				}
-			}	
-		//}
-		/*else if(GameState.GameMode == game_modes.CaptureTheFlag)
-		{
-			for (var x=0; x<map_values.HoleSize; x++) 
-			{
-				for (var y=0; y<map_values.HoleSize; y++) 
-				{
-					var leftSideOfHolePosition = Math.round(centerpoint.x + x - (map_values.HoleSize/2));
-					var topSideOfHolePosition = Math.round(centerpoint.y + y - (map_values.HoleSize/2));
-
-					if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
-					{
-						var gridValue = GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition];
-						
-						if(gridValue != map_values.Flag1 && 
-						   gridValue != map_values.Flag2)
-						{
-							GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = map_values.Hole;
-						}
-
-						for(var i = 0; i < GameState.NumberOfWorms; i++)
-						{
-							if(gridValue == GameState.Worms[i].HeadID)
-							{
-								entityFunctions.AddKill(worm);
-								GameState.Worms[i].CollisionType = entities.collisions.HeadShotCollision;
-								entityFunctions.HandleWormCollision(GameState.Worms[i]);
-							}
-						}
-					}
-				}
 			}
-		}*/
+		}	
 	}
 
-	//TODO(Martin): Game_MODE pattern problems.
+	exports.CheckHeadShotCollision = function(worm, grid, map_values)
+	{
+		var gridValue = grid.System[worm.HeadPosition.x][worm.HeadPosition.y]; 
+
+		if(gridValue == map_values.Hole)
+		{
+			return(true);
+		}
+		else
+		{
+			return(false);
+		}
+	}
+
 	exports.SetWhiteHoleInGrid = function(centerpoint, grid, map_values)
 	{	
-		/*if(GameState.GameMode == game_modes.FreeForAll || GameState.GameMode == game_modes.TwoOnTwo)
+		for (var x=0; x < map_values.WhiteHoleSize; x++) 
 		{
-			for (var x=0; x<WHITE_HOLE_SIZE; x++) 
+			for (var y=0; y < map_values.WhiteHoleSize; y++) 
 			{
-				for (var y=0; y<WHITE_HOLE_SIZE; y++) 
-				{
-					var leftSideOfHolePosition = Math.round(centerpoint.x+x-WHITE_HOLE_SIZE/2);
-					var topSideOfHolePosition = Math.round(centerpoint.y+y-WHITE_HOLE_SIZE/2);
+				var leftSideOfHolePosition = Math.round(centerpoint.x+x-map_values.WhiteHoleSize/2);
+				var topSideOfHolePosition =  Math.round(centerpoint.y+y-map_values.WhiteHoleSize/2);
 
-					if(InsideGrid(leftSideOfHolePosition, topSideOfHolePosition))
+				if(InsideGrid(grid, leftSideOfHolePosition, topSideOfHolePosition))
+				{
+					var value = grid.System[leftSideOfHolePosition][topSideOfHolePosition]; 
+					
+					if(value != map_values.StaticWallDrawn && 
+					   value != map_values.Flag1 && 
+					   value != map_values.Flag2) 
 					{
-						if(GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] != STATIC_WALL_DRAWN)
-						{
-							GameState.Grid[leftSideOfHolePosition][topSideOfHolePosition] = WHITE_HOLE;
-						}
+						grid.System[leftSideOfHolePosition][topSideOfHolePosition] = map_values.WhiteHole;
 					}
 				}
 			}
 		}
-		else if(GameState.GameMode == game_modes.CAPTURE_THE_FLAG)
-		{*/
-			for (var x=0; x < map_values.WhiteHoleSize; x++) 
-			{
-				for (var y=0; y < map_values.WhiteHoleSize; y++) 
-				{
-					var leftSideOfHolePosition = Math.round(centerpoint.x+x-map_values.WhiteHoleSize/2);
-					var topSideOfHolePosition =  Math.round(centerpoint.y+y-map_values.WhiteHoleSize/2);
-
-					if(InsideGrid(grid, leftSideOfHolePosition, topSideOfHolePosition))
-					{
-						var value = grid.System[leftSideOfHolePosition][topSideOfHolePosition]; 
-						
-						if(value != map_values.StaticWallDrawn && 
-						   value != map_values.Flag1 && 
-						   value != map_values.Flag2) 
-						{
-							grid.System[leftSideOfHolePosition][topSideOfHolePosition] = map_values.WhiteHole;
-						}
-					}
-				}
-			}
-		//}
 	}
 
 	exports.TOTstartingPositions = function(vectorGroup, grid)
@@ -351,39 +294,39 @@ var math = require('./math.js');*/
 			worm.Path.pop();
 			worm.CollisionType = collisions.HoleCollision;	
 		}
-		/*else if(GameState.GameMode == variables.game_modes.CaptureTheFlag && 
+		else if(gameState.GameMode == 3 && 
 			   (gridValue == map_values.Flag1 || gridValue == map_values.Flag2))
 		{	
 			worm.Path.pop();
 			if(gridValue == map_values.Flag1 && worm.TeamID == map_values.Team2ID)
 			{
 				worm.HoldsFlag = map_values.Flag1;
-				RemoveFlagFromGrid(map_values.Flag1);
-				SoundSystem.PlayFlagEffect();
+				this.RemoveFlagFromGrid(gameState.Flag1, grid.System, map_values.RemoveFlag);
+				//SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == map_values.Flag2 && worm.TeamID == map_values.Team1ID)
 			{
 				worm.HoldsFlag = map_values.Flag2;
-				RemoveFlagFromGrid(map_values.Flag2);
-				SoundSystem.PlayFlagEffect();
+				this.RemoveFlagFromGrid(gameState.Flag2, grid.System, map_values.RemoveFlag);
+				//SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == map_values.Flag1 && worm.TeamID == map_values.Team1ID && worm.HoldsFlag > 0)
 			{
-				GameState.RoundWinningTeam = map_values.Team1ID;
+				gameState.RoundWinningTeam = map_values.Team1ID;
 				worm.HoldsFlag = 0;
-				SoundSystem.PlayFlagEffect();
+				//SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == map_values.Flag2 && worm.TeamID == map_values.Team2ID && worm.HoldsFlag > 0)
 			{
-				GameState.RoundWinningTeam = map_values.Team2ID;
+				gameState.RoundWinningTeam = map_values.Team2ID;
 				worm.HoldsFlag = 0;
-				SoundSystem.PlayFlagEffect();
+				//SoundSystem.PlayFlagEffect();
 			}
 			else
 			{	
-				worm.CollisionType = entities.collisions.FlagCollision;
+				worm.CollisionType = collisions.FlagCollision;
 			}
-		}*/
+		}
 		else if(gridValue > 0)
 		{
 			worm.Path.pop();

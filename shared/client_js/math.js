@@ -27,6 +27,49 @@ V2.prototype.getLength = function ()
 	return(Math.sqrt(this.x * this.x + this.y * this.y));
 };
 
+function V2Factory(amount)
+{
+	var that = {};
+
+	var Vectors = [];
+	var NextInProduction = 0;
+
+	for(var i = 0; i < amount; i++)
+	{
+		Vectors[i] = new V2(0,0);
+	}
+
+	that.CustomVector = function(x,y)
+	{
+		/*var result = 0;
+		NextInProduction++;
+
+		result = Vectors[NextInProduction]; 
+		result.x = x;
+		result.y = y;*/
+		
+		return(new V2(x,y));
+	};
+
+	that.EmptyVector = function()
+	{
+		//return(Vectors[NextInProduction++]);
+		return(new V2(0,0));
+	};
+
+	that.Reboot = function()
+	{
+		var EarlierLimit = Vectors.length;
+		Vectors = [];
+		for(var i = 0; i < EarlierLimit; i++)
+		{
+			Vectors[i] = new V2(0,0);
+		}
+	};
+
+	return(that);
+}
+
 function CanvasBox(canvas, xLeft, xRight, yTop, yBot)
 {
 	this.canvas = canvas;
