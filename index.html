@@ -212,7 +212,6 @@ function GameState()
 	
 	this.Worms = [];
 
-
 	this.Team1 = new entities.team(1);
 	this.Team2 = new entities.team(2);
 
@@ -234,6 +233,10 @@ function GameState()
 	//TODO(Martin): Handles for Music
 	this.CrashEffects = [];
 	this.DeniedEffects = [];
+	this.ShotEffects = [];
+	this.WhiteShotEffects = [];
+	this.HeadShotEffects = [];
+	this.CountDownEffects = [];
 }
 
 var GameState = new GameState();
@@ -325,21 +328,64 @@ function init()
 
 function SoundEffects()
 {
-	if(GameState.CrashEffects.length > 0)
+	var length = GameState.CrashEffects.length; 
+	if(length > 0)
 	{
-		for(var i = 0; i < GameState.CrashEffects.length; i++)
+		for(var i = 0; i < length; i++)
 		{
 			SoundSystem.PlayCrashEffect();
 		}
 		GameState.CrashEffects = [];	
 	}
-	if(GameState.DeniedEffects.length > 0)
+
+	length = GameState.DeniedEffects.length; 
+	if(length > 0)
 	{
-		for(var i = 0; i < GameState.DeniedEffects.length; i++)
+		for(var i = 0; i < length; i++)
 		{
 			SoundSystem.PlayDeniedEffect();
 		}
 		GameState.DeniedEffects = [];	
+	}
+
+	length = GameState.ShotEffects.length; 
+	if(length > 0)
+	{
+		for(var i = 0; i < length; i++)
+		{
+			SoundSystem.PlayShotEffect();
+		}
+		GameState.ShotEffects = [];	
+	}
+
+	length = GameState.WhiteShotEffects.length; 
+	if(length > 0)
+	{
+		for(var i = 0; i < length; i++)
+		{
+			SoundSystem.PlayWhiteShotEffect();
+		}
+		GameState.WhiteShotEffects = [];	
+	}
+
+	length = GameState.HeadShotEffects.length;
+	if(length > 0)
+	{
+		for(var i = 0; i < length; i++)
+		{
+			SoundSystem.PlayHeadShotEffect();
+		}
+		GameState.HeadShotEffects = [];	
+	}
+
+	length = GameState.CountDownEffects.length; 
+	if(length > 0)
+	{
+		for(var i = 0; i < length; i++)
+		{
+			SoundSystem.PlayCountDownEffect();
+		}
+		GameState.CountDownEffects = [];	
 	}
 }
 
@@ -768,7 +814,7 @@ function update(step)
 
 				if(GameState.Worms[i].JustShotHole)
 				{	
-					SoundSystem.PlayShotEffect();
+					GameState.ShotEffects.push(1);
 					GameState.Worms[i].JustShotHole = false;
 					var holeAnimation = GameState.Worms[i].getHoleAnimation();  
 					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
@@ -779,7 +825,7 @@ function update(step)
 
 				if(GameState.Worms[i].JustShotWhiteHole)
 				{	
-					SoundSystem.PlayWhiteShotEffect();
+					GameState.WhiteShotEffects.push(1);
 					GameState.Worms[i].JustShotWhiteHole = false;
 					gridFunctions.SetWhiteHoleInGrid(GameState.Worms[i].WhiteHolePosition, GameState.Grid, map_values);
 
@@ -799,7 +845,7 @@ function update(step)
 													 	map_values))
 				{
 					GameState.Worms[i].CollisionType = collisions.HeadShotCollision;
-					SoundSystem.PlayHeadshotEffect();
+					GameState.HeadShotEffects.push(1);
 				}
 				else
 				{
@@ -993,7 +1039,7 @@ function update(step)
 			{
 				if(GameState.StartCounter == 5)
 				{
-					SoundSystem.PlayCountDownEffect();
+					GameState.CountDownEffects.push(1);
 				}
 				
 				//NOTE(martin): puts in the players in order of the counter
@@ -1159,7 +1205,6 @@ We need to remake the entire screen layout + transitions between screens:
 No æøå in name input (no sound effect when pressed)
 
 TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-Figure out what pattern to use for gamemode
 Titlescreen update + create customization screen
 Start making statistics: Headshot, most kills, deaths, who killed who etc.
 Vectorize the grid?
@@ -1174,6 +1219,7 @@ STUDY(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
 map_values.TileSize is 3, but the renderer should actually not skip the 3 pixels?
 
 DONE(ALL):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Figure out what pattern to use for gamemode
 Cannot start in opposite random direction
 So.. the grid in Y direction is very very long? Why? It actually wasnt, but the grid was set to expand. 
 Update the game to using vectors instead of X and Y coordinates all over the place.
