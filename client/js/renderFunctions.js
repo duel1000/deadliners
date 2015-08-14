@@ -1,4 +1,3 @@
-//TODO(Martin): This should be put in the Renderer somehow?
 function PaintWhiteCanvasses()
 {
 	ctxBack.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
@@ -7,7 +6,6 @@ function PaintWhiteCanvasses()
 	ctxDeathParticles.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
 }
 
-//TODO(Martin): This should be put in the Renderer somehow?
 function PaintWalls()
 {
 	for (var x = 1; x < map_values.ColumnNumber - 1; x++) 
@@ -20,7 +18,7 @@ function PaintWalls()
 	}
 }
 
-function DrawWhite(canvasBox)
+function DrawWhiteBox(canvasBox)
 {
 	var canvas = 0;
 

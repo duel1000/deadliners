@@ -226,7 +226,7 @@ function GameState()
 	this.DeathParticles = [];
 	this.PaintWalls = false;
 	this.PaintWhiteCanvasses = false;
-	this.DrawWhite = [];
+	this.DrawWhiteBox = [];
 	this.DrawStartCounter = false;
 	this.RenderWinnerText = false;
 
@@ -391,26 +391,25 @@ function SoundEffects()
 
 function Render()
 {
-	//NOTE(Martin): "Meta functions".
 	if(GameState.PaintWhiteCanvasses) 
 	{ 
 		PaintWhiteCanvasses();
 		GameState.PaintWhiteCanvasses = false; 
 	}
-	
+
 	if(GameState.PaintWalls) 
 	{ 
 		PaintWalls();
 		GameState.PaintWalls = false; 
 	}
 
-	if(GameState.DrawWhite.length > 0) 
+	if(GameState.DrawWhiteBox.length > 0) 
 	{ 
-		for(var i = 0; i < GameState.DrawWhite.length; i++)
+		for(var i = 0; i < GameState.DrawWhiteBox.length; i++)
 		{
-			DrawWhite(GameState.DrawWhite[i]); 
+			DrawWhiteBox(GameState.DrawWhiteBox[i]); 
 		}
-		GameState.DrawWhite = [];
+		GameState.DrawWhiteBox = [];
 	}
 
 	if(GameState.DrawStartCounter)
@@ -443,83 +442,88 @@ function Render()
 	}
 
 	//NOTE(Martin): Actual grid drawing functions
-	for (var x = 0; x < map_values.ColumnNumber; x++) 
+	var WidthLength = GameState.Grid.Width;
+	var HeightLenth = GameState.Grid.Height;
+	for (var x = 0; x < WidthLength; x++) 
 	{
-		for (var y = 0; y < map_values.RowNumber; y++) 
+		for (var y = 0; y < HeightLenth; y++) 
 		{
-			switch (gridFunctions.GetGridValue(GameState.Grid, x, y)) 
+			var GridValue = gridFunctions.GetGridValue(GameState.Grid, x, y);
+			switch (GridValue) 
 			{
 				case map_values.Worm1Cell:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWorm1Cell, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWorm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm1Head:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm2Head:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm2Cell, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm2Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm3Head:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm3Cell, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm3Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm4Head:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Worm4Cell, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm4Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Hole:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnHole, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnHole, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.WhiteHole:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					ctxFront.clearRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Wall:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWall, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWall, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.StaticWall:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.StaticWallDrawn, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.StaticWallDrawn, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveFlag:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Flag1:
+					//TODO(Martin): It keeps drawing flag?
 					ctxBack.fillStyle = "#FF0000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Flag2:
+					//TODO(Martin): It keeps drawing flag?
 					ctxBack.fillStyle = "#FF0000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveWorm:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveHole:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.ClearAll:
-					gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
@@ -705,6 +709,7 @@ function NewGame()
 //STUDY(martin): Get comfortable with this.
 //NOTE(martin): http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
 var now, dt = 0, last = timestamp(), step = variables.game_speeds.CurrentSpeed;
+var TimesRun = 0;
 function gameloop()
 {	
 	now = timestamp();
@@ -716,6 +721,11 @@ function gameloop()
 		step = variables.game_speeds.CurrentSpeed;
 	}
 
+	if(TimesRun > 0)
+	{
+		gridFunctions.ClearGridBuffer(GameState, map_values);
+	}
+
 	while(dt > step) 
 	{
 		dt = dt - step;
@@ -725,6 +735,7 @@ function gameloop()
 	//render(dt); //NOTE(martin): Used for LERP.
 	SoundEffects();
 	Render();
+	TimesRun++;
 	last = now;
 	
 	requestAnimationFrame(gameloop);
@@ -862,8 +873,8 @@ function update(step)
 			{
 				HandleWormCollision(GameState.Worms[i]);
 				gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
-										   GameState.Worms[i].HeadPosition.x, 
-										   GameState.Worms[i].HeadPosition.y);
+												   GameState.Worms[i].HeadPosition.x, 
+												   GameState.Worms[i].HeadPosition.y);
 			}
 		}
 
@@ -977,7 +988,7 @@ function update(step)
 						GameState.Worms[i].IsRespawning = true;
 
 						gridFunctions.RemoveWormPathFromGrid(GameState.Worms[i].Path, 
-															 GameState.Grid.System, 
+															 GameState.Grid, 
 															 map_values.RemoveWorm);
 
 						gridFunctions.RemoveWormHolesFromGrid(GameState.Worms[i].HolePositions, GameState.Grid, map_values);
@@ -999,7 +1010,7 @@ function update(step)
 						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
 						
 						gridFunctions.ClearSpawnpointFromGrid(position, 
-															  GameState.Grid.System, 
+															  GameState.Grid, 
 															  map_values.ClearAll);
 					}
 				}
@@ -1036,7 +1047,7 @@ function update(step)
 										      map_values.RowNumber/2+25, 
 										      map_values.RowNumber/2-25);
 
-				GameState.DrawWhite.push(box); 
+				GameState.DrawWhiteBox.push(box); 
 			}
 			else
 			{
@@ -1076,7 +1087,7 @@ function update(step)
 										      map_values.RowNumber/2+halfTextHeight, 
 										      map_values.RowNumber/2-halfTextHeight);
 
-				GameState.DrawWhite.push(box); 
+				GameState.DrawWhiteBox.push(box); 
 
 				GameState.DrawStartCounter = true;
 				GameState.StartCounter--;					
@@ -1195,80 +1206,4 @@ function UpdateScoreboard()
 		}
 	}
 }
-/*
-TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-Sort out the sound effects, so they fit with the game.
-Less annoying soundtrack - Aslak
-Random starting position 3 player mode
-
-TODO(Nicolai):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-When canvas size changes, so does the position of canvasses. We need them to be positioned dynamically.
-Align gamepoints with canvas -> Different monitors?
-We need to remake the entire screen layout + transitions between screens:
-	- Screen 1: How many players? What Gamemode? Fullscreen button.
-	- Screen 2: Player names, customize button, start game.
-	- Screen 3: Gamescreen, return to the other screens.
-	- Screen 4: Game statistics -> Show who did what in the game. Headshots etc.
-No æøå in name input (no sound effect when pressed)
-
-TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-Titlescreen update + create customization screen
-Start making statistics: Headshot, most kills, deaths, who killed who etc.
-Vectorize the grid?
-AI player
-
-BUGS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-(Martin): Holding down the hole-button is weird
-(Martin): Holeanimation can appear outside the grid.
-(Martin): Sometimes in capture the flag spawn point changes.
-
-STUDY(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-map_values.TileSize is 3, but the renderer should actually not skip the 3 pixels?
-
-DONE(ALL):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-Figure out what pattern to use for gamemode
-Cannot start in opposite random direction
-So.. the grid in Y direction is very very long? Why? It actually wasnt, but the grid was set to expand. 
-Update the game to using vectors instead of X and Y coordinates all over the place.
-HEADSHOT!!!!
-Particle system upon death
-Player icons need to shift with player points when the round ends.
-2v2 capture the flag mode
-2v2 mode
-(Nicolai): Icons at the start menu should be aligned with the input fields
-Calculate if the whiteshotanimation fits with what gets removed
-Shot->popanimation
-Show how many points each player gets per round "fastcreamer 12 (+3)"
-Animations are not perfectly aligned with the actual hit-pixels
-Volume slider x 2
-Shotanimation + blackhole -> only when shot inside map
-Show player controls	
-Holes are not removed when new game is run
-Sometimes the points per game does not show until next round
-Simultaneous death points
-Victory points
-Restart game
-You can white hole the wall and get out of the grid.
-Create STATIC_WALLs to limit where the player can go
-study - Map draws black all the time?
-Larger grid + whitehole removable edges
-White space animation
-Map generation starts wall weird
-Press N for starting the game
-White space
-Align player points in the right side
-Put in new sound effect
-Placement animation
-Sound effects
-Assign all 4 player keys
-Layout title screen
-No new game before only 1 player remains
-Random symmetrical starting position
-Who is who when the game starts
-Music - titlemusic + gamemusic 
-Random starting positions
-Equal names not allowed
-4 player mode
-*/
-
 </script>

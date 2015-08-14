@@ -29,9 +29,68 @@
 		}
 	}
 
+	exports.ClearGridBuffer = function(gameState, map_values)
+	{
+		var GridBuffer = gameState.Grid.GridBuffer;
+		var BufferLength = GridBuffer.length;
+
+		for(var i = 0; i < BufferLength; i++)
+		{
+			var x = GridBuffer[i][0];
+			var y = GridBuffer[i][1];
+			var value = gameState.Grid.System[x][y];
+
+			if(value == map_values.Worm1Head ||
+			   value == map_values.Worm2Head ||
+			   value == map_values.Worm3Head ||
+			   value == map_values.Worm4Head)
+			{
+				gameState.Grid.System[x][y] = value-1;
+			}
+			else if(value == map_values.Worm1Cell ||
+					value == map_values.Worm2Cell ||
+					value == map_values.Worm3Cell ||
+					value == map_values.Worm4Cell)
+			{
+				gameState.Grid.System[x][y] = value+1;
+			}
+			else if(value == map_values.Wall)
+			{	
+				gameState.Grid.System[x][y] = map_values.DrawnWall;
+			}
+			else if(value == map_values.Hole)
+			{
+				gameState.Grid.System[x][y] = map_values.DrawnHole;	
+			}
+			else if(value == map_values.WhiteHole)
+			{
+				gameState.Grid.System[x][y] = map_values.Empty;	
+			}
+			else if(value == map_values.StaticWall)
+			{
+				gameState.Grid.System[x][y] = map_values.StaticWallDrawn;	
+			}
+			/*else if(value == map_values.Flag1 ||
+					value == map_values.Flag2)
+			{
+				gameState.Grid.System[x][y] = map_values.Empty;	
+			}*/
+			else if(value < 0)
+			{
+				gameState.Grid.System[x][y] = map_values.Empty;	
+			}
+		}
+
+		gameState.Grid.GridBuffer = [];
+	};
+
 	exports.SetGridValue = function(grid, value, x, y)
 	{
-		if(InsideGrid(grid, x, y)) { grid.System[x][y] = value; }
+		if(InsideGrid(grid, x, y)) 
+		{ 
+			grid.System[x][y] = value;
+			grid.GridBuffer.push([x,y]); 
+		}
 	}
 
 	exports.GetGridValue = function(grid, x, y)
@@ -53,22 +112,33 @@
 		}
 	}
 
-	exports.RemoveFlagFromGrid = function(flag, gridSystem, removeFlagValue)
+	exports.RemoveFlagFromGrid = function(flag, grid, map_values)
 	{
 		for(var x = 0; x < flag.Width; x++)
 		{
 			for(var y = 0; y < flag.Height; y++)
 			{
-				gridSystem[flag.Position[0]+x-2][flag.Position[1]+y-2] = removeFlagValue;	
+				var PosX = flag.Position[0]+x-2;
+				var PosY = flag.Position[1]+y-2;
+				var GridValue = this.GetGridValue(grid, PosX, PosY); 
+
+				if(GridValue == flag.ID)
+				{
+					this.SetGridValue(grid, map_values.RemoveFlag, PosX, PosY);
+				}
 			}
 		}
 	}
 
-	exports.RemoveWormPathFromGrid = function(wormPath, gridSystem, removeWormValue)
+	exports.RemoveWormPathFromGrid = function(wormPath, grid, removeWormValue)
 	{
-		for(var i = 0; i < wormPath.length; i++)
+		var PathLengthWithoutHead = wormPath.length-1; 
+		for(var i = 0; i < PathLengthWithoutHead; i++)
 		{
-			gridSystem[wormPath[i].x][wormPath[i].y] = removeWormValue;
+			var PosX = wormPath[i].x;
+			var PosY = wormPath[i].y;
+
+			this.SetGridValue(grid, removeWormValue, PosX, PosY);
 		}
 	}
 
@@ -91,7 +161,7 @@
 					//it can probably be solved by creating shot values per player.
 					if((x < grid.Width && x > 0) && grid.System[x][y] == map_values.DrawnHole)
 					{
-						grid.System[x][y] = map_values.RemoveHole;	
+						this.SetGridValue(grid, map_values.RemoveHole, x, y);
 					}
 				}
 			}	
@@ -99,13 +169,13 @@
 	}
 
 	//TODO(Martin): Hardcoded values.
-	exports.ClearSpawnpointFromGrid = function(spawnPoint, gridSystem, clearAllValue)
+	exports.ClearSpawnpointFromGrid = function(spawnPoint, grid, clearAllValue)
 	{
 		for (var x = spawnPoint.x - 4; x < spawnPoint.x + 5; x++) 
 		{
 			for (var y = spawnPoint.y - 4; y < spawnPoint.y + 5; y++) 
 			{
-				gridSystem[x][y] = clearAllValue;	
+				this.SetGridValue(grid, clearAllValue, x, y);
 			}
 		}	
 	}
@@ -129,7 +199,8 @@
 					if(gridValue != map_values.Flag1 && 
 					   gridValue != map_values.Flag2)
 					{
-						grid.System[leftSideOfHolePosition][topSideOfHolePosition] = map_values.Hole;
+						//TODO(Martin): Double call to InsideGrid.
+						this.SetGridValue(grid, map_values.Hole, leftSideOfHolePosition, topSideOfHolePosition);
 					}
 				}
 			}
@@ -167,7 +238,8 @@
 					   value != map_values.Flag1 && 
 					   value != map_values.Flag2) 
 					{
-						grid.System[leftSideOfHolePosition][topSideOfHolePosition] = map_values.WhiteHole;
+						//TODO(Martin): Double call to InsideGrid();
+						this.SetGridValue(grid, map_values.WhiteHole, leftSideOfHolePosition, topSideOfHolePosition);
 					}
 				}
 			}
@@ -286,28 +358,25 @@
 		
 		if(gridValue == map_values.DrawnWall)
 		{	
-			worm.Path.pop();
 			worm.CollisionType = collisions.WallCollision;
 		}
 		else if(gridValue == map_values.DrawnHole)
 		{	
-			worm.Path.pop();
 			worm.CollisionType = collisions.HoleCollision;	
 		}
 		else if(gameState.GameMode == 3 && 
 			   (gridValue == gameState.Flag1.ID || gridValue == gameState.Flag2.ID))
 		{	
-			worm.Path.pop();
 			if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team2ID)
 			{
 				worm.HoldsFlag = gameState.Flag1;
-				this.RemoveFlagFromGrid(gameState.Flag1, grid.System, map_values.RemoveFlag);
+				this.RemoveFlagFromGrid(gameState.Flag1, grid, map_values);
 				//SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == gameState.Flag2.ID && worm.TeamID == map_values.Team1ID)
 			{
 				worm.HoldsFlag = gameState.Flag2;
-				this.RemoveFlagFromGrid(gameState.Flag2, grid.System, map_values.RemoveFlag);
+				this.RemoveFlagFromGrid(gameState.Flag2, grid, map_values);
 				//SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team1ID && worm.HoldsFlag != 0)
@@ -329,7 +398,7 @@
 		}
 		else if(gridValue > 0)
 		{
-			worm.Path.pop();
+			//worm.Path.pop();
 			worm.CollisionType = collisions.Collision;	
 		}
 		else

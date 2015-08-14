@@ -5,6 +5,7 @@
 		this.Width = width;
 		this.Height = height;
 		this.System = [];
+		this.GridBuffer = [];
 	};
 
 	exports.flag = function(id, width, height, pos)
@@ -13,6 +14,7 @@
 		this.Width = width;
 		this.Height = height;
 		this.Position = pos;
+		this.PickedUp = false;
 	};
 
 	exports.worm = function(name, keys, playerID, 
@@ -38,7 +40,7 @@
 		this.WhiteHolePosition = null;
 		
 		this.CurrentDirection = null;
-		this.Path = [];
+		this.Path = [this.HeadPosition];
 		this.HoldsFlag = 0
 		this.SpawnPoint = null;
 		this.IsRespawning = false;

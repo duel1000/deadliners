@@ -76,10 +76,10 @@
 
 		Flag1: 20,
 		Flag2: 21,
-		RemoveFlag: 22,
-		RemoveWorm: 23,
-		RemoveHole: 24,
-		ClearAll: 25
+		RemoveFlag: -22,
+		RemoveWorm: -23,
+		RemoveHole: -24,
+		ClearAll: -25
 	};
 
 	exports.directions = {

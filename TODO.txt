@@ -32,6 +32,7 @@ We need to remake the entire screen layout + transitions between screens:
 No æøå in name input (no sound effect when pressed)
 
 TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Decoupl the Render function from the gamestate.
 Titlescreen update + create customization screen
 Start making statistics: Headshot, most kills, deaths, who killed who etc.
 Vectorize the grid?

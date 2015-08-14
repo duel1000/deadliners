@@ -159,7 +159,7 @@
 
 		worm.HolePosition.Clear();
 		worm.WhiteHolePosition.Clear();
-		worm.Path = [];
+		worm.Path = [worm.HeadPosition];
 		worm.HolePositions = [];
 
 		setTimeout(function()
