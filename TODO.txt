@@ -1,0 +1,91 @@
+
+TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+
+Icons 1 and 3 looks too much the same when youre stressed by playing,
+so maybe icon 3 should be remade?
+
+Headshot sound. (Unreal tournament feeling)
+Doublekill sound. (Unreal tournament feeling)
+Multikill sound. (Unreal tournament feeling)
+Sound when you get the flag.
+Sound when you drop the flag.
+Sound when you capture the flag and score a point.
+
+Spriteanimation for flag (5x5 px).
+Find a metaphor for the flag. (Powercube? Gasbox?)
+
+Describe new 1 player game mode.
+
+Sort out the sound effects volumes. Some are louder than others?
+Less annoying soundtrack in headphones, a bit too pitchy? 
+ - When you listen to it a lot it gets annoying, maybe more tracks will fix that? Would be nice and cool with one more musictrack for the game?
+
+
+TODO(Nicolai):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+When canvas size changes, so does the position of canvasses. We need them to be positioned dynamically.
+Align gamepoints with canvas -> Different monitors?
+We need to remake the entire screen layout + transitions between screens:
+	- Screen 1: How many players? What Gamemode? Fullscreen button.
+	- Screen 2: Player names, customize button, start game.
+	- Screen 3: Gamescreen, return to the other screens.
+	- Screen 4: Game statistics -> Show who did what in the game. Headshots etc.
+No æøå in name input (no sound effect when pressed)
+
+TODO(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Titlescreen update + create customization screen
+Start making statistics: Headshot, most kills, deaths, who killed who etc.
+Vectorize the grid?
+AI player
+
+BUGS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+(Martin): Holding down the hole-button is weird
+(Martin): Holeanimation can appear outside the grid.
+(Martin): Sometimes in capture the flag spawn point changes.
+
+STUDY(martin):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+map_values.TileSize is 3, but the renderer should actually not skip the 3 pixels?
+
+DONE(ALL):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
+Figure out what pattern to use for gamemode
+Cannot start in opposite random direction
+So.. the grid in Y direction is very very long? Why? It actually wasnt, but the grid was set to expand. 
+Update the game to using vectors instead of X and Y coordinates all over the place.
+HEADSHOT!!!!
+Particle system upon death
+Player icons need to shift with player points when the round ends.
+2v2 capture the flag mode
+2v2 mode
+(Nicolai): Icons at the start menu should be aligned with the input fields
+Calculate if the whiteshotanimation fits with what gets removed
+Shot->popanimation
+Show how many points each player gets per round "fastcreamer 12 (+3)"
+Animations are not perfectly aligned with the actual hit-pixels
+Volume slider x 2
+Shotanimation + blackhole -> only when shot inside map
+Show player controls	
+Holes are not removed when new game is run
+Sometimes the points per game does not show until next round
+Simultaneous death points
+Victory points
+Restart game
+You can white hole the wall and get out of the grid.
+Create STATIC_WALLs to limit where the player can go
+study - Map draws black all the time?
+Larger grid + whitehole removable edges
+White space animation
+Map generation starts wall weird
+Press N for starting the game
+White space
+Align player points in the right side
+Put in new sound effect
+Placement animation
+Sound effects
+Assign all 4 player keys
+Layout title screen
+No new game before only 1 player remains
+Random symmetrical starting position
+Who is who when the game starts
+Music - titlemusic + gamemusic 
+Random starting positions
+Equal names not allowed
+4 player mode
