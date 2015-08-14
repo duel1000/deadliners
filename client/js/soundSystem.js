@@ -215,6 +215,69 @@ function SoundSystem()
 
 		currentcrashEffect = (currentcrashEffect + 1) % crashEffectSoundPool.length;
 	};
+
+	this.PlaySoundEffects = function(gameState)
+	{
+		var length = gameState.CrashEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayCrashEffect();
+			}
+			gameState.CrashEffects = [];	
+		}
+
+		length = gameState.DeniedEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayDeniedEffect();
+			}
+			gameState.DeniedEffects = [];	
+		}
+
+		length = gameState.ShotEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayShotEffect();
+			}
+			gameState.ShotEffects = [];	
+		}
+
+		length = gameState.WhiteShotEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayWhiteShotEffect();
+			}
+			gameState.WhiteShotEffects = [];	
+		}
+
+		length = gameState.HeadShotEffects.length;
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayHeadshotEffect();
+			}
+			gameState.HeadShotEffects = [];	
+		}
+
+		length = gameState.CountDownEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayCountDownEffect();
+			}
+			gameState.CountDownEffects = [];	
+		}
+	}
 }
 
 function PlaySoundEffect(pool, currentPointer, volume)

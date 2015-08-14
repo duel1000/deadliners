@@ -22,8 +22,10 @@
 			</div>
 			<div>
 				<div class="black-white-button button-margin" id="nextButton1">next</div>
-			</div>
+			</div>	
 		</div>
+		<div  class="black-white-button button-margin" id="serverGameButton">online</div>
+
 		<div id="inputNamesMenu" class="white no-display">
 		<div class="smallHeaderFont" id="titleScreenText">input all player names  &nbsp;\&nbsp;  customize game  &nbsp;\&nbsp;  start race!</div>
 
@@ -188,6 +190,9 @@ $("#effectsVolumeSlider .ui-slider-handle").unbind('keydown');
 
 function GameState()
 {
+	this.ServerGame = false;
+	this.LocalGame = true;
+
 	this.PlayerNames = ["","","",""];
 	this.NumberOfWorms = 2;
 	this.GameMode = variables.game_modes.FreeForAll;
@@ -247,28 +252,107 @@ SoundSystem.init();
 
 //TODO(Martin): Should probably put keystate events into a separate function and pass them
 //to the GameState, so the server knows what ended down.
-var keystate;
+var keystate = {};
 var Player1Keys = new variables.key_package(37,38,39,40,189,190);
 var Player2Keys = new variables.key_package(68,82,71,70,88,90);
 var Player3Keys = new variables.key_package(97,101,99,98,34,35);
 var Player4Keys = new variables.key_package(74,73,76,75,66,86);
 
-function init()
+document.addEventListener("keydown", function(event) 
 {	
-	keystate = {};
+	//TODO(martin): Handle this properly. Handle the full screen button.
+	//event.preventDefault();
 
-	document.addEventListener("keydown", function(event) 
-	{	
-		//TODO(martin): Handle this properly. Handle the full screen button.
-		event.preventDefault();
-		keystate[event.keyCode] = true;
-	});
+	keystate[event.keyCode] = true;
+	
+});
 
-	document.addEventListener("keyup", function(event) 
+document.addEventListener("keyup", function(event) 
+{
+	delete keystate[event.keyCode];
+});
+
+function initServerGame()
+{
+	//DO SOMETHING!! :D
+
+	socket.emit('join', { msg : 'I WANNA JOIN!!'});	
+
+	socket.on('gamefromserver', function(data)
 	{
-		delete keystate[event.keyCode];
-	});
+		console.log(data.NewGameState);
 
+		GameState = data.NewGameState;
+
+		if(GameState.NumberOfWorms >= 1)
+		{
+			GameState.Worms[0].holeAnimations = worm1HoleAnimations;
+			GameState.Worms[0].deployAnimation = deployAnimation1;
+			GameState.Worms[0].deployOutAnimation = deployOutAnimation1;
+			GameState.Worms[0].fullDeployAnimation = fullDeployAnimation1;
+		}
+		if(GameState.NumberOfWorms >= 2)
+		{
+			GameState.Worms[1].holeAnimations = worm2HoleAnimations;
+			GameState.Worms[1].deployAnimation = deployAnimation2;
+			GameState.Worms[1].deployOutAnimation = deployOutAnimation2;
+			GameState.Worms[1].fullDeployAnimation = fullDeployAnimation2;
+		}
+		if(GameState.NumberOfWorms >= 3)
+		{		
+			GameState.Worms[2].holeAnimations = worm3HoleAnimations;
+			GameState.Worms[2].deployAnimation = deployAnimation3;
+			GameState.Worms[2].deployOutAnimation = deployOutAnimation3;
+			GameState.Worms[2].fullDeployAnimation = fullDeployAnimation3;
+		}
+		if(GameState.NumberOfWorms == 4)
+		{
+			GameState.Worms[3].holeAnimations = worm4HoleAnimations;
+			GameState.Worms[3].deployAnimation = deployAnimation4;
+			GameState.Worms[3].deployOutAnimation = deployOutAnimation4;
+			GameState.Worms[3].fullDeployAnimation = fullDeployAnimation4;
+		}
+
+		if(GameState.GameMode == variables.game_modes.FreeForAll)
+		{
+			$("#player1points .name").text(GameState.PlayerNames[0]);
+			$("#player1points .points").text('0');
+			$("#player2points .name").text(GameState.PlayerNames[1]);
+			$("#player2points .points").text('0');
+			$("#player3points .name").text(GameState.PlayerNames[2]);
+			$("#player3points .points").text('0');
+			$("#player4points .name").text(GameState.PlayerNames[3]);
+			$("#player4points .points").text('0');		
+		}
+		else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
+		          GameState.GameMode == variables.game_modes.CaptureTheFlag)
+		{
+			$("#player1points .name").text("TEAM 1");
+			$("#player1points .points").text('0');
+			$("#player2points .name").text("TEAM 2");
+			$("#player2points .points").text('0');
+		}
+
+		setTimeout(function()
+		{
+			NewGame();
+		}, 1500);
+
+		GameState.GameStarted = true;
+		gameloop();
+	});
+}
+
+function SendStuffToServer()
+{
+	socket.emit('update', { 
+		direction: GameState.Worms[0].CurrentDirection
+
+	});
+}
+
+function initLocalGame()
+{
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
 	GameState.PaintWalls = true;
@@ -324,69 +408,6 @@ function init()
 	}
 
 	gameloop();
-}
-
-function SoundEffects()
-{
-	var length = GameState.CrashEffects.length; 
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayCrashEffect();
-		}
-		GameState.CrashEffects = [];	
-	}
-
-	length = GameState.DeniedEffects.length; 
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayDeniedEffect();
-		}
-		GameState.DeniedEffects = [];	
-	}
-
-	length = GameState.ShotEffects.length; 
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayShotEffect();
-		}
-		GameState.ShotEffects = [];	
-	}
-
-	length = GameState.WhiteShotEffects.length; 
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayWhiteShotEffect();
-		}
-		GameState.WhiteShotEffects = [];	
-	}
-
-	length = GameState.HeadShotEffects.length;
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayHeadshotEffect();
-		}
-		GameState.HeadShotEffects = [];	
-	}
-
-	length = GameState.CountDownEffects.length; 
-	if(length > 0)
-	{
-		for(var i = 0; i < length; i++)
-		{
-			SoundSystem.PlayCountDownEffect();
-		}
-		GameState.CountDownEffects = [];	
-	}
 }
 
 function Render()
@@ -732,8 +753,13 @@ function gameloop()
 		update(step);
 	}
 
+	if(GameState.ServerGame)
+	{
+		SendStuffToServer();
+	}
+
 	//render(dt); //NOTE(martin): Used for LERP.
-	SoundEffects();
+	SoundSystem.PlaySoundEffects(GameState);
 	Render();
 	TimesRun++;
 	last = now;
@@ -903,7 +929,8 @@ function update(step)
 					}
 				}
 
-				GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
+				//TODO(Martin): Bad to sort because then worms[0] is not player 1.
+				//GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
 				UpdateScoreboard();
 
 				if(GameState.Worms[0].Points >= variables.VictoryPoints.CurrentValue)
@@ -1114,6 +1141,20 @@ function ExitGameToTitlescreen()
 
 function HandleWormKeyInput(gameStarted)
 {
+	if(GameState.ServerGame)
+	{
+		ServerGameKeyInput(gameStarted);
+	}
+	else
+	{
+		LocalGameKeyInput(gameStarted);
+	}
+	
+	keystate = {};
+}
+
+function LocalGameKeyInput(gameStarted)
+{
 	if(gameStarted)
 	{
 		for(var i = 0; i < GameState.NumberOfWorms; i++)
@@ -1173,8 +1214,44 @@ function HandleWormKeyInput(gameStarted)
 			}
 		}
 	}
-	
-	keystate = {};
+}
+
+function ServerGameKeyInput(gameStarted)
+{
+	for(var i = 0; i < GameState.NumberOfWorms; i++)
+	{
+		if(keystate[variables.keys.LeftKey])
+		{
+			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+											variables.directions.Left);
+		}
+		else if(keystate[variables.keys.UpKey])
+		{
+			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+											variables.directions.Up);
+		}
+		else if(keystate[variables.keys.RightKey])
+		{
+			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+											variables.directions.Right);
+		}
+		else if(keystate[variables.keys.DownKey])
+		{
+			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
+											variables.directions.Down);
+		}
+
+		if(keystate[variables.keys.SpecialKey])
+		{
+			entityFunctions.ShootWhiteHole(GameState.Worms[i], variables.directions, map_values);
+		}
+		
+		if(keystate[variables.keys.ShotKey])
+		{	
+			entityFunctions.ShootHole(GameState.Worms[i], variables.directions, 
+					  				  map_values.HoleRange, VectorFactory);
+		}
+	}
 }
 
 function UpdateScoreboard()

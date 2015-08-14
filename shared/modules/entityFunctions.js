@@ -24,9 +24,9 @@
 		worm.JustShotHole = false;
 		worm.JustShotWhiteHole = false;
 
-		worm.deployAnimation.init(worm.HeadPosition, -12);
-		worm.deployOutAnimation.init(worm.HeadPosition, -12);
-		worm.fullDeployAnimation.init(v2Factory.EmptyVector(), -12);
+		//worm.deployAnimation.init(worm.HeadPosition, -12);
+		//worm.deployOutAnimation.init(worm.HeadPosition, -12);
+		//worm.fullDeployAnimation.init(v2Factory.EmptyVector(), -12);
 
 		worm.TeamID = teamID;
 	}
@@ -35,34 +35,6 @@
 	{
 		worm.KillCount++;
 		worm.TotalKills++;
-
-		/*switch(worm.KillCount)
-		{
-			case 1:
-				SoundSystem.PlayHeadshotEffect();
-				break;
-			case 2:
-				SoundSystem.PlayDoubleKillEffect();
-				break;
-			case 3:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-			case 4:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-			case 5:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-			case 6:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-			case 7:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-			case 8:
-				SoundSystem.PlayMultiKillEffect();
-				break;
-		}*/
 	}
 
 	exports.ScorePoint = function(worm, value)

@@ -42,9 +42,29 @@ function EnterGame()
 		setupGameMenu.show();
 		inputNamesMenu.hide();
 		gameScreen.show();
-		init();
+
+		if(GameState.ServerGame)
+		{
+			initServerGame();	
+		}
+		else
+		{
+			initLocalGame();
+		}
+
 	}, 900);
 }
+
+$('#serverGameButton').on('click', function()
+{
+	if(GameState.LocalGame)
+	{
+		GameState.LocalGame = false;
+		GameState.ServerGame = true;
+
+		EnterGame();
+	}
+});
 
 $(".black-white-button").each(function()
 {
@@ -259,308 +279,3 @@ ShotAmountButton.on('click', function()
 	GameState.hole_count.ShiftAmountForward();
 	$(this).text('shot amount: ' + GameState.hole_count.Amount);
 });
-
-//OLD MENUS BELOW
-
-
-/*
-var inputScreenText = 'local game \r \\\ \r 1-4 players \r \\\ \r  input player names \r \\\ \r start racing!';
-var customizeScreenText = 'customize game';
-
-var gameScreen = $("#gameScreen");
-var startGameButton = $("#startGameButton");
-startGameButton.on('click', function()
-{
-	EnterGame();
-});
-
-$('#customizeButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$('#titleScreenText').text(customizeScreenText);
-	$('#nameInputScreen').hide();
-	$('#customizeScreen').show();
-});
-
-$('#backButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$('#titleScreenText').text(inputScreenText);
-	$('#customizeScreen').hide();
-	$('#nameInputScreen').show();
-});
-
-var speedCounter = 0;
-$('#gameSpeedButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$(this).text('game speed: ' + GAME_SPEED_TEXT[speedCounter]);
-	CHOSEN_GAME_SPEED = GAME_SPEEDS[speedCounter];
-	speedCounter = (speedCounter + 1) % GAME_SPEEDS.length;
-});
-
-//TODO(Martin): Column number and row number are used totally random throughout the code.
-var mapSizeCounter = 0;
-$('#mapSizeButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$(this).text('map size: ' + MAP_SIZE_TEXT[mapSizeCounter]);
-	CHOSEN_MAP_SIZE = MAP_SIZES[mapSizeCounter];
-	mapSizeCounter = (mapSizeCounter + 1) % MAP_SIZES.length;
-	
-	COLUMN_NUMBER = CHOSEN_MAP_SIZE + MAP_THRESHOLD*2;
-	ROW_NUMBER = CHOSEN_MAP_SIZE + MAP_THRESHOLD*2;
-});
-
-var shotAmountCounter = 2;
-$('#shotAmountButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$(this).text('shot amount: ' + HOLE_COUNTS[shotAmountCounter]);
-	HOLE_AMOUNT = HOLE_COUNTS[shotAmountCounter];
-	shotAmountCounter = (shotAmountCounter + 1) % HOLE_COUNTS.length;
-});
-
-var specialShotCounter = 1;
-$('#specialAmountButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$(this).text('special amount: ' + SPECIAL_COUNTS[specialShotCounter]);
-	WHITE_HOLE_AMOUNT = SPECIAL_COUNTS[specialShotCounter];
-	specialShotCounter = (specialShotCounter + 1) % SPECIAL_COUNTS.length;
-});
-
-var victoryPointsCounter = 0;
-$('#gameScoreButton').on('click', function()
-{
-	SoundSystem.PlayInputEffect();
-	$(this).text('victory points: ' + VICTORY_VALUES[victoryPointsCounter]);
-	CHOSEN_VICTORY_POINTS = VICTORY_VALUES[victoryPointsCounter];
-	victoryPointsCounter = (victoryPointsCounter + 1) % VICTORY_VALUES.length;
-})
-
-$('#startGameButton2').on('click', function()
-{
-	startGameButton.click();
-});
-
-
-$('#restartGameButton').on('click', function()
-{
-	gameFinished = false;
-
-	init();
-	$(this).hide();
-});
-
-function NoMatchingNames()
-{
-	if(player1name.length > 0 && (player1name == player2name || player1name == player3name || player1name == player4name))
-	{
-		return(false);
-	}
-	else if(player2name.length > 0 && (player2name == player3name || player2name == player4name))
-	{
-		return(false);
-	}
-	else if(player3name.length > 0 && (player3name == player4name))
-	{
-		return(false);
-	}
-	else
-	{
-		return(true);
-	}
-}
-
-function EvaluatePlayerName()
-{
-	var regex = /^[a-zA-Z0-9~@#$^*()_+=[\]{}|\\,.?: -]*$/;
-	var result1 = regex.exec(player1name);
-	var result2 = regex.exec(player2name);
-	var result3 = regex.exec(player3name);
-	var result4 = regex.exec(player4name);
-
-	if(result1 == null || result2 == null || result3 == null || result4 == null)
-	{
-		return(false);
-	}
-	else
-	{
-		return(true);
-	}
-}
-
-function ValidateNames()
-{
-	if($("#player1name").val().length > 0 && $("#player2name").val().length == 0 && 
-	   $("#player3name").val().length == 0 && $("#player4name").val().length == 0 && NoMatchingNames() && EvaluatePlayerName())
-	{	
-		NUMBER_OF_WORMS = 1;
-		CheckGameMode();
-		startGameButton.show();
-
-		$("body").removeClass("players1").removeClass("players2").removeClass("players3").removeClass("players4");
-		$("body").addClass("players1");
-
-		return;
-	}
-	else
-	{
-		//startGameButton.hide();
-		//$('.twoPlayerWrap').hide();	
-		$("body").removeClass("players1").removeClass("players2").removeClass("players3").removeClass("players4");
-	}
-
-	if($("#player1name").val().length > 0 && $("#player2name").val().length > 0 && 
-	   $("#player3name").val().length == 0 && $("#player4name").val().length == 0 && NoMatchingNames() && EvaluatePlayerName())
-	{
-		NUMBER_OF_WORMS = 2;
-		CheckGameMode();
-		startGameButton.show();
-
-		$("body").addClass("players2");
-
-		return;
-	}
-	else
-	{
-		startGameButton.hide();
-		//$('.twoPlayerWrap').hide();	
-		$("body").removeClass("players1").removeClass("players2").removeClass("players3").removeClass("players4");
-	}
-
-	if($("#player1name").val().length > 0 && $("#player2name").val().length > 0 && 
-	   $("#player3name").val().length > 0 && $("#player4name").val().length == 0 && NoMatchingNames() && EvaluatePlayerName())
-	{
-		NUMBER_OF_WORMS = 3;
-		startGameButton.show();
-		CheckGameMode();
-		$("body").addClass("players3");
-
-		return;
-	}
-	else
-	{
-		startGameButton.hide();
-		//$('.twoPlayerWrap').hide();	
-		$("body").removeClass("players1").removeClass("players2").removeClass("players3").removeClass("players4");
-	}
-
-	if($("#player1name").val().length > 0 && $("#player2name").val().length > 0 && 
-	   $("#player3name").val().length > 0 && $("#player4name").val().length > 0 && NoMatchingNames() && EvaluatePlayerName())
-	{
-		NUMBER_OF_WORMS = 4;
-		startGameButton.show();
-		CheckGameMode();
-
-		$("body").addClass("players4");
-		$('.twoPlayerWrap').show();
-
-		return;
-	}
-	else
-	{
-
-		startGameButton.hide();
-		//$('.twoPlayerWrap').hide();		
-		$("body").removeClass("players1").removeClass("players2").removeClass("players3").removeClass("players4");
-	}
-}
-
-function CheckGameMode()
-{
-	if((GAME_MODE == TWO_ON_TWO || GAME_MODE == CAPTURE_THE_FLAG) && NUMBER_OF_WORMS == 0)
-	{
-		$('#startGameButton').text('enter four players');
-		$('#startGameButton').off('click');
-	}
-	else if((GAME_MODE == TWO_ON_TWO || GAME_MODE == CAPTURE_THE_FLAG) && NUMBER_OF_WORMS != 4)
-	{
-		$('#startGameButton').text('enter four players');
-		$('#startGameButton').off('click');
-	}
-	else if(NUMBER_OF_WORMS == 1 && GAME_MODE == FREE_FOR_ALL)
-	{
-		$('#startGameButton').text('start training');
-		$('#startGameButton').off('click');
-		$('#startGameButton').on('click', function()
-		{
-			EnterGame();			
-		});
-	}
-	else if(NUMBER_OF_WORMS > 1 && GAME_MODE == FREE_FOR_ALL)
-	{
-		$('#startGameButton').text('start race');
-		$('#startGameButton').off('click');
-		$('#startGameButton').on('click', function()
-		{
-			EnterGame();			
-		});
-	}
-	else if(NUMBER_OF_WORMS == 4 && (GAME_MODE == CAPTURE_THE_FLAG || GAME_MODE == TWO_ON_TWO))
-	{
-		$('#startGameButton').text('start race');
-		$('#startGameButton').off('click');
-		$('#startGameButton').on('click', function()
-		{
-			EnterGame();			
-		});
-	}
-}
-
-$('#ModeButton').on('click', function()
-{
-	SoundSystem.PlayWhiteShotEffect();
-
-	if(GAME_MODE == FREE_FOR_ALL)
-	{
-		$(this).text('2 vs 2');
-		$("body").addClass("team");
-		GAME_MODE = TWO_ON_TWO;
-
-		CheckGameMode();
-	}
-	else if(GAME_MODE == TWO_ON_TWO)
-	{
-		$(this).text('capture the flag');
-		$("body").addClass("team");
-		GAME_MODE = CAPTURE_THE_FLAG;
-
-		CheckGameMode();
-
-	}
-	else if(GAME_MODE == CAPTURE_THE_FLAG)
-	{
-		$(this).text('free for all');
-		$("body").removeClass("team");
-		GAME_MODE = FREE_FOR_ALL;
-
-		CheckGameMode();
-	}
-});
-
-$("#player1name").on('keyup', function(event)
-{
-	this.value = this.value.toLowerCase();
-	player1name = this.value;
-	ValidateNames();
-})
- $("#player2name").on('keyup', function(event)
- {
- 	this.value = this.value.toLowerCase();
-	player2name = this.value;
-	ValidateNames();
-})
-$("#player3name").on('keyup', function(event)
-{
-	this.value = this.value.toLowerCase();
-	player3name = this.value;
-	ValidateNames();
-})
-$("#player4name").on('keyup', function(event)
-{
-	this.value = this.value.toLowerCase();
-	player4name = this.value;
-	ValidateNames();
-})*/
