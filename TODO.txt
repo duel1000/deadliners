@@ -5,6 +5,7 @@ NETWORKING(Martin):
 3. Opdater client logic med inputtet.
 4. Opdater client modstandere med location fra serveren.
 
+
 TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
 
 Icons 1 and 3 looks too much the same when youre stressed by playing,

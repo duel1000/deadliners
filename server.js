@@ -36,13 +36,21 @@ io.on('connection', function(newClient)
 		if(playersJoined == 2)
 		{
 			init();
+			//NewGame();
 			io.emit('gamefromserver', { NewGameState: GameState });
 		}
 	});
 
+	newClient.on('newGamePlease', function()
+	{
+		console.log("newGamePlease");
+		NewGame();
+		io.emit('newGame', { NewGame: GameState });
+	});
+
 	newClient.on('update', function(data)
 	{
-		console.log(data.direction);
+		//console.log(data.direction);
 	});
 
 	newClient.on('disconnect', function () 
@@ -100,16 +108,16 @@ function GameState()
 	this.Flag2 = new entities.flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
 
-	//Handles for Render()	
+	//NOTE(Martin): for Render()	
 	this.SpriteAnimations = [];
 	this.DeathParticles = [];
-	this.PaintWalls = false;
-	this.PaintWhiteCanvasses = false;
+	this.PaintWalls = true;
+	this.PaintWhiteCanvasses = true;
 	this.DrawWhiteBox = [];
 	this.DrawStartCounter = false;
 	this.RenderWinnerText = false;
 
-	//TODO(Martin): Handles for Music
+	//NOTE(Martin): Handles for Music
 	this.CrashEffects = [];
 	this.DeniedEffects = [];
 	this.ShotEffects = [];
@@ -123,32 +131,22 @@ gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
 function init()
 {	
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
-	GameState.PaintWhiteCanvasses = true;
-	GameState.PaintWalls = true;
 
 	if(GameState.NumberOfWorms >= 1)
 	{
-		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], null, 1, null,
-					null, null, null,
-					map_values.Worm1Head);
+		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], null, 1, map_values.Worm1Head);
 	}
 	if(GameState.NumberOfWorms >= 2)
 	{
-		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], null, 2, null,
-					null, null, null,
-					map_values.Worm2Head);
+		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], null, 2, map_values.Worm2Head);
 	}
 	if(GameState.NumberOfWorms >= 3)
 	{		
-		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], null, 3, null,
-					null, null, null,
-					map_values.Worm3Head);
+		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], null, 3, map_values.Worm3Head);
 	}
 	if(GameState.NumberOfWorms == 4)
 	{
-		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], null, 4, null,
-					deployAnimation4, null, null,
-					map_values.null);
+		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], null, 4, map_values.Worm4Head);
 	}
 
 	if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
@@ -161,7 +159,7 @@ function init()
 	}
 
 	//gameloop();
-	NewGame();
+	//NewGame();
 }
 
 function NewGame()
@@ -175,8 +173,8 @@ function NewGame()
 	gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
 
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
-	GameState.PaintWhiteCanvasses = true;
-	GameState.PaintWalls = true;
+	//GameState.PaintWhiteCanvasses = true;
+	//GameState.PaintWalls = true;
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
@@ -184,13 +182,18 @@ function NewGame()
 		gridFunctions.SetFlagOntoGrid(GameState.Flag2, GameState.Grid);
 	}
 
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
+		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
+	}	
+
 	//STUDY(martin): Understand new and when to use it.
 	var vectorGroup = [];
 	vectorGroup[0] = VectorFactory.EmptyVector();
 	vectorGroup[1] = VectorFactory.EmptyVector();
 	vectorGroup[2] = VectorFactory.EmptyVector();
 	vectorGroup[3] = VectorFactory.EmptyVector();
-
 	var startingPositions = [];
 
 	switch(GameState.GameMode)
@@ -204,12 +207,6 @@ function NewGame()
 		case variables.game_modes.CaptureTheFlag:
 			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
 			break;
-	}
-
-	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
-	{
-		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
-		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
 	}
 
 	GameState.RoundWinningTeam = 0;
@@ -251,7 +248,10 @@ function NewGame()
 								   GameState.Worms[i].HeadPosition.y);
 	}
 
-	//GameState.GameStarted = false;
+
+	GameState.GameStarted = false;
+	//GameState.StartGameButtonPressed = true;
+	
 }
 
 //STUDY(martin): Get comfortable with this.

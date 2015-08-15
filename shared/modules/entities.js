@@ -17,9 +17,7 @@
 		this.PickedUp = false;
 	};
 
-	exports.worm = function(name, keys, playerID, 
-							holeAnimations, deployAnimation, deployOutAnimation, 
-							fullDeployAnimation,  wormHeadID) 
+	exports.worm = function(name, keys, playerID,  wormHeadID) 
 	{
 		this.Name = name;
 		this.Keys = keys;
@@ -50,24 +48,6 @@
 		
 		this.KillCount = 0;
 		this.TotalKills = 0;
-
-		//TODO(Martin): Refactor this into some kind of animation object.
-		this.deployAnimation = deployAnimation;
-		this.deployOutAnimation = deployOutAnimation;
-		this.fullDeployAnimation = fullDeployAnimation;
-		this.holeAnimations = holeAnimations;
-		this.currentHoleAnimation = null;
-
-		this.getHoleAnimation = function()
-		{
-			if(this.currentHoleAnimation > 0)
-			{
-				var result = this.holeAnimations[this.currentHoleAnimation-1];
-				this.currentHoleAnimation--;
-
-				return(result);
-			}
-		};
 	};
 
 	exports.DeathParticle = function()

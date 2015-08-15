@@ -50,6 +50,7 @@ function EnterGame()
 		else
 		{
 			initLocalGame();
+			gameloop();
 		}
 
 	}, 900);

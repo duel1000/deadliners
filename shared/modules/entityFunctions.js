@@ -17,16 +17,11 @@
 		worm.CurrentDirection = startingDirection; 
 
 		worm.HoleCount = holeAmount;
-		worm.currentHoleAnimation = holeAmount;
 		
 		worm.WhiteHoleCount = 1;
 
 		worm.JustShotHole = false;
 		worm.JustShotWhiteHole = false;
-
-		//worm.deployAnimation.init(worm.HeadPosition, -12);
-		//worm.deployOutAnimation.init(worm.HeadPosition, -12);
-		//worm.fullDeployAnimation.init(v2Factory.EmptyVector(), -12);
 
 		worm.TeamID = teamID;
 	}
@@ -123,7 +118,6 @@
 	exports.Respawn = function(worm, ms, holeCount, v2Factory)
 	{
 		worm.HoleCount = holeCount;
-		worm.currentHoleAnimation = holeCount;
 		worm.WhiteHoleCount = 1;
 		worm.HeadPosition = v2Factory.CustomVector(worm.SpawnPoint.x, worm.SpawnPoint.y);
 		worm.JustShotHole = false;

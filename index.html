@@ -280,74 +280,15 @@ function initServerGame()
 
 	socket.on('gamefromserver', function(data)
 	{
-		console.log(data.NewGameState);
-
+		GameState = null;
 		GameState = data.NewGameState;
+		
+		SetupPlayerPointsUI();
 
-		if(GameState.NumberOfWorms >= 1)
-		{
-			GameState.Worms[0].holeAnimations = worm1HoleAnimations;
-			GameState.Worms[0].deployAnimation = deployAnimation1;
-			GameState.Worms[0].deployOutAnimation = deployOutAnimation1;
-			GameState.Worms[0].fullDeployAnimation = fullDeployAnimation1;
-		}
-		if(GameState.NumberOfWorms >= 2)
-		{
-			GameState.Worms[1].holeAnimations = worm2HoleAnimations;
-			GameState.Worms[1].deployAnimation = deployAnimation2;
-			GameState.Worms[1].deployOutAnimation = deployOutAnimation2;
-			GameState.Worms[1].fullDeployAnimation = fullDeployAnimation2;
-		}
-		if(GameState.NumberOfWorms >= 3)
-		{		
-			GameState.Worms[2].holeAnimations = worm3HoleAnimations;
-			GameState.Worms[2].deployAnimation = deployAnimation3;
-			GameState.Worms[2].deployOutAnimation = deployOutAnimation3;
-			GameState.Worms[2].fullDeployAnimation = fullDeployAnimation3;
-		}
-		if(GameState.NumberOfWorms == 4)
-		{
-			GameState.Worms[3].holeAnimations = worm4HoleAnimations;
-			GameState.Worms[3].deployAnimation = deployAnimation4;
-			GameState.Worms[3].deployOutAnimation = deployOutAnimation4;
-			GameState.Worms[3].fullDeployAnimation = fullDeployAnimation4;
-		}
+		GameState.PaintWhiteCanvasses = true;
+		GameState.PaintWalls = true;
 
-		if(GameState.GameMode == variables.game_modes.FreeForAll)
-		{
-			$("#player1points .name").text(GameState.PlayerNames[0]);
-			$("#player1points .points").text('0');
-			$("#player2points .name").text(GameState.PlayerNames[1]);
-			$("#player2points .points").text('0');
-			$("#player3points .name").text(GameState.PlayerNames[2]);
-			$("#player3points .points").text('0');
-			$("#player4points .name").text(GameState.PlayerNames[3]);
-			$("#player4points .points").text('0');		
-		}
-		else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-		          GameState.GameMode == variables.game_modes.CaptureTheFlag)
-		{
-			$("#player1points .name").text("TEAM 1");
-			$("#player1points .points").text('0');
-			$("#player2points .name").text("TEAM 2");
-			$("#player2points .points").text('0');
-		}
-
-		setTimeout(function()
-		{
-			NewGame();
-		}, 1500);
-
-		GameState.GameStarted = true;
 		gameloop();
-	});
-}
-
-function SendStuffToServer()
-{
-	socket.emit('update', { 
-		direction: GameState.Worms[0].CurrentDirection
-
 	});
 }
 
@@ -359,55 +300,31 @@ function initLocalGame()
 
 	if(GameState.NumberOfWorms >= 1)
 	{
-		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], Player1Keys, 1, worm1HoleAnimations,
-					deployAnimation1, deployOutAnimation1, fullDeployAnimation1,
-					map_values.Worm1Head);
+		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], Player1Keys, 1,											   map_values.Worm1Head);
 	}
 	if(GameState.NumberOfWorms >= 2)
 	{
-		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], Player2Keys, 2, worm2HoleAnimations,
-					deployAnimation2, deployOutAnimation2, fullDeployAnimation2,
-					map_values.Worm2Head);
+		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], Player2Keys, 2,											   map_values.Worm2Head);
 	}
 	if(GameState.NumberOfWorms >= 3)
 	{		
-		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], Player3Keys, 3, worm3HoleAnimations,
-					deployAnimation3, deployOutAnimation3, fullDeployAnimation3,
-					map_values.Worm3Head);
+		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], Player3Keys, 3,											   map_values.Worm3Head);
 	}
 	if(GameState.NumberOfWorms == 4)
 	{
-		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4, worm4HoleAnimations,
-					deployAnimation4, deployOutAnimation4, fullDeployAnimation4,
-					map_values.Worm4Head);
+		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4,											   map_values.Worm4Head);
 	}
 
-	if(GameState.GameMode == variables.game_modes.FreeForAll)
+	if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
+       GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
-		$("#player1points .name").text(GameState.PlayerNames[0]);
-		$("#player1points .points").text('0');
-		$("#player2points .name").text(GameState.PlayerNames[1]);
-		$("#player2points .points").text('0');
-		$("#player3points .name").text(GameState.PlayerNames[2]);
-		$("#player3points .points").text('0');
-		$("#player4points .name").text(GameState.PlayerNames[3]);
-		$("#player4points .points").text('0');		
-	}
-	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-	          GameState.GameMode == variables.game_modes.CaptureTheFlag)
-	{
-		$("#player1points .name").text("TEAM 1");
-		$("#player1points .points").text('0');
-		$("#player2points .name").text("TEAM 2");
-		$("#player2points .points").text('0');
-				
 		GameState.Team1.Member1 = GameState.Worms[0];
 		GameState.Team1.Member2 = GameState.Worms[1];
 		GameState.Team2.Member1 = GameState.Worms[2];
 		GameState.Team2.Member2 = GameState.Worms[3];
 	}
 
-	gameloop();
+	SetupPlayerPointsUI();
 }
 
 function Render()
@@ -637,7 +554,32 @@ function Render()
 	}
 }
 
-function NewGame()
+var GettinGNewGameFromServer = false;
+function NewGameServer()
+{
+	if(!GettinGNewGameFromServer)
+	{
+		GettinGNewGameFromServer = true;
+		
+		socket.emit('newGamePlease');
+
+		socket.on('newGame', function(data)
+		{
+			GameState = null;
+			GameState = data.NewGame;
+			Render();
+
+			HoleAnimations.ResetAllAnimations(GameState.hole_count.Amount);
+			InitializeAnimations(GameState);
+			
+			GameState.StartGameButtonPressed = true;
+			GettinGNewGameFromServer = false;
+			
+		});
+	}
+}
+
+function NewGameLocal()
 {
 	VectorFactory.Reboot();
 
@@ -656,6 +598,12 @@ function NewGame()
 		gridFunctions.SetFlagOntoGrid(GameState.Flag1, GameState.Grid);
 		gridFunctions.SetFlagOntoGrid(GameState.Flag2, GameState.Grid);
 	}
+	
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
+		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
+	}
 
 	//STUDY(martin): Understand new and when to use it.
 	var vectorGroup = [];
@@ -663,7 +611,6 @@ function NewGame()
 	vectorGroup[1] = VectorFactory.EmptyVector();
 	vectorGroup[2] = VectorFactory.EmptyVector();
 	vectorGroup[3] = VectorFactory.EmptyVector();
-
 	var startingPositions = [];
 
 	switch(GameState.GameMode)
@@ -678,13 +625,7 @@ function NewGame()
 			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
 			break;
 	}
-
-	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
-	{
-		//flag1animation.init(FLAG_1_POSITION[0], FLAG_1_POSITION[1], -6);
-		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
-	}
-
+	
 	GameState.RoundWinningTeam = 0;
 
 	for (var i=0; i < GameState.NumberOfWorms; i++) 
@@ -716,6 +657,9 @@ function NewGame()
 		}
 	}
 
+	HoleAnimations.ResetAllAnimations(GameState.hole_count.Amount);
+	InitializeAnimations(GameState);
+
 	//TODO(Martin): Should not be WORM1CELL but different heads.
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
@@ -725,6 +669,13 @@ function NewGame()
 	}
 
 	GameState.GameStarted = false;
+}
+
+function SendStuffToServer()
+{
+	socket.emit('update', { 
+		direction: GameState.Worms[0].CurrentDirection
+	});
 }
 
 //STUDY(martin): Get comfortable with this.
@@ -833,8 +784,15 @@ function update(step)
 	
 	if(keystate[variables.GeneralKeys.NewRound] && !GameState.GameStarted && !GameState.StartGameButtonPressed)
 	{
-		GameState.StartGameButtonPressed = true;
-		NewGame();
+		if(GameState.LocalGame)
+		{
+			GameState.StartGameButtonPressed = true;
+			NewGameLocal();	
+		}
+		else if(GameState.ServerGame)
+		{
+			NewGameServer();
+		}
 	}
 
 	if(GameState.GameStarted)
@@ -853,7 +811,8 @@ function update(step)
 				{	
 					GameState.ShotEffects.push(1);
 					GameState.Worms[i].JustShotHole = false;
-					var holeAnimation = GameState.Worms[i].getHoleAnimation();  
+
+					var holeAnimation = HoleAnimations.GetHoleAnimation(GameState.Worms[i].PlayerID);
 					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
 					GameState.SpriteAnimations.push(holeAnimation);
 
@@ -1033,8 +992,14 @@ function update(step)
 												GameState.hole_count.Amount,
 												VectorFactory);
 
-						GameState.Worms[i].fullDeployAnimation.setNewPosition(position);
-						GameState.SpriteAnimations.push(GameState.Worms[i].fullDeployAnimation);
+						HoleAnimations.ResetWormAnimations(GameState.Worms[i].PlayerID, 
+														   GameState.hole_count.Amount);
+
+						var animation = DeployAnimations.GetAnimation(GameState.Worms[i].PlayerID); 
+						animation.setNewPosition(position);
+
+						animation = FullDeployAnimations.GetAnimation(GameState.Worms[i].PlayerID);
+						GameState.SpriteAnimations.push(animation);
 						
 						gridFunctions.ClearSpawnpointFromGrid(position, 
 															  GameState.Grid, 
@@ -1059,7 +1024,8 @@ function update(step)
 
 				for(var i = 0; i < GameState.NumberOfWorms; i++)
 				{
-					GameState.SpriteAnimations.push(GameState.Worms[i].deployOutAnimation);
+					var animation = DeployOutAnimations.GetAnimation(GameState.Worms[i].PlayerID); 
+					GameState.SpriteAnimations.push(animation);
 				}
 
 				GameState.GameStarted = true;
@@ -1087,22 +1053,34 @@ function update(step)
 				if(GameState.StartCounter == 4 && GameState.NumberOfWorms > 3)
 				{
 					$(".point[data-order=3]").addClass('textBlurAnimation');
-					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+
+					var playerID = GameState.Worms[GameState.StartCounter-1].PlayerID;
+					var animation = DeployAnimations.GetAnimation(playerID);
+					GameState.SpriteAnimations.push(animation);
 				}
 				else if(GameState.StartCounter == 3 && GameState.NumberOfWorms > 2)
 				{
 					$(".point[data-order=2]").addClass('textBlurAnimation');
-					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+
+					var playerID = GameState.Worms[GameState.StartCounter-1].PlayerID;
+					var animation = DeployAnimations.GetAnimation(playerID);
+					GameState.SpriteAnimations.push(animation);
 				}
 				else if(GameState.StartCounter == 2 && GameState.NumberOfWorms > 1)
 				{
 					$(".point[data-order=1]").addClass('textBlurAnimation');
-					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+					
+					var playerID = GameState.Worms[GameState.StartCounter-1].PlayerID;
+					var animation = DeployAnimations.GetAnimation(playerID);
+					GameState.SpriteAnimations.push(animation);
 				}
 				else if(GameState.StartCounter == 1 && GameState.NumberOfWorms > 0)
 				{
 					$(".point[data-order=0]").addClass('textBlurAnimation');
-					GameState.SpriteAnimations.push(GameState.Worms[GameState.StartCounter-1].deployAnimation);
+					
+					var playerID = GameState.Worms[GameState.StartCounter-1].PlayerID;
+					var animation = DeployAnimations.GetAnimation(playerID);
+					GameState.SpriteAnimations.push(animation);
 				}
 
 				var halfTextWidth = ctxBack.measureText(GameState.StartCounter).width;
@@ -1220,33 +1198,33 @@ function ServerGameKeyInput(gameStarted)
 {
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
-		if(keystate[variables.keys.LeftKey])
+		if(keystate[Player1Keys.LeftKey])
 		{
 			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
 											variables.directions.Left);
 		}
-		else if(keystate[variables.keys.UpKey])
+		else if(keystate[Player1Keys.UpKey])
 		{
 			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
 											variables.directions.Up);
 		}
-		else if(keystate[variables.keys.RightKey])
+		else if(keystate[Player1Keys.RightKey])
 		{
 			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
 											variables.directions.Right);
 		}
-		else if(keystate[variables.keys.DownKey])
+		else if(keystate[Player1Keys.DownKey])
 		{
 			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
 											variables.directions.Down);
 		}
 
-		if(keystate[variables.keys.SpecialKey])
+		if(keystate[Player1Keys.SpecialKey])
 		{
 			entityFunctions.ShootWhiteHole(GameState.Worms[i], variables.directions, map_values);
 		}
 		
-		if(keystate[variables.keys.ShotKey])
+		if(keystate[Player1Keys.ShotKey])
 		{	
 			entityFunctions.ShootHole(GameState.Worms[i], variables.directions, 
 					  				  map_values.HoleRange, VectorFactory);
@@ -1281,6 +1259,29 @@ function UpdateScoreboard()
 			$("#player1points .points").text(GameState.Team1.TeamScore + ' draw');
 			$("#player2points .points").text(GameState.Team2.TeamScore + ' draw');
 		}
+	}
+}
+
+function SetupPlayerPointsUI()
+{
+	if(GameState.GameMode == variables.game_modes.FreeForAll)
+	{
+		$("#player1points .name").text(GameState.PlayerNames[0]);
+		$("#player1points .points").text('0');
+		$("#player2points .name").text(GameState.PlayerNames[1]);
+		$("#player2points .points").text('0');
+		$("#player3points .name").text(GameState.PlayerNames[2]);
+		$("#player3points .points").text('0');
+		$("#player4points .name").text(GameState.PlayerNames[3]);
+		$("#player4points .points").text('0');		
+	}
+	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
+	          GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	{
+		$("#player1points .name").text("TEAM 1");
+		$("#player1points .points").text('0');
+		$("#player2points .name").text("TEAM 2");
+		$("#player2points .points").text('0');
 	}
 }
 </script>
