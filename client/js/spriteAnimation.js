@@ -40,7 +40,6 @@ function SpriteAnimation(options)
 
 	this.setNewPosition = function(positionVector)
 	{
-
 		Position = VectorFactory.CustomVector(positionVector.x*map_values.TileSize + _threshold, positionVector.y*map_values.TileSize + _threshold);
 	};
 
@@ -122,6 +121,7 @@ function SpriteAnimation(options)
 
 	this.Clear = function(context)
 	{
+		console.log("claer");
 		frameIndex = 0;
 		tickCount = 0;
 		this.runCount = 0;

@@ -8,6 +8,23 @@
 		this.GridBuffer = [];
 	};
 
+	exports.training_game_mode = {
+		CurrentLevel: 3,
+		DeployNew: false,	
+		CurrentDeployCount: 0,
+		TargetsToDeploy: 3,
+		TargetsDestroyed: 0,
+		Targets: []
+	};
+
+	exports.target = function()
+	{
+		ID = 0;
+		Position = 0;
+		Size = 9;
+		Animation = 0;
+	};
+
 	exports.flag = function(id, width, height, pos)
 	{
 		this.ID = id;

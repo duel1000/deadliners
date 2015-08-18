@@ -135,8 +135,31 @@
 
 var map_values = variables.map_values;
 var collisions = entities.collisions;
-
 var VectorFactory = new math.V2Factory(100);
+
+var training_game_mode = entities.training_game_mode;
+
+var target1 = new entities.target();
+target1.ID = 100;
+target1.Position = VectorFactory.EmptyVector();
+target1.Position.x = Math.floor((Math.random() * 75) + 50);
+target1.Position.y = Math.floor((Math.random() * 75) + 50);
+
+var target2 = new entities.target();
+target2.ID = 200;
+target2.Position = VectorFactory.EmptyVector();
+target2.Position.x = Math.floor((Math.random() * 115) + 85);
+target2.Position.y = Math.floor((Math.random() * 115) + 85);
+
+var target3 = new entities.target();
+target3.ID = 300;
+target3.Position = VectorFactory.EmptyVector();
+target3.Position.x = Math.floor((Math.random() * 150) + 125);
+target3.Position.y = Math.floor((Math.random() * 150) + 125);
+
+training_game_mode.Targets.push(target1);
+training_game_mode.Targets.push(target2);
+training_game_mode.Targets.push(target3);
 
 var socket = io();
 var CLIENT_ID = 0;
@@ -228,6 +251,7 @@ function GameState()
 
 	//Handles for Render()	
 	this.SpriteAnimations = [];
+	this.AnimationsToClear = [];
 	this.DeathParticles = [];
 	this.PaintWalls = false;
 	this.PaintWhiteCanvasses = false;
@@ -242,6 +266,7 @@ function GameState()
 	this.WhiteShotEffects = [];
 	this.HeadShotEffects = [];
 	this.CountDownEffects = [];
+	this.TargetHitEffects = [];
 }
 
 var GameState = new GameState();
@@ -324,7 +349,14 @@ function initLocalGame()
 		GameState.Team2.Member2 = GameState.Worms[3];
 	}
 
-	SetupPlayerPointsUI();
+	if(GameState.GameMode == variables.game_modes.Training)
+	{
+		SetupTrainingGameUI();		
+	}
+	else
+	{
+		SetupPlayerPointsUI();
+	}
 }
 
 function Render()
@@ -390,53 +422,43 @@ function Render()
 			switch (GridValue) 
 			{
 				case map_values.Worm1Cell:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWorm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm1Head:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm2Head:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm2Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm3Head:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm3Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Worm4Head:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Worm4Cell, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Hole:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnHole, x ,y);
 					ctxBack.fillStyle = "#000000";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.WhiteHole:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					ctxFront.clearRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.Wall:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.DrawnWall, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.StaticWall:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.StaticWallDrawn, x ,y);
 					ctxFront.fillStyle = "#000000";
 					ctxFront.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveFlag:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
@@ -451,17 +473,18 @@ function Render()
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveWorm:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.RemoveHole:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
 				case map_values.ClearAll:
-					//gridFunctions.SetGridValue(GameState.Grid, map_values.Empty, x ,y);
+					ctxBack.fillStyle = "#FFFFFF";
+					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
+					break;
+				case map_values.Target:
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
@@ -480,6 +503,12 @@ function Render()
 			GameState.SpriteAnimations[i].Clear(ctxMiddle);	
 			GameState.SpriteAnimations.splice(i,1);
 		}
+	}
+
+	for(var i = 0; i < GameState.AnimationsToClear.length; i++)
+	{
+		GameState.AnimationsToClear[i].Clear(ctxMiddle);
+		GameState.AnimationsToClear.splice(i,1);
 	}
 
 	if(GameState.DeathParticles.length > 0)
@@ -624,6 +653,9 @@ function NewGameLocal()
 		case variables.game_modes.CaptureTheFlag:
 			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
 			break;
+		case variables.game_modes.Training:
+			startingPositions = gridFunctions.FFAstartingPositions(vectorGroup, GameState.Grid);
+			break;
 	}
 	
 	GameState.RoundWinningTeam = 0;
@@ -701,7 +733,7 @@ function gameloop()
 	while(dt > step) 
 	{
 		dt = dt - step;
-		update(step);
+		Update(step);
 	}
 
 	if(GameState.ServerGame)
@@ -776,7 +808,7 @@ function HandleWormCollision(worm)
 	}	
 }
 
-function update(step)
+function Update(step)
 {
 	GameState.SecondsCounter += step;
 	
@@ -816,6 +848,23 @@ function update(step)
 					holeAnimation.init(GameState.Worms[i].HolePosition, -13);
 					GameState.SpriteAnimations.push(holeAnimation);
 
+					if(GameState.GameMode == variables.game_modes.Training)
+					{
+						var playerHitTarget = gridFunctions.CheckForTargetHit(GameState.Worms[i].HolePosition, training_game_mode.Targets);
+
+						if(playerHitTarget != 0)
+						{
+							console.log("Hit target: " + playerHitTarget.ID);
+							gridFunctions.RemoveTargetFromGrid(playerHitTarget, GameState.Grid, map_values);
+
+							GameState.TargetHitEffects.push(1);
+
+							//TODO(Martin): Jeg kom hertil!!! Forsøgte at cleare den animation der..
+							playerHitTarget.Animation.Clear(ctxMiddle);
+							//GameState.AnimationsToClear.push(playerHitTarget.Animation);
+						}
+					}
+
 					gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 				}
 
@@ -848,7 +897,6 @@ function update(step)
 					gridFunctions.SetWormCollision(GameState.Worms[i], GameState.Grid, 
 												   map_values, collisions, GameState);
 				}
-
 			}
 		}		
 
@@ -1008,6 +1056,44 @@ function update(step)
 				}
 			}
 		}
+		else if(GameState.GameMode == variables.game_modes.Training)
+		{
+			if(training_game_mode.TargetsToDeploy > 0)
+			{
+				if(GameState.SecondsCounter > training_game_mode.CurrentDeployCount &&
+					training_game_mode.TargetsToDeploy > 0)
+				{
+					training_game_mode.DeployNew = true;	
+				}
+			}
+
+			if(training_game_mode.DeployNew)
+			{
+				var target = training_game_mode.Targets[training_game_mode.CurrentDeployCount];
+				var animation = TargetAnimations.GetAnotherAnimation();
+				animation.init(target.Position, -12);
+
+				//TODO(Martin): This is actually for the renderer and should be separated?
+				target.Animation = animation; 
+
+				GameState.SpriteAnimations.push(animation);
+				
+				setTimeout(function()
+				{
+					gridFunctions.SetTargetInGrid(target, GameState.Grid, map_values);
+				},1300);
+				
+				training_game_mode.CurrentDeployCount++;
+				training_game_mode.TargetsToDeploy--;
+				training_game_mode.DeployNew = false;
+			}
+
+			if(training_game_mode.TargetsDestroyed == training_game_mode.CurrentLevel)
+			{
+				//Round ended
+				console.log("Round ended!");
+			}
+		}
 	}
 	else if(GameState.StartGameButtonPressed)
 	{
@@ -1103,7 +1189,7 @@ function update(step)
 	}	
 }
 
-//TODO(Martin): This should be a function that resets the GameState object?
+//TODO(Martin): This should be a that resets the GameState object?
 function ExitGameToTitlescreen()
 {
 	SoundSystem.ChangeToTitleScreen();
@@ -1259,29 +1345,6 @@ function UpdateScoreboard()
 			$("#player1points .points").text(GameState.Team1.TeamScore + ' draw');
 			$("#player2points .points").text(GameState.Team2.TeamScore + ' draw');
 		}
-	}
-}
-
-function SetupPlayerPointsUI()
-{
-	if(GameState.GameMode == variables.game_modes.FreeForAll)
-	{
-		$("#player1points .name").text(GameState.PlayerNames[0]);
-		$("#player1points .points").text('0');
-		$("#player2points .name").text(GameState.PlayerNames[1]);
-		$("#player2points .points").text('0');
-		$("#player3points .name").text(GameState.PlayerNames[2]);
-		$("#player3points .points").text('0');
-		$("#player4points .name").text(GameState.PlayerNames[3]);
-		$("#player4points .points").text('0');		
-	}
-	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-	          GameState.GameMode == variables.game_modes.CaptureTheFlag)
-	{
-		$("#player1points .name").text("TEAM 1");
-		$("#player1points .points").text('0');
-		$("#player2points .name").text("TEAM 2");
-		$("#player2points .points").text('0');
 	}
 }
 </script>

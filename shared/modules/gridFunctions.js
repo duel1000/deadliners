@@ -180,6 +180,57 @@
 		}	
 	}
 
+	exports.RemoveTargetFromGrid = function(target, grid, map_values)
+	{
+		var leftSide = Math.floor(target.Position.x - map_values.TargetSize/2);
+		var rightSide = Math.round(target.Position.x + map_values.TargetSize/2);
+
+		for (var x = leftSide; x < rightSide; x++) 
+			{
+				var upperSide = Math.floor(target.Position.y - map_values.TargetSize/2);
+				var lowerSide = Math.round(target.Position.y + map_values.TargetSize/2);
+				
+				for (var y = upperSide; y < lowerSide; y++) 
+				{
+					this.SetGridValue(grid, map_values.ClearAll, x, y);
+				}
+			}	
+	};
+
+	exports.SetTargetInGrid = function(target, grid, map_values)
+	{
+		for (var x = target.Position.x - 4; x < target.Position.x + 5; x++) 
+		{
+			for (var y = target.Position.y - 4; y < target.Position.y + 5; y++) 
+			{
+				this.SetGridValue(grid, map_values.Target, x, y);
+			}
+		}	
+	}
+
+	//TODO(Martin): Check all these values.
+	exports.CheckForTargetHit = function(holePosition, targets)
+	{
+		var result = 0;
+		var targetAmount = targets.length;
+		
+		for(var i = 0; i < targetAmount; i++)
+		{
+			var xDistance = Math.abs(holePosition.x - targets[i].Position.x);
+
+			if(xDistance < 10)
+			{
+				var yDistance = Math.abs(holePosition.y - targets[i].Position.y);
+				if(yDistance < 10)
+				{
+					result = targets[i];
+				}
+			}
+		}
+
+		return(result);
+	};
+
 	//TODO(Martin): Pattern problems + it does a lot different stuff
 	exports.SetHoleInGrid = function(worm, grid, map_values)
 	{

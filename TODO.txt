@@ -1,10 +1,12 @@
 
+1 player Mode
+Spilleren kører som normalt. Har 3 skud og 1 hvidt skud. Målet er at ramme “målskiver” der er stationært placeret på canvas. Man stiger i levels, så i level 1 er der 1 “Målskive” i level 2 er der 2 etc. -  Hvis man skyder og rammer - så beholder man skuddet - hvis man rammer ved siden af - så mister man sit skud. Det kan godt være, at man skal starte med 2 “målskiver” - så det ikke er for kedeligt fra starten. “Målskiverne” skal placeres tilfældigt - men have en margen rundt om sig - hvor andre “målskiver” ikke kan placeres + en afstand til væggen. Så skal man have en ranking af spillere, hvem der er nået til hvilket level - og evt. hvad tid de har opnået på enkelte levels Humørikonet smile
+
 NETWORKING(Martin):
 1. Gem spiller input i et objekt.
 2. Send en pakke med input til serveren + nuværende position.
 3. Opdater client logic med inputtet.
 4. Opdater client modstandere med location fra serveren.
-
 
 TODO(Jakob):-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
 

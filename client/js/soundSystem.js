@@ -18,6 +18,8 @@ function SoundSystem()
 	var headShotEffectSoundPool = null;
 	var doubleKillEffectSoundPool = null;
 	var multiKillEffectSoundPool = null;
+	var TargetHitEffectSoundPool = null;
+
 
 	this.init = function()
 	{
@@ -44,6 +46,7 @@ function SoundSystem()
 		doubleKillEffectSoundPool = CreateSoundPool("sounds/doublekillEffect.mp3", 2, effectsVolume);
 		multiKillEffectSoundPool = CreateSoundPool("sounds/multikillEffect.mp3", 2, effectsVolume);
 		DeniedEffectSoundPool = CreateSoundPool("sounds/deniedEffect.mp3", 2, effectsVolume);
+		TargetHitEffectSoundPool = CreateSoundPool("sounds/targetHit.mp3", 5, effectsVolume*2);
 
 		FlagEffect = CreateSoundEffect("sounds/flagEffect.mp3", effectsVolume);
 	};
@@ -117,6 +120,19 @@ function SoundSystem()
 		}
 
 		currentHeadshotSound = (currentHeadshotSound + 1) % headShotEffectSoundPool.length;
+	};
+
+	var currentTargetHitEffect = 0;
+	this.PlayTargetHitEffect = function()
+	{
+		if(TargetHitEffectSoundPool[currentTargetHitEffect].currentTime == 0 || 
+		   TargetHitEffectSoundPool[currentTargetHitEffect].ended) 
+		{
+			TargetHitEffectSoundPool[currentTargetHitEffect].volume = effectsVolume;
+			TargetHitEffectSoundPool[currentTargetHitEffect].play();
+		}
+
+		currentTargetHitEffect = (currentTargetHitEffect + 1) % TargetHitEffectSoundPool.length;
 	};
 
 	var currentDoubleKillEffect = 0;
@@ -276,6 +292,16 @@ function SoundSystem()
 				SoundSystem.PlayCountDownEffect();
 			}
 			gameState.CountDownEffects = [];	
+		}
+
+		length = gameState.TargetHitEffects.length; 
+		if(length > 0)
+		{
+			for(var i = 0; i < length; i++)
+			{
+				SoundSystem.PlayTargetHitEffect();
+			}
+			gameState.TargetHitEffects = [];	
 		}
 	}
 }

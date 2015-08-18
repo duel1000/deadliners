@@ -466,6 +466,45 @@ function GetWhiteHoleAnimation()
 	return(WhiteHoleAnimations[currentWhiteHoleAnimation]);
 }
 
+function target_animations(size)
+{
+	var that = {};
+	var _size = size;
+	var _animations = [];
+	
+	that.Init = function()
+	{
+		for(var i = 0; i < _size; i++)
+		{
+			var targetAnimation = new SpriteAnimation({
+				spritesheet: player4spritesheet,
+				width: 162,
+				height: 189,
+				columns: 6,
+				rows: 7,
+				animationSpeed: 1,
+				frameOrder: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,18,42,16,17,42,17,15,42,15],
+				timesToRun: 1,
+				clearCanvasAfterAnimation: false
+			});
+			
+			_animations.push(targetAnimation);
+		}
+	};
+
+	var _currentAnimation = 0;
+	that.GetAnotherAnimation = function()
+	{
+		_currentAnimation = (_currentAnimation + 1) % _size;
+		return(_animations[_currentAnimation]);
+	}
+
+	return(that);
+}
+
+var TargetAnimations = new target_animations(10);
+TargetAnimations.Init();
+
 var flag1animation = new SpriteAnimation({
 		spritesheet: flagspritesheet,
 		width: 90,

@@ -99,10 +99,14 @@ $('#GameModeButton').on('click', function()
 			$("body").addClass("team");
 			break;
 		case variables.game_modes.CaptureTheFlag:
-			GameState.GameMode = variables.game_modes.FreeForAll;
-			$(this).text('free for all');
+			GameState.GameMode = variables.game_modes.Training;
+			$(this).text('training');
 			$("body").removeClass("team");
 			break;
+		case variables.game_modes.Training:
+			GameState.GameMode = variables.game_modes.FreeForAll;
+			$(this).text('free for all');
+			break;z
 	}
 	ValidateGameSetup();
 });
@@ -111,6 +115,22 @@ var NextButton = $('#nextButton1');
 var NextButtonIsValid = true;
 function ValidateGameSetup()
 {
+
+	if(GameState.NumberOfWorms == 1 && GameState.GameMode == variables.game_modes.Training)
+	{
+		NextButtonIsValid = true;
+		NextButton.text('next');
+		NextButton.css('border-color', 'white');
+		return;	
+	}
+	else if(GameState.NumberOfWorms > 1 && GameState.GameMode == variables.game_modes.Training)
+	{
+		NextButtonIsValid = false;
+		NextButton.text('1 player game mode');
+		NextButton.css('border-color', 'red');
+		return;	
+	}
+
 	if(GameState.NumberOfWorms == 4 || GameState.GameMode == variables.game_modes.FreeForAll)
 	{
 		NextButtonIsValid = true;

@@ -3,7 +3,8 @@
 	exports.game_modes = {
 		FreeForAll: 1,
 		TwoOnTwo: 2,
-		CaptureTheFlag: 3
+		CaptureTheFlag: 3,
+		Training: 4
 	};
 
 	exports.game_speeds = {
@@ -49,6 +50,8 @@
 		Flag1Position: [60, 128],
 		Flag2Position: [256 - 60, 128],
 
+		TargetSize: 9,
+
 		Empty: 0,
 		Wall: 1,
 		DrawnWall: 2,
@@ -79,7 +82,9 @@
 		RemoveFlag: -22,
 		RemoveWorm: -23,
 		RemoveHole: -24,
-		ClearAll: -25
+		ClearAll: -25,
+
+		Target: 26
 	};
 
 	exports.directions = {
