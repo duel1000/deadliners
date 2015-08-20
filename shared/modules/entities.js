@@ -67,19 +67,6 @@
 		this.TotalKills = 0;
 	};
 
-	exports.DeathParticle = function()
-	{
-		this.P = null;
-		this.dP = null;
-		this.Color = null;
-		this.Direction = null;
-		this.MaxLength = 30;
-		this.CurrentLength = 0;
-		this.CheckForColor = false;
-		this.SizeX = 1;
-		this.SizeY = 1;
-	};
-
 	exports.team = function(id)
 	{
 		this.ID = id;

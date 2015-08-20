@@ -57,7 +57,7 @@ function SpriteAnimation(options)
 	{
 		if(!this.initiated)
 		{
-			log("NOT INITATED!");
+			log("SPRITEANIMATION NOT INITATED!");
 			return;
 		}
 
@@ -121,7 +121,6 @@ function SpriteAnimation(options)
 
 	this.Clear = function(context)
 	{
-		console.log("claer");
 		frameIndex = 0;
 		tickCount = 0;
 		this.runCount = 0;
@@ -130,6 +129,11 @@ function SpriteAnimation(options)
 		{
 			context.clearRect(Position.x, Position.y, frameWidth, frameHeight);
 		}
+	};
+
+	this.HardClear = function(context)
+	{
+		context.clearRect(Position.x, Position.y, frameWidth, frameHeight);
 	};
 }
 

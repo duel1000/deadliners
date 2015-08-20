@@ -124,6 +124,7 @@
 <script src="js/animationSetup.js"></script>
 <script src="js/renderFunctions.js"></script>
 <script src="js/helperFunctions.js"></script>
+<script src="js/particleSystem.js"></script>
 
 <!--SHARED LOGIC-->
 <script src="modules/math.js"></script>
@@ -131,11 +132,27 @@
 <script src="modules/entityFunctions.js"></script>
 <script src="modules/gridFunctions.js"></script>
 <script src="modules/variables.js"></script>
+
 <script>
 
 var map_values = variables.map_values;
 var collisions = entities.collisions;
 var VectorFactory = new math.V2Factory(100);
+
+var DeathParticleSystem = new particle_system();
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.DeathParticleEmitters.push(new DeathParticleEmitter(16));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
+DeathParticleSystem.HeadshotEmitters.push(new HeadshotEmitter(200));
 
 var training_game_mode = entities.training_game_mode;
 
@@ -507,74 +524,13 @@ function Render()
 
 	for(var i = 0; i < GameState.AnimationsToClear.length; i++)
 	{
-		GameState.AnimationsToClear[i].Clear(ctxMiddle);
+		GameState.AnimationsToClear[i].HardClear(ctxMiddle);
 		GameState.AnimationsToClear.splice(i,1);
 	}
 
-	if(GameState.DeathParticles.length > 0)
-	{
-		ctxDeathParticles.clearRect(0,0,map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
-	}
+	ctxDeathParticles.clearRect(0,0,map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
 
-	for(var i = 0; i < GameState.DeathParticles.length; i++)
-	{
-		var particle = GameState.DeathParticles[i]; 
-
-		particle.CurrentLength += 1;
-		if(particle.CurrentLength > particle.MaxLength)
-		{
-			GameState.DeathParticles.splice(i,1);
-		}
-		else
-		{
-			var randomVector = VectorFactory.EmptyVector();
-			
-			switch(particle.Direction)
-			{
-				case variables.directions.Right:
-					randomVector.x = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
-					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
-					break;
-				case variables.directions.Left:
-					randomVector.x = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
-					randomVector.y = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
-					break;
-				case variables.directions.Up:
-					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
-					randomVector.y = -(Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0));
-					break;
-				case variables.directions.Down:
-					randomVector.x = Math.floor((Math.random() * 4) + 0) - Math.floor((Math.random() * 4) + 0);
-					randomVector.y = Math.floor((Math.random() * 5) + 0) - Math.floor((Math.random() * 2) + 0);
-					break;
-				case variables.directions.Spread:
-					randomVector.x = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
-					randomVector.y = Math.floor((Math.random() * 6) + 0) - Math.floor((Math.random() * 6) + 0);
-					break;
-			}
-
-			particle.dP = randomVector;
-			particle.P.Add(particle.dP);
-
-			var alpha = 1-(particle.CurrentLength / particle.MaxLength);
-			ctxDeathParticles.globalAlpha = alpha * 0.8;
-
-			if(particle.CheckForColor)
-			{
-				var xPos = Math.floor(particle.P.x / 3);
-				var yPos = Math.floor(particle.P.y / 3);
-				var gridValue = gridFunctions.GetGridValue(GameState.Grid, xPos, yPos);
-
-				if(gridValue == map_values.Empty)
-				{
-					particle.Color = '#000000';
-				}
-			}
-			
-			ctxDeathParticles.fillStyle = particle.Color;
-			ctxDeathParticles.fillRect(particle.P.x,particle.P.y, particle.SizeX, particle.SizeY);
-		}
-	}
+	DeathParticleSystem.UpdateAndRender();
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
@@ -603,7 +559,6 @@ function NewGameServer()
 			
 			GameState.StartGameButtonPressed = true;
 			GettinGNewGameFromServer = false;
-			
 		});
 	}
 }
@@ -754,52 +709,17 @@ function HandleWormCollision(worm)
 {
 	if(worm.CollisionType > collisions.NoCollision)
 	{
-		var numberOfParticles = 0;
 		if(worm.CollisionType == collisions.HeadshotCollision)
 		{
-			numberOfParticles = Math.floor((Math.random() * 50) + 15);
+			//TODO(Martin): Why the hell does it not get here??
+			console.log("here");
+			DeathParticleSystem.SpawnHeadshotEmitter(worm.HeadPosition, 
+												     numberOfParticles);
 		}
 		else
 		{
-			numberOfParticles = Math.floor((Math.random() * 15) + 6);
-		}
-
-		for(var ParticleSpawnIndex = 0;
-			ParticleSpawnIndex < numberOfParticles;
-			ParticleSpawnIndex++)
-		{
-			//TODO(Martin): Probably should not new them here :)
-			var particle = new entities.DeathParticle();
-			particle.P = VectorFactory.CustomVector(worm.HeadPosition.x*map_values.TileSize,
-												    worm.HeadPosition.y*map_values.TileSize);
-			
-			particle.SizeX = 3;
-			particle.SizeY = 3;
-			
-			if(worm.CollisionType == collisions.HeadshotCollision)
-			{
-				particle.Direction = variables.directions.Spread;
-				particle.dP = VectorFactory.CustomVector(9,9);
-			}
-			else
-			{
-				particle.Direction = worm.CurrentDirection;	
-				particle.dP = VectorFactory.CustomVector(5,5);
-			}
-
-			if(worm.CollisionType == collisions.WallCollision || 
-			   worm.CollisionType == collisions.HoleCollision ||
-			   worm.CollisionType == collisions.HeadshotCollision)
-			{
-				particle.Color = '#FFFFFF';
-				particle.CheckForColor = true;
-			}
-			else
-			{
-				particle.Color = '#000000';
-			}
-
-			GameState.DeathParticles.push(particle);
+			DeathParticleSystem.SpawnDeathParticleEmitter(worm.HeadPosition, 
+														  worm.CurrentDirection);
 		}
 
 		entityFunctions.Kill(worm);
@@ -854,14 +774,10 @@ function Update(step)
 
 						if(playerHitTarget != 0)
 						{
-							console.log("Hit target: " + playerHitTarget.ID);
 							gridFunctions.RemoveTargetFromGrid(playerHitTarget, GameState.Grid, map_values);
-
+							DeathParticleSystem.SpawnHeadshotEmitter(playerHitTarget.Position);
 							GameState.TargetHitEffects.push(1);
-
-							//TODO(Martin): Jeg kom hertil!!! Forsøgte at cleare den animation der..
-							playerHitTarget.Animation.Clear(ctxMiddle);
-							//GameState.AnimationsToClear.push(playerHitTarget.Animation);
+							GameState.AnimationsToClear.push(playerHitTarget.Animation);
 						}
 					}
 
@@ -1044,6 +960,7 @@ function Update(step)
 														   GameState.hole_count.Amount);
 
 						var animation = DeployAnimations.GetAnimation(GameState.Worms[i].PlayerID); 
+
 						animation.setNewPosition(position);
 
 						animation = FullDeployAnimations.GetAnimation(GameState.Worms[i].PlayerID);
@@ -1071,7 +988,7 @@ function Update(step)
 			{
 				var target = training_game_mode.Targets[training_game_mode.CurrentDeployCount];
 				var animation = TargetAnimations.GetAnotherAnimation();
-				animation.init(target.Position, -12);
+				animation.init(target.Position, -13);
 
 				//TODO(Martin): This is actually for the renderer and should be separated?
 				target.Animation = animation; 
