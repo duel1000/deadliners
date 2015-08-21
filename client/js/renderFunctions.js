@@ -40,7 +40,7 @@ function PaintWalls()
 	{
 		for (var y = 1; y < map_values.RowNumber - 1; y++) 
 		{
-			ctxBack.fillStyle = "#FFFFFF"; //FFFFFF
+			ctxBack.fillStyle = "#FFFFFF";
 			ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 		}
 	}

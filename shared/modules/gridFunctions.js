@@ -130,6 +130,7 @@
 		}
 	}
 
+	//TODO(Martin): This removes where the head was in CTF.
 	exports.RemoveWormPathFromGrid = function(wormPath, grid, removeWormValue)
 	{
 		var PathLengthWithoutHead = wormPath.length-1; 
@@ -197,6 +198,7 @@
 			}	
 	};
 
+	//TODO(Martin): 4 and 5 are not accurate, thay dont fit with the animation size.
 	exports.SetTargetInGrid = function(target, grid, map_values)
 	{
 		for (var x = target.Position.x - 4; x < target.Position.x + 5; x++) 
@@ -209,12 +211,13 @@
 	}
 
 	//TODO(Martin): Check all these values.
-	exports.CheckForTargetHit = function(holePosition, targets)
+	exports.CheckForTargetHit = function(holePosition, training_game_mode)
 	{
 		var result = 0;
-		var targetAmount = targets.length;
+		var targets = training_game_mode.Targets;
+		var targetsToCheck = training_game_mode.CurrentLevel;
 		
-		for(var i = 0; i < targetAmount; i++)
+		for(var i = 0; i < targetsToCheck; i++)
 		{
 			var xDistance = Math.abs(holePosition.x - targets[i].Position.x);
 
@@ -223,7 +226,11 @@
 				var yDistance = Math.abs(holePosition.y - targets[i].Position.y);
 				if(yDistance < 10)
 				{
-					result = targets[i];
+					if(!targets[i].IsDestroyed)
+					{
+						targets[i].IsDestroyed = true;
+						result = targets[i];
+					}
 				}
 			}
 		}

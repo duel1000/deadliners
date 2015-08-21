@@ -9,18 +9,41 @@
 	};
 
 	exports.training_game_mode = {
-		CurrentLevel: 3,
-		DeployNew: false,	
-		CurrentDeployCount: 0,
-		TargetsToDeploy: 3,
+		CurrentLevel: 1,
+		TargetsDeployed: 0,
 		TargetsDestroyed: 0,
-		Targets: []
+		Targets: [],
+
+		NewLevel: function(newGame)
+		{
+			if(newGame)
+			{
+				this.CurrentLevel = 1;
+			}
+			else
+			{
+				this.CurrentLevel++;
+			}
+
+			this.TargetsDeployed = 0;
+			this.TargetsDestroyed = 0;
+
+			//TODO(Martin): This dont work with my animations..
+			//this.Targets = math.ShuffleArray(this.Targets); 
+
+			var amount = this.Targets.length;
+			for(var i = 0; i < amount; i++)
+			{
+				this.Targets[i].IsDestroyed = false;
+			}
+		}
 	};
 
 	exports.target = function()
 	{
 		ID = 0;
 		Position = 0;
+		IsDestroyed = false;
 		Size = 9;
 		Animation = 0;
 	};

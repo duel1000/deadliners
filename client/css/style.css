@@ -50,6 +50,10 @@ body {
 	display:none;
 }
 
+#shotsWrapper {
+	display: none;
+}
+
 .headerFont {
 	color: white;
 	font-size: 150px;

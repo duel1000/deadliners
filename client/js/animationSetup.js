@@ -107,66 +107,27 @@ function hole_animations()
 		switch(wormID)
 		{
 			case 1:
-				if(Worm1CurrentHoleAnimation > 0)
-				{
-					Worm1CurrentHoleAnimation--;
-					result = Worm1HoleAnimations[Worm1CurrentHoleAnimation];
-				}
+				result = Worm1HoleAnimations[Worm1CurrentHoleAnimation];
+				Worm1CurrentHoleAnimation = (Worm1CurrentHoleAnimation + 1) % Worm1HoleAnimations.length;
 				break;
 
 			case 2:
-				if(Worm2CurrentHoleAnimation > 0)
-				{
-					result = Worm2HoleAnimations[Worm2CurrentHoleAnimation];
-					Worm2CurrentHoleAnimation--;
-				}
+				result = Worm2HoleAnimations[Worm2CurrentHoleAnimation];
+				Worm2CurrentHoleAnimation = (Worm2CurrentHoleAnimation + 1) % Worm2HoleAnimations.length;
 				break;
 
 			case 3:
-				if(Worm3CurrentHoleAnimation > 0)
-				{
-					result = Worm2HoleAnimations[Worm3CurrentHoleAnimation];
-					Worm3CurrentHoleAnimation--;
-				}
+				result = Worm3HoleAnimations[Worm3CurrentHoleAnimation];
+				Worm3CurrentHoleAnimation = (Worm3CurrentHoleAnimation + 1) % Worm3HoleAnimations.length;
 				break;
 
 			case 4:
-				if(Worm4CurrentHoleAnimation > 0)
-				{
-					result = Worm2HoleAnimations[Worm4CurrentHoleAnimation];
-					Worm4CurrentHoleAnimation--;
-				}
+				result = Worm4HoleAnimations[Worm4CurrentHoleAnimation];
+				Worm4CurrentHoleAnimation = (Worm4CurrentHoleAnimation + 1) % Worm4HoleAnimations.length;
 				break;
 		}
 
 		return(result);
-	};
-
-	that.ResetAllAnimations = function(count)
-	{
-		Worm1CurrentHoleAnimation = count;
-		Worm2CurrentHoleAnimation = count;
-		Worm3CurrentHoleAnimation = count;
-		Worm4CurrentHoleAnimation = count;
-	};
-
-	that.ResetWormAnimations = function(wormID, count)
-	{
-		switch(wormID)
-		{
-			case 1:
-				Worm1CurrentHoleAnimation = count;
-				break;
-			case 2:
-				Worm2CurrentHoleAnimation = count;
-				break;
-			case 3:
-				Worm3CurrentHoleAnimation = count;
-				break;
-			case 4:
-				Worm4CurrentHoleAnimation = count;
-				break;
-		}
 	};
 
 	return(that);
@@ -466,15 +427,14 @@ function GetWhiteHoleAnimation()
 	return(WhiteHoleAnimations[currentWhiteHoleAnimation]);
 }
 
-function target_animations(size)
+function target_animations()
 {
 	var that = {};
-	var _size = size;
-	var _animations = [];
+	var animations = [];
 	
-	that.Init = function()
+	that.Init = function(amount)
 	{
-		for(var i = 0; i < _size; i++)
+		for(var i = 0; i < amount; i++)
 		{
 			var targetAnimation = new SpriteAnimation({
 				spritesheet: player4spritesheet,
@@ -488,22 +448,22 @@ function target_animations(size)
 				clearCanvasAfterAnimation: false
 			});
 			
-			_animations.push(targetAnimation);
+			animations.push(targetAnimation);
 		}
 	};
 
-	var _currentAnimation = 0;
+	var currentAnimation = 0;
 	that.GetAnotherAnimation = function()
 	{
-		_currentAnimation = (_currentAnimation + 1) % _size;
-		return(_animations[_currentAnimation]);
+		currentAnimation = (currentAnimation + 1) % animations.length;
+		return(animations[currentAnimation]);
 	}
 
 	return(that);
 }
 
-var TargetAnimations = new target_animations(10);
-TargetAnimations.Init();
+var TargetAnimations = new target_animations();
+TargetAnimations.Init(15);
 
 var flag1animation = new SpriteAnimation({
 		spritesheet: flagspritesheet,
