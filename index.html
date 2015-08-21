@@ -359,7 +359,7 @@ var Player4Keys = new variables.key_package(74,73,76,75,66,86);
 document.addEventListener("keydown", function(event) 
 {	
 	//TODO(martin): Handle this properly. Handle the full screen button.
-	//event.preventDefault();
+	event.preventDefault();
 
 	keystate[event.keyCode] = true;
 	
