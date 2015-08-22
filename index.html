@@ -67,23 +67,46 @@
 	
 	<div id="gamescreen" class="no-display">
 		<div id="gameView">
+			<div class="highScore">
+				<div class="point white" id="highscore1">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="highscore2">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="highscore3">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="highscore4">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="highscore5">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+			</div>
+
 			<div class="playerPoints">
-			<div class="point white" id="player1points" data-player="1" data-order="0">
-				<div class="name"></div>
-				<div class="points"></div>
-			</div>
-			<div class="point white" id="player2points" data-player="2" data-order="1">
-				<div class="name"></div>
-				<div class="points"></div>
-			</div>
-			<div class="point white" id="player3points" data-player="3" data-order="2">
-				<div class="name"></div>
-				<div class="points"></div>
-			</div>
-			<div class="point white" id="player4points" data-player="4" data-order="3">
-				<div class="name"></div>
-				<div class="points"></div>
-			</div>
+				<div class="point white" id="player1points" data-player="1" data-order="0">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="player2points" data-player="2" data-order="1">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="player3points" data-player="3" data-order="2">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
+				<div class="point white" id="player4points" data-player="4" data-order="3">
+					<div class="name"></div>
+					<div class="points"></div>
+				</div>
 			</div> 
 			
 			<div class="wrapper">
@@ -157,8 +180,11 @@ socket.on('connected', function(data)
 
 socket.on('NewTopFive', function(data)
 {
-	//TODO(Martin): Make a top 5 list.
-	console.log(data.list);
+	$("#highscore1").find(".name").text(data.list.one).parent().find(".points").text(data.list.score1);
+	$("#highscore2").find(".name").text(data.list.two).parent().find(".points").text(data.list.score2);
+	$("#highscore3").find(".name").text(data.list.three).parent().find(".points").text(data.list.score3);
+	$("#highscore4").find(".name").text(data.list.four).parent().find(".points").text(data.list.score4);
+	$("#highscore5").find(".name").text(data.list.five).parent().find(".points").text(data.list.score5);
 });
 
 var BackCanvas = document.getElementById("backCanvas");
@@ -1284,7 +1310,7 @@ function ServerGameKeyInput(gameStarted)
 
 function UpdateScoreboard()
 {
-	if(GameState.GameMode == variables.game_modes.FreeForAll)
+	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.Training)
 	{	
 		for(var i = 0; i < GameState.NumberOfWorms; i++){
 			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
