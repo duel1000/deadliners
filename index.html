@@ -241,6 +241,12 @@ socket.on('connected', function(data)
 	CLIENT_ID = data.id;
 });
 
+socket.on('NewTopFive', function(data)
+{
+	//TODO(Martin): Make a top 5 list.
+	console.log(data.list);
+});
+
 var BackCanvas = document.getElementById("backCanvas");
 var MiddleCanvas = document.getElementById("middleCanvas");
 var TopCanvas = document.getElementById("topCanvas");
@@ -907,6 +913,10 @@ function Update(step)
 
 						if(training_game_mode.CurrentLevel == 12)
 						{
+
+							socket.emit('gameScore', { name : GameState.Worms[0].Name, 
+													   score : training_game_mode.CurrentLevel });	
+
 							var amount = training_game_mode.Targets.length;
 							for(var e = 0; e < amount; e++)
 							{
@@ -951,6 +961,8 @@ function Update(step)
 			}
 			else if(GameState.GameMode == variables.game_modes.Training && !GameState.Worms[0].Alive)
 			{
+				socket.emit('gameScore', { name : GameState.Worms[0].Name, 
+										   score : training_game_mode.CurrentLevel });	
 				GameState.GameStarted = false;
 			}
 		}		
