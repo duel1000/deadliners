@@ -510,6 +510,30 @@ body {
 	display: inline-block;
 }
 
+.highScore {
+	position: absolute;
+	top: 15px;
+	left:30px;
+	font-size: 26px;
+	width: 300px;
+}
+
+.highScore .name{
+	float:left;
+	width: 225px;
+	text-align: left;
+}
+
+.highScore .points{
+	float:left;
+	width:75px;
+	text-align: right;
+}
+
+.highScore .white.point{
+	display: inline-block;
+}
+
 /*.fader {
 	animation:fadeIn 1.0s ease-in;
 	animation:fadeOut 1.0s ease-in;	

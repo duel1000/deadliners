@@ -101,12 +101,13 @@ $('#GameModeButton').on('click', function()
 		case variables.game_modes.CaptureTheFlag:
 			GameState.GameMode = variables.game_modes.Training;
 			$(this).text('training');
-			$("body").removeClass("team");
+			$("body").removeClass("team").addClass("training");
 			break;
 		case variables.game_modes.Training:
 			GameState.GameMode = variables.game_modes.FreeForAll;
 			$(this).text('free for all');
-			break;z
+			$("body").removeClass("training");
+			break;
 	}
 	ValidateGameSetup();
 });
