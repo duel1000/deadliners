@@ -10,9 +10,7 @@
 		worm.HolePosition = v2Factory.EmptyVector();
 		worm.HolePositions = [];
 		worm.Path = [];
-
-		var startingPoint = v2Factory.CustomVector(position.x, position.y);
-		worm.Path.push(startingPoint);
+		worm.Path.push(worm.SpawnPoint);
 		
 		worm.Alive = true;
 		worm.CollisionType = 0;
@@ -127,7 +125,8 @@
 
 		worm.HolePosition.Clear();
 		worm.WhiteHolePosition.Clear();
-		worm.Path = [worm.HeadPosition];
+		worm.Path = [];
+		worm.Path.push(worm.SpawnPoint);
 		worm.HolePositions = [];
 
 		setTimeout(function()

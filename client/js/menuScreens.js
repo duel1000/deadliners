@@ -58,13 +58,13 @@ function EnterGame()
 
 $('#serverGameButton').on('click', function()
 {
-	if(GameState.LocalGame)
+	/*if(GameState.LocalGame)
 	{
 		GameState.LocalGame = false;
 		GameState.ServerGame = true;
 
 		EnterGame();
-	}
+	}*/
 });
 
 $(".black-white-button").each(function()
@@ -162,6 +162,18 @@ NextButton.on('click', function()
 		{
 			$('#player' + i + 'field').show();
 		}
+
+		$('#serverGameButton').hide();
+
+		if(GameState.GameMode == variables.game_modes.Training)
+		{
+			CustomizeButton.hide();
+		}
+		else
+		{
+			CustomizeButton.show();	
+		}
+
 		setupGameMenu.hide();
 		inputNamesMenu.show();
 		ValidateEnteredPlayers();
@@ -171,6 +183,7 @@ NextButton.on('click', function()
 var BackButton1 = $('#backButton1');
 BackButton1.on('click', function()
 {
+	$('#serverGameButton').show();
 	inputNamesMenu.hide();
 	setupGameMenu.show();
 });

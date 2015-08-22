@@ -24,7 +24,7 @@
 				<div class="black-white-button button-margin" id="nextButton1">next</div>
 			</div>	
 		</div>
-		<div  class="black-white-button button-margin" id="serverGameButton">online</div>
+		<div  class="black-red-button button-margin" disabled="disabled" id="serverGameButton">online</div>
 
 		<div id="inputNamesMenu" class="white no-display">
 		<div class="smallHeaderFont" id="titleScreenText">input all player names  &nbsp;\&nbsp;  customize game  &nbsp;\&nbsp;  start race!</div>
@@ -904,33 +904,32 @@ function Update(step)
 						{
 							gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 						}
+
+						if(training_game_mode.CurrentLevel == 12)
+						{
+							var amount = training_game_mode.Targets.length;
+							for(var e = 0; e < amount; e++)
+							{
+								ParticleSystem.SpawnHeadshotEmitter(training_game_mode.Targets[e].Position);
+							}
+
+							GameState.WinnerText = GameState.Worms[0].Name + ' got some fireworks!';
+							GameState.RenderWinnerText = true;
+
+							entityFunctions.Kill(GameState.Worms[i]);
+							GameState.GameStarted = false;
+						}
+						if(GameState.Worms[i].HoleCount == 0)
+						{
+							ParticleSystem.SpawnHeadshotEmitter(GameState.Worms[i].HeadPosition);
+							entityFunctions.Kill(GameState.Worms[i]);
+							GameState.GameStarted = false;
+						}
 					}
 					else
 					{
 						gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 					}
-
-					if(training_game_mode.CurrentLevel == 12)
-					{
-						var amount = training_game_mode.Targets.length;
-						for(var e = 0; e < amount; e++)
-						{
-							ParticleSystem.SpawnHeadshotEmitter(training_game_mode.Targets[e].Position);
-						}
-
-						GameState.WinnerText = GameState.Worms[0].Name + ' got some fireworks!';
-						GameState.RenderWinnerText = true;
-
-						entityFunctions.Kill(GameState.Worms[i]);
-						GameState.GameStarted = false;
-					}
-					if(GameState.Worms[i].HoleCount == 0)
-					{
-						ParticleSystem.SpawnHeadshotEmitter(GameState.Worms[i].HeadPosition);
-						entityFunctions.Kill(GameState.Worms[i]);
-						GameState.GameStarted = false;
-					}
-
 				}
 
 				if(GameState.Worms[i].JustShotWhiteHole)
@@ -979,6 +978,9 @@ function Update(step)
 			if(GameState.Worms[i].Alive)
 			{
 				HandleWormCollision(GameState.Worms[i]);
+			}
+			if(GameState.Worms[i].Alive)
+			{
 				gridFunctions.SetGridValue(GameState.Grid, GameState.Worms[i].HeadID, 
 												   GameState.Worms[i].HeadPosition.x, 
 												   GameState.Worms[i].HeadPosition.y);
