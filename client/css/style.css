@@ -510,12 +510,17 @@ body {
 	display: inline-block;
 }
 
-.highScore {
+.highScore{
+	display: none;
 	position: absolute;
 	top: 15px;
 	left:30px;
 	font-size: 26px;
 	width: 300px;
+}
+
+.training .highScore {
+	display:block;
 }
 
 .highScore .name{
