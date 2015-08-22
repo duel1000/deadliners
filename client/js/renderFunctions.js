@@ -1,6 +1,6 @@
 function SetupTrainingGameUI()
 {
-	//TODO(Martin): Do something :)
+	$("#player1points .name").text(GameState.PlayerNames[0]);
 }
 
 function SetupPlayerPointsUI()
