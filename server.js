@@ -55,7 +55,6 @@ io.on('connection', function(newClient)
 			//NewGame();
 			io.emit('gamefromserver', { NewGameState: GameState });
 		}
-
 	});
 
 	newClient.on('gameScore', function(data)

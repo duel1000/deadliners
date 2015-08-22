@@ -148,92 +148,6 @@ var ParticleSystem = new particle_system();
 
 var training_game_mode = entities.training_game_mode;
 
-var target1 = new entities.target();
-target1.ID = 100;
-target1.Position = VectorFactory.EmptyVector();
-target1.Position.x = 75;
-target1.Position.y = 75;
-
-var target2 = new entities.target();
-target2.ID = 200;
-target2.Position = VectorFactory.EmptyVector();
-target2.Position.x = 225;
-target2.Position.y = 55;
-
-var target3 = new entities.target();
-target3.ID = 300;
-target3.Position = VectorFactory.EmptyVector();
-target3.Position.x = 190;
-target3.Position.y = 150;
-
-var target4 = new entities.target();
-target4.ID = 400;
-target4.Position = VectorFactory.EmptyVector();
-target4.Position.x = 75;
-target4.Position.y = 190;
-
-var target5 = new entities.target();
-target5.ID = 500;
-target5.Position = VectorFactory.EmptyVector();
-target5.Position.x = 160;
-target5.Position.y = 180;
-
-var target6= new entities.target();
-target6.ID = 600;
-target6.Position = VectorFactory.EmptyVector();
-target6.Position.x = 35;
-target6.Position.y = 35;
-
-var target7 = new entities.target();
-target7.ID = 700;
-target7.Position = VectorFactory.EmptyVector();
-target7.Position.x = 130;
-target7.Position.y = 55;
-
-var target8 = new entities.target();
-target8.ID = 800;
-target8.Position = VectorFactory.EmptyVector();
-target8.Position.x = 175;
-target8.Position.y = 45;
-
-var target9 = new entities.target();
-target9.ID = 900;
-target9.Position = VectorFactory.EmptyVector();
-target9.Position.x = 55;
-target9.Position.y = 135;
-
-var target10 = new entities.target();
-target10.ID = 1000;
-target10.Position = VectorFactory.EmptyVector();
-target10.Position.x = 100;
-target10.Position.y = 100;
-
-var target11 = new entities.target();
-target11.ID = 1100;
-target11.Position = VectorFactory.EmptyVector();
-target11.Position.x = 105;
-target11.Position.y = 180;
-
-var target12 = new entities.target();
-target12.ID = 1200;
-target12.Position = VectorFactory.EmptyVector();
-target12.Position.x = 45;
-target12.Position.y = 170;
-
-training_game_mode.Targets.push(target1);
-training_game_mode.Targets.push(target2);
-training_game_mode.Targets.push(target3);
-training_game_mode.Targets.push(target4);
-training_game_mode.Targets.push(target5);
-training_game_mode.Targets.push(target6);
-training_game_mode.Targets.push(target7);
-training_game_mode.Targets.push(target8);
-training_game_mode.Targets.push(target9);
-training_game_mode.Targets.push(target10);
-training_game_mode.Targets.push(target11);
-training_game_mode.Targets.push(target12);
-
-
 var socket = io();
 var CLIENT_ID = 0;
 socket.on('connected', function(data)
@@ -666,11 +580,6 @@ function NewGameLocal()
 		//flag2animation.init(FLAG_2_POSITION[0], FLAG_2_POSITION[1], -6);
 	}
 
-	if(GameState.GameMode == variables.game_modes.Training)
-	{
-		training_game_mode.NewLevel(true);
-	}
-
 	//STUDY(martin): Understand new and when to use it.
 	var vectorGroup = [];
 	vectorGroup[0] = VectorFactory.EmptyVector();
@@ -724,6 +633,11 @@ function NewGameLocal()
 						   variables.directions.Up, GameState.Team2.ID,
 						   VectorFactory, GameState.hole_count.Amount);
 		}
+	}
+
+	if(GameState.GameMode == variables.game_modes.Training)
+	{
+		training_game_mode.NewGame(startingPositions[0]);
 	}
 	
 	InitializeAnimations(GameState);
@@ -885,6 +799,7 @@ function Update(step)
 							GameState.AnimationsToClear.push(TargetThatPlayerHit.Animation);
 
 							training_game_mode.TargetsDestroyed++;
+							training_game_mode.TotalTargetsDestroyed++;
 						}
 						else
 						{
@@ -904,14 +819,14 @@ function Update(step)
 							GameState.Worms[i].WhiteHoleCount = 1;
 							$('#specials').text(1);
 
-							training_game_mode.NewLevel(false);
+							training_game_mode.NextLevel(GameState.Worms[0].HeadPosition);
 						}
 						else
 						{
 							gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 						}
 
-						if(training_game_mode.CurrentLevel == 12)
+						/*if(training_game_mode.CurrentLevel == 12)
 						{
 
 							socket.emit('gameScore', { name : GameState.Worms[0].Name, 
@@ -928,7 +843,8 @@ function Update(step)
 
 							entityFunctions.Kill(GameState.Worms[i]);
 							GameState.GameStarted = false;
-						}
+						}*/
+						
 						if(GameState.Worms[i].HoleCount == 0)
 						{
 							ParticleSystem.SpawnHeadshotEmitter(GameState.Worms[i].HeadPosition);
@@ -962,7 +878,7 @@ function Update(step)
 			else if(GameState.GameMode == variables.game_modes.Training && !GameState.Worms[0].Alive)
 			{
 				socket.emit('gameScore', { name : GameState.Worms[0].Name, 
-										   score : training_game_mode.CurrentLevel });	
+										   score : training_game_mode.TotalTargetsDestroyed });	
 				GameState.GameStarted = false;
 			}
 		}		

@@ -463,7 +463,9 @@ function target_animations()
 }
 
 var TargetAnimations = new target_animations();
-TargetAnimations.Init(15);
+
+//TODO(Martin): This will crash after when training hits lvl 101
+TargetAnimations.Init(100);
 
 var flag1animation = new SpriteAnimation({
 		spritesheet: flagspritesheet,
