@@ -22,6 +22,7 @@
 			this.CurrentLevel = 1;
 			this.TargetsDeployed = 0;
 			this.TargetsDestroyed = 0;
+			this.TotalTargetsDestroyed = 0;
 		},
 
 		NextLevel: function(wormPosition)

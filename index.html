@@ -180,11 +180,11 @@ socket.on('connected', function(data)
 
 socket.on('NewTopFive', function(data)
 {
-	$("#highscore1").find(".name").text(data.list.one).parent().find(".points").text(data.list.score1);
-	$("#highscore2").find(".name").text(data.list.two).parent().find(".points").text(data.list.score2);
-	$("#highscore3").find(".name").text(data.list.three).parent().find(".points").text(data.list.score3);
-	$("#highscore4").find(".name").text(data.list.four).parent().find(".points").text(data.list.score4);
-	$("#highscore5").find(".name").text(data.list.five).parent().find(".points").text(data.list.score5);
+	$("#highscore1").find(".name").text(data.list.name1).parent().find(".points").text(data.list.score1);
+	$("#highscore2").find(".name").text(data.list.name2).parent().find(".points").text(data.list.score2);
+	$("#highscore3").find(".name").text(data.list.name3).parent().find(".points").text(data.list.score3);
+	$("#highscore4").find(".name").text(data.list.name4).parent().find(".points").text(data.list.score4);
+	$("#highscore5").find(".name").text(data.list.name5).parent().find(".points").text(data.list.score5);
 });
 
 var BackCanvas = document.getElementById("backCanvas");

@@ -7,6 +7,10 @@ var port = process.env.PORT || 3000;
 app.use(express.static('client'));
 app.use(express.static('shared'));
 
+//var data = require('./data/mongoSetup');
+var jsonfile = require('jsonfile');
+var util = require('util');
+ 
 app.get('/', function(req, res)
 {
 	res.sendFile(__dirname + '/index.html');
@@ -22,18 +26,63 @@ http.listen(port, function()
 	console.log('listening on *:' + port);
 });
 
-//TODO(Martin): MongoDB
-var TopFiveList = {
-	one: 'XXXXXX',
-	score1: 0,
-	two: 'XXXXXX',
-	score2: 0,
-	three: 'XXXXXX',
-	score3: 0,
-	four: 'XXXXXX',
-	score4: 0,
-	five: 'XXXXXX',
-	score5: 0
+function CreateAndEmitNewTop5List(name, score)
+{
+	jsonfile.readFile('./data/top5list.json', function(err, obj) 
+	{
+		if(err) { console.log(err); }
+
+		var TopFiveList = obj;
+
+		switch(true)
+		{
+			case score > TopFiveList.score1:
+				TopFiveList.score2 = TopFiveList.score1; 
+				TopFiveList.name2 = TopFiveList.name1; 
+				TopFiveList.name1 = name;
+				TopFiveList.score1 = score;
+				break;
+			case score > TopFiveList.score2:
+				TopFiveList.score3 = TopFiveList.score2; 
+				TopFiveList.name3 = TopFiveList.name2; 
+				TopFiveList.name2 = name;
+				TopFiveList.score2 = score;
+				break;
+			case score > TopFiveList.score3:
+				TopFiveList.score4 = TopFiveList.score3; 
+				TopFiveList.name4 = TopFiveList.name3; 
+				TopFiveList.name3 = name;
+				TopFiveList.score3 = score;
+				break;
+			case score > TopFiveList.score4:
+				TopFiveList.score5 = TopFiveList.score4; 
+				TopFiveList.name5 = TopFiveList.name4; 
+				TopFiveList.name4 = name;
+				TopFiveList.score4 = score;
+				break;
+			case score > TopFiveList.score5:
+				TopFiveList.name5 = name;
+				TopFiveList.score5 = score;
+				break;
+		}
+
+		io.emit('NewTopFive', { list: TopFiveList });
+
+		jsonfile.writeFile('./data/top5list.json', TopFiveList, function (err) 
+		{
+	  		if(err) { console.log(err); }
+		});
+	});
+}
+
+function SendTopFiveList()
+{
+	jsonfile.readFile('./data/top5list.json', function(err, obj) 
+	{
+		if(err) { console.log(err); }
+		var TopFiveList = obj;
+		io.emit('NewTopFive', { list: TopFiveList });
+	});
 }
 
 var playersJoined = 0;
@@ -42,7 +91,7 @@ io.on('connection', function(newClient)
 	newClient.userid = uuid.v4();
 	console.log('\t socket.io:: player ' + newClient.userid + ' connected');
 	
-	io.emit('NewTopFive', { list: TopFiveList });
+	SendTopFiveList();
 
 	newClient.on('join', function(data)
 	{
@@ -61,41 +110,7 @@ io.on('connection', function(newClient)
 	{
 		var name = data.name;
 		var score = data.score;
-
-		//TODO(Martin): MongoDB
-		switch(true)
-		{
-			case score > TopFiveList.score1:
-				TopFiveList.score2 = TopFiveList.score1; 
-				TopFiveList.two = TopFiveList.one; 
-				TopFiveList.one = name;
-				TopFiveList.score1 = score;
-				break;
-			case score > TopFiveList.score2:
-				TopFiveList.score3 = TopFiveList.score2; 
-				TopFiveList.three = TopFiveList.two; 
-				TopFiveList.two = name;
-				TopFiveList.score2 = score;
-				break;
-			case score > TopFiveList.score3:
-				TopFiveList.score4 = TopFiveList.score3; 
-				TopFiveList.four = TopFiveList.three; 
-				TopFiveList.three = name;
-				TopFiveList.score3 = score;
-				break;
-			case score > TopFiveList.score4:
-				TopFiveList.score5 = TopFiveList.score4; 
-				TopFiveList.five = TopFiveList.four; 
-				TopFiveList.four = name;
-				TopFiveList.score4 = score;
-				break;
-			case score > TopFiveList.score5:
-				TopFiveList.five = name;
-				TopFiveList.score5 = score;
-				break;
-		}
-
-		io.emit('NewTopFive', { list: TopFiveList });
+		CreateAndEmitNewTop5List(name, score);
 	});
 
 	newClient.on('newGamePlease', function()
