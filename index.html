@@ -1174,7 +1174,7 @@ function UpdateScoreboard()
 	{	
 		for(var i = 0; i < GameState.NumberOfWorms; i++)
 		{
-			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
+			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')');
 		}
 	}
 	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)

@@ -692,6 +692,8 @@ body {
 .control4::after{
 	position: absolute;
 	right: 0;
+	font-size: 18px;
+	line-height: 26px;
 }
 
 .control1::after{
