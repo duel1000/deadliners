@@ -143,7 +143,6 @@
 		}
 	}
 
-	//TODO(Martin): This function should not need the holesize
 	exports.RemoveWormHolesFromGrid = function(holePositions, grid, map_values)
 	{
 		for(var i = 0; i < holePositions.length; i++)
@@ -198,7 +197,7 @@
 			}	
 	};
 
-	//TODO(Martin): 4 and 5 are not accurate, thay dont fit with the animation size.
+	//TODO(Martin): 4 and 5 are not accurate, they dont fit with the animation size.
 	exports.SetTargetInGrid = function(target, grid, map_values)
 	{
 		for (var x = target.Position.x - 4; x < target.Position.x + 5; x++) 
@@ -210,7 +209,6 @@
 		}	
 	}
 
-	//TODO(Martin): Check all these values.
 	exports.CheckForTargetHit = function(holePosition, training_game_mode)
 	{
 		var result = 0;
@@ -390,12 +388,10 @@
 		return(vectorGroup);
 	}
 
-	//TODO(Martin): This loooks bad.
-	exports.SetWormCollision = function(worm, grid, map_values, collisions, gameState)
+	exports.SetWormCollision = function(worm, grid, map_values, collisions, gameState, gameMode)
 	{
 		var xPos = worm.HeadPosition.x;
 		var yPos = worm.HeadPosition.y;
-
 		var gridValue = this.GetGridValue(grid, xPos, yPos);
 
 		if(gridValue == map_values.Worm1Head || 
@@ -422,32 +418,32 @@
 		{	
 			worm.CollisionType = collisions.HoleCollision;	
 		}
-		else if(gameState.GameMode == 3 && 
+		else if(gameState.GameMode == variables.game_modes.CaptureTheFlag && 
 			   (gridValue == gameState.Flag1.ID || gridValue == gameState.Flag2.ID))
 		{	
 			if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team2ID)
 			{
 				worm.HoldsFlag = gameState.Flag1;
 				this.RemoveFlagFromGrid(gameState.Flag1, grid, map_values);
-				//SoundSystem.PlayFlagEffect();
+				SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == gameState.Flag2.ID && worm.TeamID == map_values.Team1ID)
 			{
 				worm.HoldsFlag = gameState.Flag2;
 				this.RemoveFlagFromGrid(gameState.Flag2, grid, map_values);
-				//SoundSystem.PlayFlagEffect();
+				SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == gameState.Flag1.ID && worm.TeamID == map_values.Team1ID && worm.HoldsFlag != 0)
 			{
 				gameState.RoundWinningTeam = map_values.Team1ID;
 				worm.HoldsFlag = 0;
-				//SoundSystem.PlayFlagEffect();
+				SoundSystem.PlayFlagEffect();
 			}
 			else if(gridValue == gameState.Flag2.ID && worm.TeamID == map_values.Team2ID && worm.HoldsFlag != 0)
 			{
 				gameState.RoundWinningTeam = map_values.Team2ID;
 				worm.HoldsFlag = 0;
-				//SoundSystem.PlayFlagEffect();
+				SoundSystem.PlayFlagEffect();
 			}
 			else
 			{	
