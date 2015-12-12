@@ -16,8 +16,7 @@ function SetupPlayerPointsUI()
 		$("#player4points .name").text(GameState.PlayerNames[3]);
 		$("#player4points .points").text('0');		
 	}
-	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-	          GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		$("#player1points .name").text("TEAM 1");
 		$("#player1points .points").text('0');

@@ -15,11 +15,6 @@ app.get('/', function(req, res)
 	res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/todo', function(req, res)
-{
-	res.sendFile(__dirname + '/TODO.txt');
-});
-
 http.listen(port, function()
 {
 	console.log('listening on *:' + port);

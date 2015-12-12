@@ -220,6 +220,8 @@ function GameState()
 	this.GameFinished = false;
 	this.StartGameButtonPressed = false;
 
+	this.Running = false;
+
 	this.SecondsCounter = 0;
 
 	this.WormsDiedThisRound = [];
@@ -244,7 +246,7 @@ function GameState()
 	this.Flag2 = new entities.flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
 
-	//Handles for Render()	
+	//NOTE(martin): Handles for Render()	
 	this.SpriteAnimations = [];
 	this.AnimationsToClear = [];
 	this.DeathParticles = [];
@@ -254,7 +256,7 @@ function GameState()
 	this.DrawStartCounter = false;
 	this.RenderWinnerText = false;
 
-	//TODO(Martin): Handles for Music
+	//NOTE(Martin): Handles for Music
 	this.CrashEffects = [];
 	this.DeniedEffects = [];
 	this.ShotEffects = [];
@@ -276,28 +278,51 @@ var Player2Keys = new variables.key_package(68,82,71,70,88,90);
 var Player3Keys = new variables.key_package(97,101,99,98,34,35);
 var Player4Keys = new variables.key_package(74,73,76,75,66,86);
 
-function SetupKeyEvents(KeyCodes)
+var Listener = function(event)
 {
-	document.addEventListener("keydown", function(event) 
-	{	
-		if(event.keyCode == KeyCodes.LeftKey ||
-		   event.keyCode == KeyCodes.UpKey ||
-		   event.keyCode == KeyCodes.RightKey ||
-		   event.keyCode == KeyCodes.DownKey ||
-		   event.keyCode == KeyCodes.ShotKey ||
-		   event.keyCode == KeyCodes.SpecialKey ||
-		   event.keyCode == 13) //ENTER
-		{
-			event.preventDefault();
-			keystate[event.keyCode] = true;
-		}
-	});
+	if(event.keyCode == Player1Keys.LeftKey ||
+	   event.keyCode == Player1Keys.UpKey ||
+	   event.keyCode == Player1Keys.RightKey ||
+	   event.keyCode == Player1Keys.DownKey ||
+	   event.keyCode == Player1Keys.ShotKey ||
+	   event.keyCode == Player1Keys.SpecialKey ||
+
+	   event.keyCode == Player2Keys.LeftKey ||
+	   event.keyCode == Player2Keys.UpKey ||
+	   event.keyCode == Player2Keys.RightKey ||
+	   event.keyCode == Player2Keys.DownKey ||
+	   event.keyCode == Player2Keys.ShotKey ||
+	   event.keyCode == Player2Keys.SpecialKey ||
+
+	   event.keyCode == Player3Keys.LeftKey ||
+	   event.keyCode == Player3Keys.UpKey ||
+	   event.keyCode == Player3Keys.RightKey ||
+	   event.keyCode == Player3Keys.DownKey ||
+	   event.keyCode == Player3Keys.ShotKey ||
+	   event.keyCode == Player3Keys.SpecialKey ||
+
+	   event.keyCode == Player4Keys.LeftKey ||
+	   event.keyCode == Player4Keys.UpKey ||
+	   event.keyCode == Player4Keys.RightKey ||
+	   event.keyCode == Player4Keys.DownKey ||
+	   event.keyCode == Player4Keys.ShotKey ||
+	   event.keyCode == Player4Keys.SpecialKey ||
+	   event.keyCode == 13) //ENTER
+	{
+		event.preventDefault();
+		keystate[event.keyCode] = true;
+	}
 }
 
-SetupKeyEvents(Player1Keys);
-SetupKeyEvents(Player2Keys);
-SetupKeyEvents(Player3Keys);
-SetupKeyEvents(Player4Keys);
+function EnableKeyEvents()
+{
+		document.addEventListener("keydown", Listener, false);
+}
+
+function DisableKeyEvents()
+{
+	document.removeEventListener("keydown", Listener, false);
+}
 
 document.addEventListener("keyup", function(event) 
 {
@@ -328,8 +353,7 @@ function initGame()
 		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4,											   map_values.Worm4Head);
 	}
 
-	if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-       GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		GameState.Team1.Member1 = GameState.Worms[0];
 		GameState.Team1.Member2 = GameState.Worms[1];
@@ -339,7 +363,6 @@ function initGame()
 
 	if(GameState.GameMode == variables.game_modes.Training)
 	{
-		//TODO(Martin): hole_count is just stupid.
 		GameState.hole_count.ShiftAmountForward();
 		GameState.hole_count.ShiftAmountForward();
 		$('#shotsWrapper').show();
@@ -350,6 +373,8 @@ function initGame()
 		$('#shotsWrapper').hide();
 		SetupPlayerPointsUI();
 	}
+
+	GameState.Running = true;
 }
 
 function Render()
@@ -383,7 +408,6 @@ function Render()
 		GameState.DrawStartCounter = false;
 	}
 
-	//TODO(Martin): Check this through.
 	if(GameState.RenderWinnerText)
 	{
 		GameState.RenderWinnerText = false;
@@ -477,10 +501,6 @@ function Render()
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				/*case map_values.Target:
-					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
-					break;*/
 			}
 		}
 	}
@@ -524,7 +544,7 @@ function NewGame()
 	GameState.CurrentGamePoints = 0;
 	GameState.DeadWormsCounter = 0;
 
-	//TODO(Martin): This is like a re-init function.
+	//TODO(Martin): Compress this function with the init function.
 	gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
 
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
@@ -555,9 +575,6 @@ function NewGame()
 		case variables.game_modes.FreeForAll:
 			startingPositions = gridFunctions.FFAstartingPositions(vectorGroup, GameState.Grid);
 			break;
-		case variables.game_modes.TwoOnTwo:
-			startingPositions = gridFunctions.TOTstartingPositions(vectorGroup, GameState.Grid);
-			break;
 		case variables.game_modes.CaptureTheFlag:
 			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
 			break;
@@ -570,7 +587,6 @@ function NewGame()
 
 	for (var i=0; i < GameState.NumberOfWorms; i++) 
 	{
-		//TODO(martin): This is pretty bad :)
 		if(i == 0)
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
@@ -604,7 +620,6 @@ function NewGame()
 	
 	InitializeAnimations(GameState);
 
-	//TODO(Martin): Should not be WORM1CELL but different heads.
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
 		gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, 
@@ -622,7 +637,6 @@ function gameloop()
 	now = timestamp();
 	dt = dt + Math.min(1, (now - last) / 1000);
 	
-	//TODO(Martin): Maybe the game loop should be initialized with init() method.
 	if(step != variables.game_speeds.CurrentSpeed)
 	{
 		step = variables.game_speeds.CurrentSpeed;
@@ -645,7 +659,10 @@ function gameloop()
 	TimesRun++;
 	last = now;
 	
-	requestAnimationFrame(gameloop);
+	if(GameState.Running)
+	{
+		requestAnimationFrame(gameloop);
+	}
 }
 
 function HandleWormCollision(worm)
@@ -654,8 +671,6 @@ function HandleWormCollision(worm)
 	{
 		if(worm.CollisionType == collisions.HeadshotCollision)
 		{
-			//TODO(Martin): Why the hell does it not get here??
-			console.log("here");
 			ParticleSystem.SpawnHeadshotEmitter(worm.HeadPosition, numberOfParticles);
 		}
 		else
@@ -765,25 +780,6 @@ function Update(step)
 						{
 							gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 						}
-
-						/*if(training_game_mode.CurrentLevel == 12)
-						{
-
-							socket.emit('gameScore', { name : GameState.Worms[0].Name, 
-													   score : training_game_mode.CurrentLevel });	
-
-							var amount = training_game_mode.Targets.length;
-							for(var e = 0; e < amount; e++)
-							{
-								ParticleSystem.SpawnHeadshotEmitter(training_game_mode.Targets[e].Position);
-							}
-
-							GameState.WinnerText = GameState.Worms[0].Name + ' got some fireworks!';
-							GameState.RenderWinnerText = true;
-
-							entityFunctions.Kill(GameState.Worms[i]);
-							GameState.GameStarted = false;
-						}*/
 						
 						if(GameState.Worms[i].HoleCount == 0)
 						{
@@ -817,8 +813,6 @@ function Update(step)
 			}
 			else if(GameState.GameMode == variables.game_modes.Training && !GameState.Worms[0].Alive)
 			{
-				socket.emit('gameScore', { name : GameState.Worms[0].Name, 
-										   score : training_game_mode.TotalTargetsDestroyed });	
 				GameState.GameStarted = false;
 			}
 		}		
@@ -898,53 +892,6 @@ function Update(step)
 				GameState.GameStarted = false;
 			}
 
-		}
-		//TODO(Martin): Check who is alive.
-		else if(GameState.GameMode == variables.game_modes.TwoOnTwo)
-		{
-			if(!GameState.Team1.Member1.Alive && 
-			   !GameState.Team1.Member2.Alive &&
-			   !GameState.Team2.Member1.Alive && 
-			   !GameState.Team2.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 0;
-				UpdateScoreboard();
-			}
-			else if(!GameState.Team1.Member1.Alive && !GameState.Team1.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 2;
-				entityFunctions.Kill(GameState.Worms[2]);
-				entityFunctions.Kill(GameState.Worms[3]);
-				GameState.CrashEffects.push(1);
-				GameState.CrashEffects.push(1);
-				UpdateScoreboard();
-				if(GameState.Team2.TeamScore >= variables.VictoryPoints.CurrentValue)
-				{
-					GameState.GameFinished == true;
-					$('#restartGameButton').show();
-					GameState.WinnerText = "team 2 won the race!";
-					GameState.RenderWinner = true;
-				}
-			}
-			else if(!GameState.Team2.Member1.Alive && !GameState.Team1.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 1;
-				entityFunctions.Kill(GameState.Worms[0]);
-				entityFunctions.Kill(GameState.Worms[1]);
-				GameState.CrashEffects.push(1);
-				GameState.CrashEffects.push(1);
-				UpdateScoreboard();
-				if(GameState.Team1.TeamScore >= variables.VictoryPoints.CurrentValue)
-				{
-					GameState.GameFinished == true;
-					$('#restartGameButton').show();
-					GameState.WinnerText = "team 1 won the race!";
-					GameState.RenderWinner = true;
-				}
-			}
 		}
 		else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 		{
@@ -1096,6 +1043,8 @@ function Update(step)
 //TODO(Martin): This does simply not work properly, even though the exit game button is displayed :)
 function ExitGameToTitlescreen()
 {
+	GameState.Running = false;
+
 	SoundSystem.ChangeToTitleScreen();
 	GameState.StartGameButtonPressed = false;
 	GameState.GameStarted = false;
@@ -1175,11 +1124,12 @@ function UpdateScoreboard()
 {
 	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.Training)
 	{	
-		for(var i = 0; i < GameState.NumberOfWorms; i++){
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
 			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
 		}
 	}
-	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		if(GameState.RoundWinningTeam == 1)
 		{
