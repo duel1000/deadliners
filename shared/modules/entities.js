@@ -12,30 +12,49 @@
 		CurrentLevel: 1,
 		TargetsDeployed: 0,
 		TargetsDestroyed: 0,
+		TotalTargetsDestroyed: 0,
 		Targets: [],
 
-		NewLevel: function(newGame)
+		NewGame: function(wormPosition)
 		{
-			if(newGame)
-			{
-				this.CurrentLevel = 1;
-			}
-			else
-			{
-				this.CurrentLevel++;
-			}
+			this.Targets = [];
+			this.CreateNewTarget(wormPosition);
+			this.CurrentLevel = 1;
+			this.TargetsDeployed = 0;
+			this.TargetsDestroyed = 0;
+			this.TotalTargetsDestroyed = 0;
+		},
 
+		NextLevel: function(wormPosition)
+		{
+			this.CurrentLevel++;
+			this.Targets = [];
 			this.TargetsDeployed = 0;
 			this.TargetsDestroyed = 0;
 
-			//TODO(Martin): This dont work with my animations..
-			//this.Targets = math.ShuffleArray(this.Targets); 
-
-			var amount = this.Targets.length;
-			for(var i = 0; i < amount; i++)
+			for(var i = 0; i < this.CurrentLevel; i++)
 			{
-				this.Targets[i].IsDestroyed = false;
+				//TODO(Martin): Make this a pool instead.
+				this.CreateNewTarget(wormPosition);
 			}
+		},
+
+		CurrentTargetID: 1,
+		CreateNewTarget: function(wormPosition)
+		{
+			var target = new entities.target();
+			target.ID = this.CurrentTargetID;
+			this.CurrentTargetID++;
+
+			target.Position = VectorFactory.EmptyVector();
+
+			x = Math.floor((Math.random() * 190) + 35);
+			y = Math.floor((Math.random() * 190) + 35);
+
+			target.Position.x = x;  
+			target.Position.y = y;
+
+			this.Targets.push(target);
 		}
 	};
 
