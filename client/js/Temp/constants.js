@@ -15,18 +15,6 @@ MAP_SIZES = [TINY_MAP_SIZE, SMALL_MAP_SIZE, MEDIUM_MAP_SIZE, LARGE_MAP_SIZE, HUG
 MAP_SIZE_TEXT = ['tiny', 'small', 'medium', 'large', 'huge'],
 CHOSEN_MAP_SIZE = HUGE_MAP_SIZE;
 
-function hole_count() 
-{
-	var holeAmounts = [3,6,9];
-	var pointer = 1;
-	this.Amount = 6;
-	this.ShiftAmountForward = function()
-	{
-		pointer = (pointer + 1) % holeAmounts.length;
-		this.Amount = holeAmounts[pointer]; 
-	};
-}
-
 var LOW_SPECIALSHOT_COUNT = 1,
 MEDIUM_SPECIALSHOT_COUNT = 2,
 HIGH_SPECIALSHOT_COUNT = 3,

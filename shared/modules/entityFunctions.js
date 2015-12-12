@@ -2,7 +2,7 @@
 {
 	exports.InitializeWorm = function(worm, position, 
 									  startingDirection, teamID,
-									  v2Factory, holeAmount)
+									  v2Factory, holeAmount, whiteHoleAmount)
 	{
 		worm.HeadPosition = position;		
 		worm.SpawnPoint = v2Factory.CustomVector(position.x, position.y);
@@ -18,7 +18,7 @@
 
 		worm.HoleCount = holeAmount;
 		
-		worm.WhiteHoleCount = 1;
+		worm.WhiteHoleCount = whiteHoleAmount;
 
 		worm.JustShotHole = false;
 		worm.JustShotWhiteHole = false;

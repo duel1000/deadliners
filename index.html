@@ -1,3 +1,12 @@
+<!--
+TODO:
+
+Exit knap
+Customize menu
+Dobbelt skud halløj i training
+
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,12 +64,11 @@
 		</div>
 		<div id="customizeMenu" class="no-display">
 			<div class="smallHeaderFont" id="titleScreenText">customize game setup  &nbsp;\&nbsp;  confirm</div>
-			<div class="black-white-button button-margin red-border" id="gameSpeedButton">game speed: high</div>
-			<div class="black-white-button button-margin red-border" id="mapSizeButton">map size: huge</div>
+			<div class="black-white-button button-margin" id="gameSpeedButton">game speed: high</div>
 			<div class="black-white-button button-margin" id="shotAmountButton">shot amount: 6</div>
-			<div class="black-white-button button-margin red-border" id="specialAmountButton">special amount: 1</div>
-			<div class="black-white-button button-margin red-border" id="gameScoreButton">victory points: 21</div>
-			<div class="black-white-button button-margin" id="backFromCustomizeButton">confirm</div>
+			<div class="black-white-button button-margin" id="specialAmountButton">special amount: 1</div>
+			<div class="black-white-button button-margin" id="gameScoreButton">victory points: 21</div>
+			<div class="black-white-button button-margin2" id="backFromCustomizeButton">confirm</div>
 		</div>
 	</div>
 	
@@ -232,6 +240,7 @@ function GameState()
 	this.WinnerText = "";
 
 	this.hole_count = new variables.hole_count();
+	this.WhiteHoleAmount = 1;
 
 	this.Grid = new entities.grid_2D(map_values.ColumnNumber, map_values.RowNumber);
 	
@@ -245,6 +254,8 @@ function GameState()
 
 	this.Flag2 = new entities.flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
+
+	this.VictoryPoints = 21;
 
 	//NOTE(martin): Handles for Render()	
 	this.SpriteAnimations = [];
@@ -591,25 +602,29 @@ function NewGame()
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
 			 			   variables.directions.Down, GameState.Team1.ID,
-			 			   VectorFactory, GameState.hole_count.Amount);
+			 			   VectorFactory, GameState.hole_count.Amount,
+			 			   GameState.WhiteHoleAmount);
 		}
 		else if(i == 1)
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
 			 			   variables.directions.Up, GameState.Team1.ID,
-			 			   VectorFactory, GameState.hole_count.Amount);
+			 			   VectorFactory, GameState.hole_count.Amount,
+			 			   GameState.WhiteHoleAmount);
 		}
 		else if(i == 2)
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
 						   variables.directions.Down, GameState.Team2.ID,
-						   VectorFactory, GameState.hole_count.Amount);
+						   VectorFactory, GameState.hole_count.Amount,
+						   GameState.WhiteHoleAmount);
 		}
 		else if(i == 3)
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i], 
 						   variables.directions.Up, GameState.Team2.ID,
-						   VectorFactory, GameState.hole_count.Amount);
+						   VectorFactory, GameState.hole_count.Amount,
+						   GameState.WhiteHoleAmount);
 		}
 	}
 
@@ -630,16 +645,22 @@ function NewGame()
 	GameState.GameStarted = false;
 }
 
-var now, dt = 0, last = timestamp(), step = variables.game_speeds.CurrentSpeed;
+function ChangeGameSpeed(Value)
+{
+	CurrentSpeed = Value;
+}
+
+var CurrentSpeed = variables.game_speeds.CurrentSpeed;
+var now, dt = 0, last = timestamp(), step = CurrentSpeed;
 var TimesRun = 0;
 function gameloop()
 {	
 	now = timestamp();
 	dt = dt + Math.min(1, (now - last) / 1000);
 	
-	if(step != variables.game_speeds.CurrentSpeed)
+	if(step != CurrentSpeed)
 	{
-		step = variables.game_speeds.CurrentSpeed;
+		step = CurrentSpeed;
 	}
 
 	if(TimesRun > 0)
@@ -878,7 +899,7 @@ function Update(step)
 				//GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
 				UpdateScoreboard();
 
-				if(GameState.Worms[0].Points >= variables.VictoryPoints.CurrentValue)
+				if(GameState.Worms[0].Points >= GameState.VictoryPoints)
 				{
 					GameState.StartGameButtonPressed = false;
 					GameState.GameFinished = true;
