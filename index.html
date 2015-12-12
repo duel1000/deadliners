@@ -678,16 +678,16 @@ function ChangeGameSpeed(Value)
 }
 
 var CurrentSpeed = variables.game_speeds.CurrentSpeed;
-var now, dt = 0, last = timestamp(), step = CurrentSpeed;
+var now, dt = 0, last = timestamp(), TargetDtForFrame = CurrentSpeed;
 var TimesRun = 0;
 function gameloop()
 {	
 	now = timestamp();
 	dt = dt + Math.min(1, (now - last) / 1000);
 	
-	if(step != CurrentSpeed)
+	if(TargetDtForFrame != CurrentSpeed)
 	{
-		step = CurrentSpeed;
+		TargetDtForFrame = CurrentSpeed;
 	}
 
 	if(TimesRun > 0)
@@ -695,15 +695,16 @@ function gameloop()
 		gridFunctions.ClearGridBuffer(GameState, map_values);
 	}
 
-	while(dt > step) 
+	while(dt > TargetDtForFrame) 
 	{
-		dt = dt - step;
-		Update(step);
+		dt = dt - TargetDtForFrame;
+		Update(TargetDtForFrame);
 	}
 
 	//render(dt); //NOTE(martin): Used for LERP.
 	SoundSystem.PlaySoundEffects(GameState);
 	Render();
+
 	TimesRun++;
 	last = now;
 	
@@ -922,8 +923,7 @@ function Update(step)
 					}
 				}
 
-				//TODO(Martin): Bad to sort because then worms[0] is not player 1.
-				//GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
+				GameState.Worms.sort(function(a, b) {return b.Points - a.Points });
 				UpdateScoreboard();
 
 				if(GameState.Worms[0].Points >= GameState.VictoryPoints)
