@@ -24,7 +24,6 @@
 				<div class="black-white-button button-margin" id="nextButton1">next</div>
 			</div>	
 		</div>
-		<div  class="black-red-button button-margin" disabled="disabled" id="serverGameButton">online</div>
 
 		<div id="inputNamesMenu" class="white no-display">
 		<div class="smallHeaderFont" id="titleScreenText">input all player names  &nbsp;\&nbsp;  customize game  &nbsp;\&nbsp;  start race!</div>
@@ -67,29 +66,6 @@
 	
 	<div id="gamescreen" class="no-display">
 		<div id="gameView">
-			<div class="highScore">
-				<div class="point white" id="highscore1">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="highscore2">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="highscore3">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="highscore4">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="highscore5">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-			</div>
-
 			<div class="playerPoints">
 				<div class="point white" id="player1points" data-player="1" data-order="0">
 					<div class="name"></div>
@@ -126,10 +102,6 @@
 			<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
 			<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
 		</div>
-		
-		<div id="statsView">
-			
-		</div>
 	</div>
 
 	<div id="musicVolume">
@@ -142,7 +114,6 @@
 </html>
 
 <!--CLIENT SYSTEMS-->
-<script src="/socket.io/socket.io.js"></script>
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/menuScreens.js"></script>
@@ -170,22 +141,6 @@ var VectorFactory = new math.V2Factory(100);
 var ParticleSystem = new particle_system();
 
 var training_game_mode = entities.training_game_mode;
-
-var socket = io();
-var CLIENT_ID = 0;
-socket.on('connected', function(data)
-{
-	CLIENT_ID = data.id;
-});
-
-socket.on('NewTopFive', function(data)
-{
-	$("#highscore1").find(".name").text(data.list.name1).parent().find(".points").text(data.list.score1);
-	$("#highscore2").find(".name").text(data.list.name2).parent().find(".points").text(data.list.score2);
-	$("#highscore3").find(".name").text(data.list.name3).parent().find(".points").text(data.list.score3);
-	$("#highscore4").find(".name").text(data.list.name4).parent().find(".points").text(data.list.score4);
-	$("#highscore5").find(".name").text(data.list.name5).parent().find(".points").text(data.list.score5);
-});
 
 var BackCanvas = document.getElementById("backCanvas");
 var MiddleCanvas = document.getElementById("middleCanvas");
@@ -232,9 +187,6 @@ $("#effectsVolumeSlider .ui-slider-handle").unbind('keydown');
 
 function GameState()
 {
-	this.ServerGame = false;
-	this.LocalGame = true;
-
 	this.PlayerNames = ["","","",""];
 	this.NumberOfWorms = 2;
 	this.GameMode = variables.game_modes.FreeForAll;
@@ -294,8 +246,6 @@ gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
 var SoundSystem = new SoundSystem();
 SoundSystem.init();
 
-//TODO(Martin): Should probably put keystate events into a separate function and pass them
-//to the GameState, so the server knows what ended down.
 var keystate = {};
 var Player1Keys = new variables.key_package(37,38,39,40,189,190);
 var Player2Keys = new variables.key_package(68,82,71,70,88,90);
@@ -330,27 +280,8 @@ document.addEventListener("keyup", function(event)
 	delete keystate[event.keyCode];
 });
 
-function initServerGame()
-{
-	//DO SOMETHING!! :D
 
-	socket.emit('join', { msg : 'I WANNA JOIN!!'});	
-
-	socket.on('gamefromserver', function(data)
-	{
-		GameState = null;
-		GameState = data.NewGameState;
-		
-		SetupPlayerPointsUI();
-
-		GameState.PaintWhiteCanvasses = true;
-		GameState.PaintWalls = true;
-
-		gameloop();
-	});
-}
-
-function initLocalGame()
+function initGame()
 {
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
@@ -562,30 +493,7 @@ function Render()
 	}
 }
 
-var GettinNewGameFromServer = false;
-function NewGameServer()
-{
-	if(!GettinNewGameFromServer)
-	{
-		GettinNewGameFromServer = true;
-		
-		socket.emit('newGamePlease');
-
-		socket.on('newGame', function(data)
-		{
-			GameState = null;
-			GameState = data.NewGame;
-			Render();
-			
-			InitializeAnimations(GameState);
-			
-			GameState.StartGameButtonPressed = true;
-			GettinNewGameFromServer = false;
-		});
-	}
-}
-
-function NewGameLocal()
+function NewGame()
 {
 	VectorFactory.Reboot();
 
@@ -683,13 +591,6 @@ function NewGameLocal()
 	GameState.GameStarted = false;
 }
 
-function SendStuffToServer()
-{
-	socket.emit('update', { 
-		direction: GameState.Worms[0].CurrentDirection
-	});
-}
-
 var now, dt = 0, last = timestamp(), step = variables.game_speeds.CurrentSpeed;
 var TimesRun = 0;
 function gameloop()
@@ -712,11 +613,6 @@ function gameloop()
 	{
 		dt = dt - step;
 		Update(step);
-	}
-
-	if(GameState.ServerGame)
-	{
-		SendStuffToServer();
 	}
 
 	//render(dt); //NOTE(martin): Used for LERP.
@@ -758,15 +654,8 @@ function Update(step)
 	
 	if(keystate[variables.GeneralKeys.NewRound] && !GameState.GameStarted && !GameState.StartGameButtonPressed)
 	{
-		if(GameState.LocalGame)
-		{
-			GameState.StartGameButtonPressed = true;
-			NewGameLocal();	
-		}
-		else if(GameState.ServerGame)
-		{
-			NewGameServer();
-		}
+		GameState.StartGameButtonPressed = true;
+		NewGame();	
 	}
 
 	if(GameState.GameStarted)
@@ -1196,20 +1085,6 @@ function ExitGameToTitlescreen()
 
 function HandleWormKeyInput(gameStarted)
 {
-	if(GameState.ServerGame)
-	{
-		ServerGameKeyInput(gameStarted);
-	}
-	else
-	{
-		LocalGameKeyInput(gameStarted);
-	}
-	
-	keystate = {};
-}
-
-function LocalGameKeyInput(gameStarted)
-{
 	if(gameStarted)
 	{
 		for(var i = 0; i < GameState.NumberOfWorms; i++)
@@ -1269,44 +1144,7 @@ function LocalGameKeyInput(gameStarted)
 			}
 		}
 	}
-}
-
-function ServerGameKeyInput(gameStarted)
-{
-	for(var i = 0; i < GameState.NumberOfWorms; i++)
-	{
-		if(keystate[Player1Keys.LeftKey])
-		{
-			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
-											variables.directions.Left);
-		}
-		else if(keystate[Player1Keys.UpKey])
-		{
-			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
-											variables.directions.Up);
-		}
-		else if(keystate[Player1Keys.RightKey])
-		{
-			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
-											variables.directions.Right);
-		}
-		else if(keystate[Player1Keys.DownKey])
-		{
-			entityFunctions.ChangeDirection(GameState.Worms[i], variables.directions, 
-											variables.directions.Down);
-		}
-
-		if(keystate[Player1Keys.SpecialKey])
-		{
-			entityFunctions.ShootWhiteHole(GameState.Worms[i], variables.directions, map_values);
-		}
-		
-		if(keystate[Player1Keys.ShotKey])
-		{	
-			entityFunctions.ShootHole(GameState.Worms[i], variables.directions, 
-					  				  map_values.HoleRange, VectorFactory);
-		}
-	}
+	keystate = {};
 }
 
 function UpdateScoreboard()
