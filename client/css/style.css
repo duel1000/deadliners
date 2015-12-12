@@ -321,7 +321,8 @@ body {
 }
 
 .point {
-	margin-top: 15px;
+	margin-bottom: 15px;
+	margin-top: 0 !important;
 	padding-left: 49px;
 }
 
@@ -663,7 +664,8 @@ body {
 	bottom: 30px;
 }
 
-#controls{
+#controls,
+.score{
 	font-size: 26px;
 }
 
@@ -681,6 +683,7 @@ body {
 .control3,
 .control4{
 	text-align: left;
+	margin-bottom: 15px;
 }
 
 .control1::after,

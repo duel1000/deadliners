@@ -78,10 +78,10 @@ Dobbelt skud halløj i training
 				<div class="restartGameButton" id="restartGameButton">restart race</div>
 				<div id="controls" class="white">
 					<div class="gameMode"></div>
-					<div class="control1">Player 1:</div>
-					<div class="control2">Player 2:</div>
-					<div class="control3">Player 3:</div>
-					<div class="control4">Player 4:</div>
+					<div class="control1"></div>
+					<div class="control2"></div>
+					<div class="control3"></div>
+					<div class="control4"></div>
 				</div>
 				<div class="black-white-button" id="exitGameButton">exit game</div>
 			</div> 
@@ -96,6 +96,7 @@ Dobbelt skud halløj i training
 			</div>
 
 			<div class="col3">
+				<div class="score white">score</div>
 				<div class="playerPoints">
 					<div class="point white" id="player1points" data-player="1" data-order="0">
 						<div class="name"></div>
@@ -304,44 +305,51 @@ var SoundSystem = new SoundSystem();
 SoundSystem.init();
 
 var keystate = {};
-var Player1Keys = new variables.key_package(37,38,39,40,45,190);
+
+// DASH HAS A DIFFERENT KEYCODE IN FF
+var dash = 189;
+if(typeof InstallTrigger !== 'undefined'){
+	dash = 173;
+}
+
+var Player1Keys = new variables.key_package(37,38,39,40,dash,190);
 var Player2Keys = new variables.key_package(68,82,71,70,88,90);
 var Player3Keys = new variables.key_package(97,101,99,98,34,35);
 var Player4Keys = new variables.key_package(74,73,76,75,66,86);
 
-var Listener = function(event)
+var Listener = function(e)
 {
-	if(event.keyCode == Player1Keys.LeftKey ||
-	   event.keyCode == Player1Keys.UpKey ||
-	   event.keyCode == Player1Keys.RightKey ||
-	   event.keyCode == Player1Keys.DownKey ||
-	   event.keyCode == Player1Keys.ShotKey ||
-	   event.keyCode == Player1Keys.SpecialKey ||
+	if(e.keyCode == Player1Keys.LeftKey ||
+	   e.keyCode == Player1Keys.UpKey ||
+	   e.keyCode == Player1Keys.RightKey ||
+	   e.keyCode == Player1Keys.DownKey ||
+	   e.keyCode == Player1Keys.ShotKey ||
+	   e.keyCode == Player1Keys.SpecialKey ||
 
-	   event.keyCode == Player2Keys.LeftKey ||
-	   event.keyCode == Player2Keys.UpKey ||
-	   event.keyCode == Player2Keys.RightKey ||
-	   event.keyCode == Player2Keys.DownKey ||
-	   event.keyCode == Player2Keys.ShotKey ||
-	   event.keyCode == Player2Keys.SpecialKey ||
+	   e.keyCode == Player2Keys.LeftKey ||
+	   e.keyCode == Player2Keys.UpKey ||
+	   e.keyCode == Player2Keys.RightKey ||
+	   e.keyCode == Player2Keys.DownKey ||
+	   e.keyCode == Player2Keys.ShotKey ||
+	   e.keyCode == Player2Keys.SpecialKey ||
 
-	   event.keyCode == Player3Keys.LeftKey ||
-	   event.keyCode == Player3Keys.UpKey ||
-	   event.keyCode == Player3Keys.RightKey ||
-	   event.keyCode == Player3Keys.DownKey ||
-	   event.keyCode == Player3Keys.ShotKey ||
-	   event.keyCode == Player3Keys.SpecialKey ||
+	   e.keyCode == Player3Keys.LeftKey ||
+	   e.keyCode == Player3Keys.UpKey ||
+	   e.keyCode == Player3Keys.RightKey ||
+	   e.keyCode == Player3Keys.DownKey ||
+	   e.keyCode == Player3Keys.ShotKey ||
+	   e.keyCode == Player3Keys.SpecialKey ||
 
-	   event.keyCode == Player4Keys.LeftKey ||
-	   event.keyCode == Player4Keys.UpKey ||
-	   event.keyCode == Player4Keys.RightKey ||
-	   event.keyCode == Player4Keys.DownKey ||
-	   event.keyCode == Player4Keys.ShotKey ||
-	   event.keyCode == Player4Keys.SpecialKey ||
-	   event.keyCode == 13) //ENTER
+	   e.keyCode == Player4Keys.LeftKey ||
+	   e.keyCode == Player4Keys.UpKey ||
+	   e.keyCode == Player4Keys.RightKey ||
+	   e.keyCode == Player4Keys.DownKey ||
+	   e.keyCode == Player4Keys.ShotKey ||
+	   e.keyCode == Player4Keys.SpecialKey ||
+	   e.keyCode == 13) //ENTER
 	{
-		event.preventDefault();
-		keystate[event.keyCode] = true;
+		e.preventDefault();
+		keystate[e.keyCode] = true;
 	}
 }
 

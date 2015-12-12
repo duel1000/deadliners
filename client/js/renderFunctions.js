@@ -4,7 +4,12 @@ function SetupTrainingGameUI()
 }
 
 function SetupPlayerPointsUI()
-{
+{	
+	$(".control1").text(GameState.PlayerNames[0]);
+	$(".control2").text(GameState.PlayerNames[1]);
+	$(".control3").text(GameState.PlayerNames[2]);
+	$(".control4").text(GameState.PlayerNames[3]);
+
 	if(GameState.GameMode == variables.game_modes.FreeForAll)
 	{
 		$("#player1points .name").text(GameState.PlayerNames[0]);
