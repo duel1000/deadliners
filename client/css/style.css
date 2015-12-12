@@ -11,9 +11,12 @@ body {
 .col1{
 	display: block;
 	float: left;
-	width: 15%;
+	width: 23%;
 	position: relative;
 	min-height: 1px;
+	height: 100vh;
+	margin-right: 1%;
+	margin-left: 1%;
 }
 
 .col2{
@@ -22,15 +25,18 @@ body {
 	width: 50%;
 	position: relative;
 	min-height: 1px;
+	max-height: 100vh;
 }
 
 .col3{
 	display: block;
 	float: left;
-	width: 35%;
+	width: 23%;
 	position: relative;
 	min-height: 1px;
 	height: 100vh;
+	margin-right: 1%;
+	margin-left: 1%;
 }
 
 .black-white-button {
@@ -238,6 +244,8 @@ body {
 	display: block;
 	overflow: hidden;
 	position: relative;
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 768px !important;
 	max-height: 768px !important;
 }
@@ -565,7 +573,6 @@ body {
 .soundSliders{
 	position: absolute;
 	bottom: 20px;
-	right: 20px;
 }
 
 #musicVolume {
@@ -645,4 +652,53 @@ body {
     cursor: pointer;
     outline: none;
     border: none;
+}
+
+#exitGameButton{
+	position: absolute;
+	bottom: 30px;
+}
+
+#controls{
+	font-size: 26px;
+}
+
+.players1 .control2,
+.players1 .control3,
+.players1 .control4,
+.players2 .control3,
+.players2 .control4,
+.players3 .control4{
+	display: none;
+}
+
+.control1,
+.control2,
+.control3,
+.control4{
+	text-align: left;
+}
+
+.control1::after,
+.control2::after,
+.control3::after,
+.control4::after{
+	position: absolute;
+	right: 0;
+}
+
+.control1::after{
+	content:"\25C4 \25B2 \25BC \25BA . -";
+}
+
+.control2::after{
+	content:"D R G F X Z";
+}
+
+.control3::after{
+	content:"N1 N5 N3 N2 Page-Down End";
+}
+
+.control4::after{
+	content:"J I L K B V";
 }

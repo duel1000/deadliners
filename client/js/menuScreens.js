@@ -14,6 +14,7 @@ function EnterGame()
 		gameScreen.show();
 
 		resizeCanvas();
+		writeGameMode();
 
 		initGame();
 		gameloop();

@@ -67,7 +67,15 @@
 	<div id="gamescreen" class="no-display">
 		<div id="gameView">
 			<div class="col1">
-				
+				<div class="restartGameButton" id="restartGameButton">restart race</div>
+				<div id="controls" class="white">
+					<div class="gameMode"></div>
+					<div class="control1">Player 1:</div>
+					<div class="control2">Player 2:</div>
+					<div class="control3">Player 3:</div>
+					<div class="control4">Player 4:</div>
+				</div>
+				<div class="black-white-button" id="exitGameButton">exit game</div>
 			</div> 
 			
 			<div class="col2">
@@ -103,11 +111,6 @@
 					<div class="white">shots: <span id="shots">3</span></div>
 					<div class="white">specials: <span id="specials">1</span></div>
 				</div>
-
-				<div class="restartGameButton" id="restartGameButton">restart race</div>
-				<div class="black-white-button button-margin" id="showControlsButton">show controls</div>
-				<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
-				<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
 
 				<div class="soundSliders">
 					<div id="musicVolume">
@@ -209,6 +212,23 @@ function resizeCanvas(){
 	$(".wrapper, #backCanvas, #middleCanvas, #topCanvas, #deathParticleCanvas").css("height", canvasSize).css("width", canvasSize);
 }
 
+function writeGameMode(){
+	var gameModeSelector = $(".gameMode");
+	switch(GameState.GameMode){
+		case 1:
+			gameModeSelector.text("free for all");
+		break;
+
+		case 2:
+			gameModeSelector.text("capture the flag");
+		break;
+
+		case 3:
+			gameModeSelector.text("training");
+		break;
+	}
+}
+
 function GameState()
 {
 	this.PlayerNames = ["","","",""];
@@ -273,7 +293,7 @@ var SoundSystem = new SoundSystem();
 SoundSystem.init();
 
 var keystate = {};
-var Player1Keys = new variables.key_package(37,38,39,40,189,190);
+var Player1Keys = new variables.key_package(37,38,39,40,45,190);
 var Player2Keys = new variables.key_package(68,82,71,70,88,90);
 var Player3Keys = new variables.key_package(97,101,99,98,34,35);
 var Player4Keys = new variables.key_package(74,73,76,75,66,86);
