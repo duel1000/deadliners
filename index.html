@@ -11,7 +11,7 @@
 		<img class="deadlinerImg" src="images/deadliner.png">
 		
 		<div id="setupGameMenu">
-		<div class="smallHeaderFont" id="titleScreenText">local game  &nbsp;\&nbsp;  1-4 players  &nbsp;\&nbsp;  choose game mode  &nbsp;\&nbsp;  next</div>
+		<div class="smallHeaderFont" id="titleScreenText">local game  &nbsp;\&nbsp;  1-4 players  &nbsp;\&nbsp;  choose game mode</div>
 			<div>
 				<div class="white">number of players:</div>
 				<div class="black-white-button" id="NumberOfPlayersSelect">2</div>
@@ -250,7 +250,7 @@ function GameState()
 	this.SpriteAnimations = [];
 	this.AnimationsToClear = [];
 	this.DeathParticles = [];
-	this.PaintWalls = false;
+	this.PaintWhiteBackCanvasWalls = false;
 	this.PaintWhiteCanvasses = false;
 	this.DrawWhiteBox = [];
 	this.DrawStartCounter = false;
@@ -334,7 +334,7 @@ function initGame()
 {
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
-	GameState.PaintWalls = true;
+	GameState.PaintWhiteBackCanvasWalls = true;
 
 	if(GameState.NumberOfWorms >= 1)
 	{
@@ -385,10 +385,10 @@ function Render()
 		GameState.PaintWhiteCanvasses = false; 
 	}
 
-	if(GameState.PaintWalls) 
+	if(GameState.PaintWhiteBackCanvasWalls) 
 	{ 
-		PaintWalls();
-		GameState.PaintWalls = false; 
+		PaintWhiteBackCanvasWalls();
+		GameState.PaintWhiteBackCanvasWalls = false; 
 	}
 
 	if(GameState.DrawWhiteBox.length > 0) 
@@ -549,7 +549,7 @@ function NewGame()
 
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
 	GameState.PaintWhiteCanvasses = true;
-	GameState.PaintWalls = true;
+	GameState.PaintWhiteBackCanvasWalls = true;
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{

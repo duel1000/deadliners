@@ -33,10 +33,11 @@ function PaintWhiteCanvasses()
 	ctxDeathParticles.clearRect(0,0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
 }
 
-function PaintWalls()
+function PaintWhiteBackCanvasWalls()
 {
 	ctxBack.fillStyle = "#FFFFFF";
-	ctxBack.fillRect(0, 0, map_values.ColumnNumber*map_values.TileSize, map_values.RowNumber*map_values.TileSize);
+	ctxBack.fillRect(map_values.TileSize+map_values.TileSize, map_values.TileSize+map_values.TileSize, 
+					 map_values.ColumnNumber*map_values.TileSize-map_values.TileSize, map_values.RowNumber*map_values.TileSize-map_values.TileSize);
 }
 
 function DrawWhiteBox(canvasBox)
