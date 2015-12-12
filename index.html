@@ -2,7 +2,6 @@
 TODO:
 
 Exit knap
-Customize menu
 Dobbelt skud halløj i training
 
 -->
@@ -377,19 +376,19 @@ function initGame()
 
 	if(GameState.NumberOfWorms >= 1)
 	{
-		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], Player1Keys, 1,											   map_values.Worm1Head);
+		GameState.Worms[0] = new entities.worm(GameState.PlayerNames[0], Player1Keys, 1, map_values.Worm1Head);
 	}
 	if(GameState.NumberOfWorms >= 2)
 	{
-		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], Player2Keys, 2,											   map_values.Worm2Head);
+		GameState.Worms[1] = new entities.worm(GameState.PlayerNames[1], Player2Keys, 2, map_values.Worm2Head);
 	}
 	if(GameState.NumberOfWorms >= 3)
 	{		
-		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], Player3Keys, 3,											   map_values.Worm3Head);
+		GameState.Worms[2] = new entities.worm(GameState.PlayerNames[2], Player3Keys, 3, map_values.Worm3Head);
 	}
 	if(GameState.NumberOfWorms == 4)
 	{
-		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4,											   map_values.Worm4Head);
+		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4, map_values.Worm4Head);
 	}
 
 	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
