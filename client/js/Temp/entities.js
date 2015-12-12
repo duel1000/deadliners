@@ -45,7 +45,6 @@ function worm(name, keys, playerID, holeAnimations, deployAnimation, deployOutAn
 	this.KillCount = 0;
 	this.TotalKills = 0;
 
-	//TODO(Martin): Refactor this into some kind of animation object.
 	this.deployAnimation = deployAnimation;
 	this.deployOutAnimation = deployOutAnimation;
 	this.fullDeployAnimation = fullDeployAnimation;

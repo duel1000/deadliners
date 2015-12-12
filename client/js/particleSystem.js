@@ -64,7 +64,6 @@ function DeathParticleEmitter(particleAmount)
 				var xPos = Math.floor(Particle.P.x / 3);
 				var yPos = Math.floor(Particle.P.y / 3);
 
-				//TODO(Martin): Figure out if i care about the GameState as global here.
 				var gridValue = gridFunctions.GetGridValue(GameState.Grid, xPos, yPos);
 
 				if(gridValue == map_values.Empty)
@@ -139,7 +138,6 @@ function HeadshotEmitter(particleAmount)
 			var xPos = Math.floor(Particle.P.x / 3);
 			var yPos = Math.floor(Particle.P.y / 3);
 
-			//TODO(Martin): Figure out if i care about the GameState as global here.
 			var gridValue = gridFunctions.GetGridValue(GameState.Grid, xPos, yPos);
 
 			if(gridValue == map_values.Empty)

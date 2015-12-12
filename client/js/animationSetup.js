@@ -1,5 +1,3 @@
-//TODO(Martin): All this should be put in a struct.
-
 var player1spritesheetWhite = new Image();
 player1spritesheetWhite.src = 'sprites/player1_white.png';
 var player1spritesheet = new Image();

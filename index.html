@@ -220,7 +220,7 @@ function GameState()
 	this.Flag2 = new entities.flag(map_values.Flag2, map_values.FlagSize, 
 						  map_values.FlagSize, map_values.Flag2Position);
 
-	//Handles for Render()	
+	//NOTE(martin): Handles for Render()	
 	this.SpriteAnimations = [];
 	this.AnimationsToClear = [];
 	this.DeathParticles = [];
@@ -230,7 +230,7 @@ function GameState()
 	this.DrawStartCounter = false;
 	this.RenderWinnerText = false;
 
-	//TODO(Martin): Handles for Music
+	//NOTE(Martin): Handles for Music
 	this.CrashEffects = [];
 	this.DeniedEffects = [];
 	this.ShotEffects = [];
@@ -304,8 +304,7 @@ function initGame()
 		GameState.Worms[3] = new entities.worm(GameState.PlayerNames[3], Player4Keys, 4,											   map_values.Worm4Head);
 	}
 
-	if(GameState.GameMode == variables.game_modes.TwoOnTwo || 
-       GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		GameState.Team1.Member1 = GameState.Worms[0];
 		GameState.Team1.Member2 = GameState.Worms[1];
@@ -315,7 +314,6 @@ function initGame()
 
 	if(GameState.GameMode == variables.game_modes.Training)
 	{
-		//TODO(Martin): hole_count is just stupid.
 		GameState.hole_count.ShiftAmountForward();
 		GameState.hole_count.ShiftAmountForward();
 		$('#shotsWrapper').show();
@@ -359,7 +357,6 @@ function Render()
 		GameState.DrawStartCounter = false;
 	}
 
-	//TODO(Martin): Check this through.
 	if(GameState.RenderWinnerText)
 	{
 		GameState.RenderWinnerText = false;
@@ -453,10 +450,6 @@ function Render()
 					ctxBack.fillStyle = "#FFFFFF";
 					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
 					break;
-				/*case map_values.Target:
-					ctxBack.fillStyle = "#FFFFFF";
-					ctxBack.fillRect(x*map_values.TileSize, y*map_values.TileSize, map_values.TileSize, map_values.TileSize);
-					break;*/
 			}
 		}
 	}
@@ -500,7 +493,7 @@ function NewGame()
 	GameState.CurrentGamePoints = 0;
 	GameState.DeadWormsCounter = 0;
 
-	//TODO(Martin): This is like a re-init function.
+	//TODO(Martin): Compress this function with the init function.
 	gridFunctions.Initiate2Dgrid(GameState.Grid, map_values.Empty);
 
 	gridFunctions.SetWallsInGrid(GameState.Grid, map_values);
@@ -531,9 +524,6 @@ function NewGame()
 		case variables.game_modes.FreeForAll:
 			startingPositions = gridFunctions.FFAstartingPositions(vectorGroup, GameState.Grid);
 			break;
-		case variables.game_modes.TwoOnTwo:
-			startingPositions = gridFunctions.TOTstartingPositions(vectorGroup, GameState.Grid);
-			break;
 		case variables.game_modes.CaptureTheFlag:
 			startingPositions = gridFunctions.CTFstartingPositions(vectorGroup, GameState.Grid);
 			break;
@@ -546,7 +536,6 @@ function NewGame()
 
 	for (var i=0; i < GameState.NumberOfWorms; i++) 
 	{
-		//TODO(martin): This is pretty bad :)
 		if(i == 0)
 		{
 			entityFunctions.InitializeWorm(GameState.Worms[i], startingPositions[i],
@@ -580,7 +569,6 @@ function NewGame()
 	
 	InitializeAnimations(GameState);
 
-	//TODO(Martin): Should not be WORM1CELL but different heads.
 	for(var i = 0; i < GameState.NumberOfWorms; i++)
 	{
 		gridFunctions.SetGridValue(GameState.Grid, map_values.Worm1Cell, 
@@ -598,7 +586,6 @@ function gameloop()
 	now = timestamp();
 	dt = dt + Math.min(1, (now - last) / 1000);
 	
-	//TODO(Martin): Maybe the game loop should be initialized with init() method.
 	if(step != variables.game_speeds.CurrentSpeed)
 	{
 		step = variables.game_speeds.CurrentSpeed;
@@ -630,8 +617,6 @@ function HandleWormCollision(worm)
 	{
 		if(worm.CollisionType == collisions.HeadshotCollision)
 		{
-			//TODO(Martin): Why the hell does it not get here??
-			console.log("here");
 			ParticleSystem.SpawnHeadshotEmitter(worm.HeadPosition, numberOfParticles);
 		}
 		else
@@ -875,53 +860,6 @@ function Update(step)
 			}
 
 		}
-		//TODO(Martin): Check who is alive.
-		else if(GameState.GameMode == variables.game_modes.TwoOnTwo)
-		{
-			if(!GameState.Team1.Member1.Alive && 
-			   !GameState.Team1.Member2.Alive &&
-			   !GameState.Team2.Member1.Alive && 
-			   !GameState.Team2.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 0;
-				UpdateScoreboard();
-			}
-			else if(!GameState.Team1.Member1.Alive && !GameState.Team1.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 2;
-				entityFunctions.Kill(GameState.Worms[2]);
-				entityFunctions.Kill(GameState.Worms[3]);
-				GameState.CrashEffects.push(1);
-				GameState.CrashEffects.push(1);
-				UpdateScoreboard();
-				if(GameState.Team2.TeamScore >= variables.VictoryPoints.CurrentValue)
-				{
-					GameState.GameFinished == true;
-					$('#restartGameButton').show();
-					GameState.WinnerText = "team 2 won the race!";
-					GameState.RenderWinner = true;
-				}
-			}
-			else if(!GameState.Team2.Member1.Alive && !GameState.Team1.Member2.Alive)
-			{
-				GameState.GameStarted = false;
-				GameState.RoundWinningTeam = 1;
-				entityFunctions.Kill(GameState.Worms[0]);
-				entityFunctions.Kill(GameState.Worms[1]);
-				GameState.CrashEffects.push(1);
-				GameState.CrashEffects.push(1);
-				UpdateScoreboard();
-				if(GameState.Team1.TeamScore >= variables.VictoryPoints.CurrentValue)
-				{
-					GameState.GameFinished == true;
-					$('#restartGameButton').show();
-					GameState.WinnerText = "team 1 won the race!";
-					GameState.RenderWinner = true;
-				}
-			}
-		}
 		else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 		{
 			if(GameState.RoundWinningTeam == 1 || GameState.RoundWinningTeam == 2)
@@ -1151,11 +1089,12 @@ function UpdateScoreboard()
 {
 	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.Training)
 	{	
-		for(var i = 0; i < GameState.NumberOfWorms; i++){
+		for(var i = 0; i < GameState.NumberOfWorms; i++)
+		{
 			$(".point[data-player=" + GameState.Worms[i].PlayerID + "]").attr('data-order', i).find(".points").text(GameState.Worms[i].Points + ' (+' + GameState.Worms[i].RecentPoints + ')')
 		}
 	}
-	else if(GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		if(GameState.RoundWinningTeam == 1)
 		{

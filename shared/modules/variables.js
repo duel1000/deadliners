@@ -2,9 +2,8 @@
 {
 	exports.game_modes = {
 		FreeForAll: 1,
-		TwoOnTwo: 2,
-		CaptureTheFlag: 3,
-		Training: 4
+		CaptureTheFlag: 2,
+		Training: 3
 	};
 
 	exports.game_speeds = {

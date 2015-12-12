@@ -1,11 +1,9 @@
 {
   "name": "ormehul",
-  "version": "0.0.1",
-  "description": "real time multiplayer ormehul",
+  "version": "0.9.1",
+  "description": "Deadliners game",
   "dependencies": {
     "express": "^4.12.3",
     "jsonfile": "^2.2.1",
-    "node-uuid": "^1.4.3",
-    "socket.io": "^1.3.6"
   }
 }

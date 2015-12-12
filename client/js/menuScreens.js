@@ -37,7 +37,6 @@ function EnterGame()
 
 	setTimeout(function()
 	{
-		//TODO(martin): Juicy animation.
 		titlescreen.hide();
 		setupGameMenu.show();
 		inputNamesMenu.hide();
@@ -71,11 +70,6 @@ $('#GameModeButton').on('click', function()
 	switch(GameState.GameMode)
 	{
 		case variables.game_modes.FreeForAll:
-			GameState.GameMode = variables.game_modes.TwoOnTwo;
-			$(this).text('2 vs 2');
-			$("body").addClass("team");
-			break;
-		case variables.game_modes.TwoOnTwo:
 			GameState.GameMode = variables.game_modes.CaptureTheFlag;
 			$(this).text('capture the flag');
 			$("body").addClass("team");
@@ -120,8 +114,7 @@ function ValidateGameSetup()
 		NextButton.text('next');
 		NextButton.css('border-color', 'white');
 	}
-	else if(GameState.NumberOfWorms < 4 && 
-	  (GameState.GameMode == variables.game_modes.TwoOnTwo || GameState.GameMode == variables.game_modes.CaptureTheFlag))
+	else if(GameState.NumberOfWorms < 4 && GameState.GameMode == variables.game_modes.CaptureTheFlag)
     {
     	NextButtonIsValid = false;
     	NextButton.text('4 player game mode');
@@ -270,7 +263,6 @@ function ValidateEnteredPlayers()
 	{
 		if(playersEntered[i] == true) 
 		{
-			//TODO(Martin): Check if names are EQUAL
 			counter++;
 		}
 	}

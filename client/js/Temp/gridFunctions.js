@@ -12,7 +12,6 @@ function Create2DGrid(width, height)
 	return(grid);
 };
 
-//TODO(Martin): Could be a V2
 function InsideGrid(x, y)
 {
 	if(x < map_values.ColumnNumber && 
@@ -129,7 +128,7 @@ function SetHoleInGrid(worm)
 {
 	var centerpoint = worm.HolePosition;
 
-	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.TwoOnTwo)
+	if(GameState.GameMode == variables.game_modes.FreeForAll)
 	{
 		for (var x=0; x<map_values.HoleSize; x++) 
 		{
@@ -191,10 +190,12 @@ function SetHoleInGrid(worm)
 	}
 }
 
+
+
 //TODO(Martin): Game_MODE pattern problems.
 function SetWhiteHoleInGrid(centerpoint)
 {	
-	if(GameState.GameMode == variables.game_modes.FreeForAll || GameState.GameMode == variables.game_modes.TwoOnTwo)
+	if(GameState.GameMode == variables.game_modes.FreeForAll)
 	{
 		for (var x=0; x<map_values.WhiteHoleSize; x++) 
 		{
@@ -242,16 +243,7 @@ function MakeStartingPositions(amount)
 {
 	var result = [];
 
-	//TODO(Martin): This is written as a TwoOnTwo mode cheat. 
-	if(GameState.GameMode == variables.game_modes.TwoOnTwo)
-	{
-		result[0] = new V2(60, (map_values.RowNumber/2) + 10);
-		result[1] = new V2(60, (map_values.RowNumber/2) - 10);
-		result[2] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) + 10);
-		result[3] = new V2(map_values.ColumnNumber - 60, (map_values.RowNumber/2) - 10);
-		return(result);
-	}
-	else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
+	if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 	{
 		result[0] = new V2(60, (map_values.RowNumber/2) + 30);
 		result[1] = new V2(60, (map_values.RowNumber/2) - 30);
