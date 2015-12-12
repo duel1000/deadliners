@@ -66,49 +66,59 @@
 	
 	<div id="gamescreen" class="no-display">
 		<div id="gameView">
-			<div class="playerPoints">
-				<div class="point white" id="player1points" data-player="1" data-order="0">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="player2points" data-player="2" data-order="1">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="player3points" data-player="3" data-order="2">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
-				<div class="point white" id="player4points" data-player="4" data-order="3">
-					<div class="name"></div>
-					<div class="points"></div>
-				</div>
+			<div class="col1">
+				
 			</div> 
 			
-			<div class="wrapper">
-				<canvas id="backCanvas"></canvas>
-		 		<canvas id="middleCanvas"></canvas>
-		 		<canvas id="topCanvas"></canvas>
-		 		<canvas id="deathParticleCanvas"></canvas>
+			<div class="col2">
+				<div class="wrapper">
+					<canvas id="backCanvas"></canvas>
+			 		<canvas id="middleCanvas"></canvas>
+			 		<canvas id="topCanvas"></canvas>
+			 		<canvas id="deathParticleCanvas"></canvas>
+				</div>
 			</div>
 
-			<div id="shotsWrapper">
-				<div class="white">shots: <span id="shots">3</span></div>
-				<div class="white">specials: <span id="specials">1</span></div>
+			<div class="col3">
+				<div class="playerPoints">
+					<div class="point white" id="player1points" data-player="1" data-order="0">
+						<div class="name"></div>
+						<div class="points"></div>
+					</div>
+					<div class="point white" id="player2points" data-player="2" data-order="1">
+						<div class="name"></div>
+						<div class="points"></div>
+					</div>
+					<div class="point white" id="player3points" data-player="3" data-order="2">
+						<div class="name"></div>
+						<div class="points"></div>
+					</div>
+					<div class="point white" id="player4points" data-player="4" data-order="3">
+						<div class="name"></div>
+						<div class="points"></div>
+					</div>
+				</div> 
+
+				<div id="shotsWrapper">
+					<div class="white">shots: <span id="shots">3</span></div>
+					<div class="white">specials: <span id="specials">1</span></div>
+				</div>
+
+				<div class="restartGameButton" id="restartGameButton">restart race</div>
+				<div class="black-white-button button-margin" id="showControlsButton">show controls</div>
+				<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
+				<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
+
+				<div class="soundSliders">
+					<div id="musicVolume">
+						<div id="musicVolumeSlider"></div>
+					</div>
+					<div id="effectsVolume">
+						<div id="effectsVolumeSlider"></div>
+					</div>
+				</div>
 			</div>
-			
-			<div class="restartGameButton" id="restartGameButton">restart race</div>
-			<div class="black-white-button button-margin" id="showControlsButton">show controls</div>
-			<div id="controls" class="white no-display">orm 1: blalal orm 1: blalal orm 1: blalal orm 1: blalal </div>
-			<div class="black-white-button button-margin" id="exitGameButton">exit game</div>
 		</div>
-	</div>
-
-	<div id="musicVolume">
-		<div id="musicVolumeSlider"></div>
-	</div>
-	<div id="effectsVolume">
-		<div id="effectsVolumeSlider"></div>
 	</div>
 </body>
 </html>
@@ -184,6 +194,20 @@ $("#effectsVolumeSlider").slider({
     }
 });
 $("#effectsVolumeSlider .ui-slider-handle").unbind('keydown');
+
+
+$(window).on("resize", resizeCanvas);
+
+var canvasSize;
+function resizeCanvas(){
+	if($(".col2").width() < 768){
+		canvasSize = $(".col2").width();
+	}
+	else{
+		canvasSize = 768;
+	}
+	$(".wrapper, #backCanvas, #middleCanvas, #topCanvas, #deathParticleCanvas").css("height", canvasSize).css("width", canvasSize);
+}
 
 function GameState()
 {

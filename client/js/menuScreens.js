@@ -43,6 +43,8 @@ function EnterGame()
 		inputNamesMenu.hide();
 		gameScreen.show();
 
+		resizeCanvas();
+
 		initGame();
 		gameloop();
 
