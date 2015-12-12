@@ -254,9 +254,98 @@ function ValidateEnteredPlayers()
 	}
 }
 
+var CurrentGameSpeedIndex = 2;
+var GameSpeeds = [1/20, 1/30, 1/40];
+
+var CurrentShotAmountIndex = 1;
+var ShotAmounts = [3,6,9];
+
+var CurrentSpecialAmountIndex = 0;
+var SpecialAmounts = [1,2,3];
+
+var CurrentGameScoreIndex = 2;
+var GameScores = [11, 15, 21];
+
+
+var GameSpeedCustomButton = $('#gameSpeedButton');
+GameSpeedCustomButton.on('click', function()
+{
+	CurrentGameSpeedIndex++;
+	if(CurrentGameSpeedIndex >= GameSpeeds.length)
+	{
+		CurrentGameSpeedIndex = 0;
+	}
+
+	var Speed = GameSpeeds[CurrentGameSpeedIndex]; 
+	ChangeGameSpeed(Speed);
+
+	var SpeedText = "";
+
+	switch(CurrentGameSpeedIndex)
+	{
+		case 0:
+		{	
+			SpeedText = "low";
+			break;
+		}
+
+		case 1:
+		{	
+			SpeedText = "medium";
+			break;
+		}
+
+		case 2:
+		{	
+			SpeedText = "high";
+			break;
+		}
+	} 
+	$(this).text('game speed: ' + SpeedText);
+});
+
 var ShotAmountButton = $('#shotAmountButton');
 ShotAmountButton.on('click', function()
 {
-	GameState.hole_count.ShiftAmountForward();
-	$(this).text('shot amount: ' + GameState.hole_count.Amount);
+	CurrentShotAmountIndex++;
+	if(CurrentShotAmountIndex >= ShotAmounts.length)
+	{
+		CurrentShotAmountIndex = 0;
+	}
+
+	var ShotAmount = ShotAmounts[CurrentShotAmountIndex];
+
+	$(this).text('shot amount: ' + ShotAmount);
+	GameState.hole_count.Amount = ShotAmount;
+});
+
+var SpecialAmountCustomButton = $('#specialAmountButton');
+SpecialAmountCustomButton.on('click', function()
+{
+	CurrentSpecialAmountIndex++;
+	if(CurrentSpecialAmountIndex >= SpecialAmounts.length)
+	{
+		CurrentSpecialAmountIndex = 0;
+	}
+
+	var SpecialAmount = SpecialAmounts[CurrentSpecialAmountIndex];
+
+	GameState.WhiteHoleAmount = SpecialAmount;
+
+	$(this).text('special amount: ' + SpecialAmount);
+});
+
+var GameScoreCustomButton = $('#gameScoreButton');
+GameScoreCustomButton.on('click', function()
+{
+	CurrentGameScoreIndex++;
+	if(CurrentGameScoreIndex >= GameScores.length)
+	{
+		CurrentGameScoreIndex = 0;
+	}
+
+	var GameScore = GameScores[CurrentGameScoreIndex]; 
+	GameState.VictoryPoints = GameScore;
+
+	$(this).text('victory points: ' + GameScore);
 });
