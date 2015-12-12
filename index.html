@@ -196,6 +196,8 @@ function GameState()
 	this.GameFinished = false;
 	this.StartGameButtonPressed = false;
 
+	this.Running = false;
+
 	this.SecondsCounter = 0;
 
 	this.WormsDiedThisRound = [];
@@ -252,28 +254,51 @@ var Player2Keys = new variables.key_package(68,82,71,70,88,90);
 var Player3Keys = new variables.key_package(97,101,99,98,34,35);
 var Player4Keys = new variables.key_package(74,73,76,75,66,86);
 
-function SetupKeyEvents(KeyCodes)
+var Listener = function(event)
 {
-	document.addEventListener("keydown", function(event) 
-	{	
-		if(event.keyCode == KeyCodes.LeftKey ||
-		   event.keyCode == KeyCodes.UpKey ||
-		   event.keyCode == KeyCodes.RightKey ||
-		   event.keyCode == KeyCodes.DownKey ||
-		   event.keyCode == KeyCodes.ShotKey ||
-		   event.keyCode == KeyCodes.SpecialKey ||
-		   event.keyCode == 13) //ENTER
-		{
-			event.preventDefault();
-			keystate[event.keyCode] = true;
-		}
-	});
+	if(event.keyCode == Player1Keys.LeftKey ||
+	   event.keyCode == Player1Keys.UpKey ||
+	   event.keyCode == Player1Keys.RightKey ||
+	   event.keyCode == Player1Keys.DownKey ||
+	   event.keyCode == Player1Keys.ShotKey ||
+	   event.keyCode == Player1Keys.SpecialKey ||
+
+	   event.keyCode == Player2Keys.LeftKey ||
+	   event.keyCode == Player2Keys.UpKey ||
+	   event.keyCode == Player2Keys.RightKey ||
+	   event.keyCode == Player2Keys.DownKey ||
+	   event.keyCode == Player2Keys.ShotKey ||
+	   event.keyCode == Player2Keys.SpecialKey ||
+
+	   event.keyCode == Player3Keys.LeftKey ||
+	   event.keyCode == Player3Keys.UpKey ||
+	   event.keyCode == Player3Keys.RightKey ||
+	   event.keyCode == Player3Keys.DownKey ||
+	   event.keyCode == Player3Keys.ShotKey ||
+	   event.keyCode == Player3Keys.SpecialKey ||
+
+	   event.keyCode == Player4Keys.LeftKey ||
+	   event.keyCode == Player4Keys.UpKey ||
+	   event.keyCode == Player4Keys.RightKey ||
+	   event.keyCode == Player4Keys.DownKey ||
+	   event.keyCode == Player4Keys.ShotKey ||
+	   event.keyCode == Player4Keys.SpecialKey ||
+	   event.keyCode == 13) //ENTER
+	{
+		event.preventDefault();
+		keystate[event.keyCode] = true;
+	}
 }
 
-SetupKeyEvents(Player1Keys);
-SetupKeyEvents(Player2Keys);
-SetupKeyEvents(Player3Keys);
-SetupKeyEvents(Player4Keys);
+function EnableKeyEvents()
+{
+		document.addEventListener("keydown", Listener, false);
+}
+
+function DisableKeyEvents()
+{
+	document.removeEventListener("keydown", Listener, false);
+}
 
 document.addEventListener("keyup", function(event) 
 {
@@ -324,6 +349,8 @@ function initGame()
 		$('#shotsWrapper').hide();
 		SetupPlayerPointsUI();
 	}
+
+	GameState.Running = true;
 }
 
 function Render()
@@ -608,7 +635,10 @@ function gameloop()
 	TimesRun++;
 	last = now;
 	
-	requestAnimationFrame(gameloop);
+	if(GameState.Running)
+	{
+		requestAnimationFrame(gameloop);
+	}
 }
 
 function HandleWormCollision(worm)
@@ -726,25 +756,6 @@ function Update(step)
 						{
 							gridFunctions.SetHoleInGrid(GameState.Worms[i], GameState.Grid, map_values);
 						}
-
-						/*if(training_game_mode.CurrentLevel == 12)
-						{
-
-							socket.emit('gameScore', { name : GameState.Worms[0].Name, 
-													   score : training_game_mode.CurrentLevel });	
-
-							var amount = training_game_mode.Targets.length;
-							for(var e = 0; e < amount; e++)
-							{
-								ParticleSystem.SpawnHeadshotEmitter(training_game_mode.Targets[e].Position);
-							}
-
-							GameState.WinnerText = GameState.Worms[0].Name + ' got some fireworks!';
-							GameState.RenderWinnerText = true;
-
-							entityFunctions.Kill(GameState.Worms[i]);
-							GameState.GameStarted = false;
-						}*/
 						
 						if(GameState.Worms[i].HoleCount == 0)
 						{
@@ -778,8 +789,6 @@ function Update(step)
 			}
 			else if(GameState.GameMode == variables.game_modes.Training && !GameState.Worms[0].Alive)
 			{
-				socket.emit('gameScore', { name : GameState.Worms[0].Name, 
-										   score : training_game_mode.TotalTargetsDestroyed });	
 				GameState.GameStarted = false;
 			}
 		}		
@@ -1010,6 +1019,8 @@ function Update(step)
 //TODO(Martin): This does simply not work properly, even though the exit game button is displayed :)
 function ExitGameToTitlescreen()
 {
+	GameState.Running = false;
+
 	SoundSystem.ChangeToTitleScreen();
 	GameState.StartGameButtonPressed = false;
 	GameState.GameStarted = false;

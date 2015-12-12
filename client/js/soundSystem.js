@@ -20,7 +20,6 @@ function SoundSystem()
 	var multiKillEffectSoundPool = null;
 	var TargetHitEffectSoundPool = null;
 
-
 	this.init = function()
 	{
 		titlescreenMusicElement = new Audio("sounds/titleScreenMusic.mp3");

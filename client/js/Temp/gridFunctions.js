@@ -190,8 +190,6 @@ function SetHoleInGrid(worm)
 	}
 }
 
-
-
 //TODO(Martin): Game_MODE pattern problems.
 function SetWhiteHoleInGrid(centerpoint)
 {	

@@ -1,38 +1,9 @@
-//SCREEN 1: 
-//sæt NUMBER_OF_WORMS mellem 1-4
-//GAME_MODE = CAPTURE_THE_FLAG/TWO_ON_TWO/FREE_FOR_ALL
-//CONFIRM KNAP
-
-//SCREEN 2:
-//input player names 1-4 efter NUMBER_OF_WORMS
-//Customize knap -> går til SCREEN 3
-//Tilbage knap -> går til SCREEN 1
-//Start spillet knap, det kalder EnterGame() -> går til SCREEN 4
-
-//SCREEN 3(customize):
-//customization options 
-//MAP SIZE
-//GAME SPEED
-//SHOT AMOUNT
-//SPECIAL AMOUNT
-//start spillet knap, det kalder EnterGame() -> går til SCREEN 4
-
-//SCREEN 4(gamescreen)
-//Viser spillefladen
-//Restart game knap
-//Tilbage til SCREEN 1 knap
-//Controls skal vises somehow
-//Stats knap -> Går til SCREEN 5
-
-//SCREEN 5(statistics)
-//Viser forskellige stats
-//Restart game knap
-//Tilbage til SCREEN 1 knap
-
 var titlescreen = $('#titleScreen');
 var gameScreen = $('#gamescreen');
 function EnterGame()
 {
+	EnableKeyEvents();
+
 	SoundSystem.PlayStartButtonEffect();
 
 	setTimeout(function()
@@ -139,7 +110,7 @@ NextButton.on('click', function()
 			$('#player' + i + 'field').show();
 		}
 
-		if(GameState.GameMode == variables.game_modes.Training)
+		if(GameState.GameMode == variables.game_modes.Training || GameState.GameMode == variables.game_modes.CaptureTheFlag)
 		{
 			CustomizeButton.hide();
 		}
@@ -188,6 +159,7 @@ StartRaceButton.on('click', function()
 var ExitGameButton = $('#exitGameButton');
 ExitGameButton.on('click', function()
 {
+	DisableKeyEvents();
 	ExitGameToTitlescreen();
 	gameScreen.hide();
 	titlescreen.show();
