@@ -939,7 +939,6 @@ function Update(step)
 			{
 				GameState.GameStarted = false;
 			}
-
 		}
 		else if(GameState.GameMode == variables.game_modes.CaptureTheFlag)
 		{
@@ -1088,20 +1087,17 @@ function Update(step)
 	}	
 }
 
-//TODO(Martin): This does simply not work properly, even though the exit game button is displayed :)
+//TODO(martin): Fix!
 function ExitGameToTitlescreen()
 {
 	GameState.Running = false;
 
 	SoundSystem.ChangeToTitleScreen();
+
 	GameState.StartGameButtonPressed = false;
 	GameState.GameStarted = false;
 	GameState.GameFinished = false;
-	GameState.StartCounter = variables.StartCounter;
-	for(var i = 0; i < GameState.NumberOfWorms; i++)
-	{
-		entityFunctions.Kill(GameState.Worms[i]);
-	}
+	GameState.StartCounter = 5;
 }
 
 function HandleWormKeyInput(gameStarted)
